@@ -59,7 +59,7 @@ function drawLessonButtons(unit_id, topic_id) {
 
   const { lessons } = units[unit_id].topics[topic_id];
 
-  ["A", "B"].forEach(day => {
+  ["Day One", "Day Two"].forEach(day => {
     if (lessons[day]) {
       const btn = document.createElement("button");
       btn.textContent = `${day} Day: ${lessons[day].hook_question}`;
