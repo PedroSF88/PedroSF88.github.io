@@ -1,4 +1,5 @@
-{
+[
+  {
   "lesson_id": "Intro_A",
   "unit_id": "U0",
   "topic_id": "T0",
@@ -685,4 +686,4 @@
   "secondary_lenses": ["Conflict", "Culture", "Legacy"],
   "ai_guidance_hint": "Focus on how Greek warfare and conquest helped spread ideas—and what those ideas became when mixed with others."
 }
-,
+]
