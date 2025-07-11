@@ -1,0 +1,29 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+  background: #fdfdfd;
+  color: #222;
+}
+button {
+  margin: 0.25rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+button:hover {
+  background: #dfefff;
+}
+h1, h2, h3 {
+  color: #333366;
+}
+blockquote {
+  border-left: 3px solid #ccc;
+  margin-left: 0;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #444
