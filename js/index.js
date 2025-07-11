@@ -78,10 +78,17 @@ function renderLesson(data) {
   out.innerHTML = `
     <h2>${data.topic_title} (${data.lesson_id})</h2>
 
-    <div class="lesson-section">
-      <h3>Learning Objective</h3>
-      <p>${data.learning_objective}</p>
-      <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+    <div class="lesson-section row">
+      <div class="col-md-6">
+        <h3>Learning Objective</h3>
+        <p>${data.learning_objective}</p>
+    </div>
+      <div class="col-md-6">
+        <h3>Success Criteria</h3>
+      <ul>
+      ${data.success_criteria.map(x => `<li>${x}</li>`).join("")}
+      </ul>
+      </div>
     </div>
 
     <div class="lesson-section">
