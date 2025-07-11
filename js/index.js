@@ -75,59 +75,50 @@ function drawUnitAccordion() {
 function renderLesson(data) {
   const out = document.getElementById("lessonView");
 
-  out.innerHTML = `
+out.innerHTML = `
+  <div class="lesson-section section-overview">
     <h2>${data.topic_title} (${data.lesson_id})</h2>
+    <h3>Learning Objective</h3>
+    <p>${data.learning_objective}</p>
+    <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+  </div>
 
-    <div class="lesson-section row">
-      <div class="col-md-6">
-        <h3>Learning Objective</h3>
-        <p>${data.learning_objective}</p>
-    </div>
-      <div class="col-md-6">
-        <h3>Success Criteria</h3>
-      <ul>
-      ${data.success_criteria.map(x => `<li>${x}</li>`).join("")}
-      </ul>
-      </div>
-    </div>
+  <div class="lesson-section section-image">
+    <h3>Intro Image</h3>
+    <img src="${data.image_url?.replace('img:', 'images/') || ''}" style="max-width:100%;" />
+    <p><em>${data.image_description}</em></p>
+  </div>
 
-    <div class="lesson-section">
-      <h3>Intro Image</h3>
-      <img src="${data.image_url.replace('img:', 'images/')}" alt="Intro Image" style="max-width:100%;" />
-      <p><em>${data.image_description}</em></p>
-    </div>
+  <div class="lesson-section section-hook">
+    <h3>Hook Question</h3>
+    <blockquote>${data.hook_question}</blockquote>
+  </div>
 
-    <div class="lesson-section">
-      <h3>Hook Question</h3>
-      <blockquote>${data.hook_question}</blockquote>
+  <div class="lesson-section section-vocab">
+    <h3>Vocabulary</h3>
+    <div class="vocab-grid">
+      ${data.vocab_list.map(v => `<button onclick="window.open('${v.link.replace('link:', '#')}', '_blank')">${v.term}</button>`).join("")}
     </div>
+  </div>
 
-    <div class="lesson-section">
-      <h3>Vocabulary</h3>
-      <div class="vocab-grid">
-        ${data.vocab_list.map(v => `
-          <button onclick="window.open('${v.link.replace('link:', '#')}', '_blank')">
-            ${v.term}
-          </button>`).join("")}
-      </div>
-    </div>
+  <div class="lesson-section section-readings">
+    <h3>Readings</h3>
+    ${["reading_1", "reading_2"].map(key => {
+      const r = data[key];
+      return r
+        ? `<div><h4>${r.title}</h4><p><em>${r.summary}</em></p></div>`
+        : "";
+    }).join("")}
+  </div>
 
-    <div class="lesson-section">
-      <h3>Readings</h3>
-      ${["reading_1", "reading_2"].map(key => {
-        const r = data[key];
-        return `<div><h4>${r.title}</h4><p><em>${r.summary}</em></p></div>`;
-      }).join("")}
-    </div>
+  <div class="lesson-section section-discussion">
+    <h3>Discussion Questions</h3>
+    <ul>${data.discussion_questions.map(q => `<li>${q}</li>`).join("")}</ul>
+  </div>
 
-    <div class="lesson-section">
-      <h3>Discussion Questions</h3>
-      <ul>${data.discussion_questions.map(q => `<li>${q}</li>`).join("")}</ul>
-    </div>
-
-    <div class="lesson-section">
-      <h3>Demonstration of Learning</h3>
-      <p>${data.DOL_prompt}</p>
-    </div>
-  `;
+  <div class="lesson-section section-dol">
+    <h3>Demonstration of Learning</h3>
+    <p>${data.DOL_prompt}</p>
+  </div>
+`;
 }
