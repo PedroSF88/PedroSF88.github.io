@@ -40,8 +40,7 @@
   "DOL_prompt": "Explain the difference between history and prehistory using an example of how we learn about each. Then, explain how choices made in prehistory still shape our world today.",
   "secondary_lenses": ["Tools", "Innovation", "Systems"],
   "ai_guidance_hint": "Think about how scientists and archaeologists study buried clues to figure out what life was like before humans could write things down."
-}
-,
+},
 {
   "lesson_id": "Intro_B",
   "unit_id": "U0",
@@ -126,8 +125,7 @@
   "DOL_prompt": "Describe one survival strategy used by hunter-gatherers and explain how it shows human adaptation. Connect that strategy to a choice people still make today.",
   "secondary_lenses": ["Systems", "Tools", "Adaptation"],
   "ai_guidance_hint": "Focus on how moving together and dividing tasks helped early humans survive as a group."
-}
-,
+},
 {
   "lesson_id": "U1_T1_B",
   "unit_id": "U1",
@@ -169,8 +167,7 @@
   "DOL_prompt": "Choose one piece of evidence (art, object, or tradition) and explain what it reveals about early humans. How does that decision or behavior still show up in the modern world?",
   "secondary_lenses": ["Culture", "Ideas", "Innovation"],
   "ai_guidance_hint": "Focus on how non-written clues like art or tools can reveal beliefs, skills, and group memory."
-}
-,
+},
 {
   "lesson_id": "U1_T2_A",
   "unit_id": "U1",
@@ -212,8 +209,7 @@
   "DOL_prompt": "Describe one big change that happened during the Agricultural Revolution. Explain how it shaped the way people live together today.",
   "secondary_lenses": ["Innovation", "Systems", "Environment"],
   "ai_guidance_hint": "Focus on how farming changed everything: food, homes, roles, and even beliefs about land and community."
-}
-,
+},
 {
   "lesson_id": "U1_T2_B",
   "unit_id": "U1",
@@ -255,8 +251,7 @@
   "DOL_prompt": "Choose one effect of the Agricultural Revolution (social, political, or environmental) and explain how it still shapes the world we live in.",
   "secondary_lenses": ["Power", "Environment", "Systems"],
   "ai_guidance_hint": "Focus on how farming gave some people more control than others, and how the land itself was shaped by those decisions."
-}
-,
+},
 {
   "lesson_id": "U1_T3_A",
   "unit_id": "U1",
@@ -341,8 +336,7 @@
   "DOL_prompt": "Choose one way Mesopotamians organized their society (laws, religion, or class). Explain how that system still influences how people live today.",
   "secondary_lenses": ["Power", "Ideas", "Systems"],
   "ai_guidance_hint": "Focus on how rules and leadership were shaped by religion and how these choices became templates for future civilizations."
-}
-,
+},
 {
   "lesson_id": "U1_T4_A",
   "unit_id": "U1",
@@ -384,8 +378,7 @@
   "DOL_prompt": "Explain how the Nile River helped Egyptians build a stable society. How do we still rely on rivers and geography today?",
   "secondary_lenses": ["Geography", "Systems", "Leadership"],
   "ai_guidance_hint": "Think about how water, farming, and strong leadership worked together to build a civilization that lasted for thousands of years."
-}
-,
+},
 {
   "lesson_id": "U1_T4_B",
   "unit_id": "U1",
@@ -427,8 +420,7 @@
   "DOL_prompt": "Choose one belief or religious structure from Egypt. Explain how it shaped the society and whether it still influences ideas today.",
   "secondary_lenses": ["Religion", "Power", "Culture"],
   "ai_guidance_hint": "Focus on how religion and leadership were blended—and how that affected everything from laws to architecture."
-}
-,
+},
 {
   "lesson_id": "U1_T5_A",
   "unit_id": "U1",
@@ -470,8 +462,7 @@
   "DOL_prompt": "Choose one feature of Indus Valley civilization (e.g., city layout or trade system). Explain how it shows long-term thinking—and what we still use from it today.",
   "secondary_lenses": ["Innovation", "Trade", "Systems"],
   "ai_guidance_hint": "Focus on how planning and trade helped a mysterious civilization thrive—and leave clues behind."
-}
-,
+},
 {
   "lesson_id": "U1_T5_B",
   "unit_id": "U1",
@@ -513,8 +504,7 @@
   "DOL_prompt": "Explain one possible cause of Indus Valley collapse and how it reflects a challenge that civilizations—then and now—face.",
   "secondary_lenses": ["Environment", "Interpretation", "Limits"],
   "ai_guidance_hint": "Focus on how missing information changes what we think we know—and why environmental choices matter long-term."
-}
-,
+},
 {
   "lesson_id": "U1_T6_A",
   "unit_id": "U1",
@@ -556,8 +546,7 @@
   "DOL_prompt": "Describe one early Chinese solution to the challenges of nature or power. How did that choice influence how leaders rule today?",
   "secondary_lenses": ["Environment", "Leadership", "Belief"],
   "ai_guidance_hint": "Focus on how early Chinese leaders responded to nature’s danger with systems of belief and rule."
-}
-,
+},
 {
   "lesson_id": "U1_T6_B",
   "unit_id": "U1",
@@ -599,8 +588,7 @@
   "DOL_prompt": "Choose one early Chinese idea (a philosophy or political structure) and explain how it helped build long-lasting order. How do we still use or debate that idea today?",
   "secondary_lenses": ["Ideas", "Power", "Education"],
   "ai_guidance_hint": "Focus on how early Chinese thinkers shaped what it means to be a good person, a good leader, and a good society."
-}
-,
+},
 {
   "lesson_id": "U2_T1_A",
   "unit_id": "U2",
@@ -642,8 +630,7 @@
   "DOL_prompt": "Pick one Greek idea (democracy, citizenship, or philosophy) and explain how it changed how people thought about power—and how it still affects us today.",
   "secondary_lenses": ["Ideas", "Systems", "Geography"],
   "ai_guidance_hint": "Focus on how small, independent city-states developed big ideas about thinking, power, and participation."
-}
-,
+},
 {
   "lesson_id": "U2_T1_B",
   "unit_id": "U2",
