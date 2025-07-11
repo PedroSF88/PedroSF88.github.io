@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select a Topic</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #topic-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .topic-button {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      background-color: #00695c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .topic-button:hover {
+      background-color: #004d40;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a Topic</h1>
+  <div id="topic-container"></div>
+
+  <script src="script.js"></script>
+  <script>
+    const unitId = getParam("unit");
+    loadTopics(unitId);
+  </script>
+</body>
+</html>

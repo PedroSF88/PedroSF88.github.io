@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select a Lesson</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #lesson-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .lesson-button {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      background-color: #7b1fa2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .lesson-button:hover {
+      background-color: #4a148c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a Lesson</h1>
+  <div id="lesson-container"></div>
+
+  <script src="script.js"></script>
+  <script>
+    const unitId = getParam("unit");
+    const topicId = getParam("topic");
+    loadLessons(unitId, topicId);
+  </script>
+</body>
+</html>
