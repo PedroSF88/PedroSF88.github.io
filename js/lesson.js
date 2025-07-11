@@ -1,94 +1,82 @@
-const params = new URLSearchParams(window.location.search);
-const lessonID = params.get("lesson_id");
+const units = {};
 
-if (!lessonID) {
-  document.getElementById("lessonView").innerHTML = `
-    <h2>No lesson selected</h2>
-    <p>Please go back and choose a lesson from the homepage.</p>
-  `;
-} else {
-  fetch("lessons/lessons.json")
-    .then(res => res.json())
-    .then(allLessons => {
-      const lesson = Object.values(allLessons).find(item => item.lesson_id === lessonID);
+// Load all lessons
+fetch("lessons/lessons.json")
+  .then(res => res.json())
+  .then(allLessons => {
+    for (const id in allLessons) {
+      const data = allLessons[id];
+      const { unit_id, topic_id } = data;
 
-      if (!lesson) {
-        document.getElementById("lessonView").innerHTML = `
-          <h2>Lesson not found</h2>
-          <p>No lesson found with ID: <code>${lessonID}</code></p>
-        `;
-        return;
+      if (!units[unit_id]) units[unit_id] = { unit_question: data.unit_question, topics: {} };
+      if (!units[unit_id].topics[topic_id]) {
+        units[unit_id].topics[topic_id] = {
+          topic_title: data.topic_title,
+          lessons: {}
+        };
       }
 
-      renderLesson(lesson);
-    });
+      units[unit_id].topics[topic_id].lessons[data.lesson_day] = data;
+    }
+
+    drawUnitButtons();
+  });
+
+function drawUnitButtons() {
+  const unitDiv = document.getElementById("unitButtons");
+  unitDiv.innerHTML = "";
+
+  for (const unit_id in units) {
+    const btn = document.createElement("button");
+    btn.classList.add("nav-btn");
+    btn.textContent = `${unit_id}: ${units[unit_id].unit_question}`;
+    btn.onclick = () => drawTopicButtons(unit_id, btn);
+    unitDiv.appendChild(btn);
+  }
 }
 
-function renderLesson(data) {
-  const out = document.getElementById("lessonView");
-  out.innerHTML = `
-    <section class="lesson-header">
-      <h1>${data.topic_title}</h1>
-      <blockquote>${data.hook_question}</blockquote>
-    </section>
+function drawTopicButtons(unit_id, selectedBtn) {
+  highlightSelected(selectedBtn, "#unitButtons");
 
-    <section>
-      <h2>Learning Objective</h2>
-      <p>${data.learning_objective}</p>
+  const topicDiv = document.getElementById("topicButtons");
+  topicDiv.innerHTML = "<h2>Select a Topic</h2>";
 
-      <h3>Success Criteria</h3>
-      <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
-    </section>
+  const unit = units[unit_id];
+  for (const topic_id in unit.topics) {
+    const btn = document.createElement("button");
+    btn.classList.add("nav-btn");
+    btn.textContent = unit.topics[topic_id].topic_title;
+    btn.onclick = () => drawLessonButtons(unit_id, topic_id, btn);
+    topicDiv.appendChild(btn);
+  }
 
-    <section>
-      <h2>Image Analysis</h2>
-      <img src="${data.image_url.replace('img:', 'images/')}" style="max-width:100%;" />
-      <ol>
-        <li>What do you notice first?</li>
-        <li>Is there a caption/text?</li>
-        <li>List and describe the people, objects, and activities you see.</li>
-        <li>Try to make sense of it: 2–3 sentence summary about the image.</li>
-      </ol>
-    </section>
+  document.getElementById("lessonButtons").innerHTML = "";
+}
 
-    <section>
-      <h2>Vocabulary</h2>
-      <div class="vocab-grid">
-        ${data.vocab_list.map(v => `
-          <div class="vocab-item">
-            <a href="${v.link.replace('link:', '#')}" target="_blank" class="vocab-btn">${v.term}</a>
-            <textarea placeholder="Your notes..."></textarea>
-          </div>
-        `).join("")}
-      </div>
-    </section>
+function drawLessonButtons(unit_id, topic_id, selectedBtn) {
+  highlightSelected(selectedBtn, "#topicButtons");
 
-    <section>
-      <h2>Readings</h2>
-      <details>
-        <summary>Reading 1: ${data.reading_1_outline.title}</summary>
-        <p>${data.reading_1_outline.summary}</p>
-      </details>
-      <details>
-        <summary>Reading 2: ${data.reading_2_outline.title}</summary>
-        <p>${data.reading_2_outline.summary}</p>
-      </details>
-    </section>
+  const lessonDiv = document.getElementById("lessonButtons");
+  lessonDiv.innerHTML = "<h2>Select a Lesson</h2>";
 
-    <section>
-      <h2>Class Discussion</h2>
-      <ul>${data.discussion_questions.map(q => `<li>${q}</li>`).join("")}</ul>
-    </section>
+  const { lessons } = units[unit_id].topics[topic_id];
 
-    <section>
-      <h2>Exit Ticket</h2>
-      <p>${data.DOL_prompt}</p>
-    </section>
+  ["Day One", "Day Two"].forEach(day => {
+    if (lessons[day]) {
+      const btn = document.createElement("button");
+      btn.classList.add("nav-btn");
+      btn.textContent = `${day}: ${lessons[day].hook_question}`;
+      btn.onclick = () => {
+        window.location.href = `lesson.html?lesson_id=${lessons[day].lesson_id}`;
+      };
+      lessonDiv.appendChild(btn);
+    }
+  });
+}
 
-    ${data.teks ? `
-      <section>
-        <h2>TEKS</h2>
-        <ul>${data.teks.map(t => `<li>${t}</li>`).join("")}</ul>
-      </section>` : ""}
-  `;
+function highlightSelected(btn, containerSelector) {
+  document.querySelectorAll(`${containerSelector} .nav-btn`).forEach(b => {
+    b.classList.remove("selected");
+  });
+  btn.classList.add("selected");
 }
