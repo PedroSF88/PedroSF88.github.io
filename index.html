@@ -2,56 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Select a Unit</title>
+  <title>Dynamic Curriculum</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
       padding: 2rem;
+      max-width: 800px;
+      margin: auto;
     }
-    h1 {
-      margin-bottom: 1.5rem;
+    h1, h2, h3 {
+      color: #2c3e50;
     }
-    #unit-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-    }
-    .unit-button {
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      background-color: #0057b8;
-      color: white;
+    .button {
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem;
       border: none;
-      border-radius: 8px;
+      background-color: #3366cc;
+      color: white;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
     }
-    .unit-button:hover {
-      background-color: #003e91;
+    .button:hover {
+      background-color: #254a9e;
+    }
+    #vocab-list {
+      padding-left: 1.5rem;
     }
   </style>
 </head>
 <body>
-
-  <h1>Select a Unit</h1>
+  <h1>Curriculum Viewer</h1>
   <div id="unit-container"></div>
+  <div id="topic-container"></div>
+  <div id="lesson-container"></div>
+  <div id="lesson-view" style="margin-top: 2rem;"></div>
 
-  <script>
-    const unitCount = 6;
-    const container = document.getElementById("unit-container");
-
-    for (let i = 1; i <= unitCount; i++) {
-      const button = document.createElement("button");
-      button.className = "unit-button";
-      button.textContent = `Unit ${i}`;
-      button.onclick = () => {
-        window.location.href = `topics.html?unit=U${i}`;
-      };
-      container.appendChild(button);
-    }
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
