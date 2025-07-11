@@ -1,66 +1,91 @@
-function getParam(name) {
-  return new URLSearchParams(window.location.search).get(name);
+let lessons = [];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const response = await fetch("lessons/lessons.json");
+  lessons = await response.json();
+  renderUnits();
+});
+
+function clearAllBelow(id) {
+  if (id === "unit") {
+    document.getElementById("topic-container").innerHTML = "";
+    document.getElementById("lesson-container").innerHTML = "";
+    document.getElementById("lesson-view").innerHTML = "";
+  } else if (id === "topic") {
+    document.getElementById("lesson-container").innerHTML = "";
+    document.getElementById("lesson-view").innerHTML = "";
+  } else if (id === "lesson") {
+    document.getElementById("lesson-view").innerHTML = "";
+  }
 }
 
-async function loadJSON() {
-  const res = await fetch("lessons/lessons.json");
-  return await res.json();
+function renderUnits() {
+  const container = document.getElementById("unit-container");
+  container.innerHTML = "<h2>Select a Unit</h2>";
+  for (let i = 1; i <= 6; i++) {
+    const btn = document.createElement("button");
+    btn.className = "button";
+    btn.textContent = `Unit ${i}`;
+    btn.onclick = () => {
+      clearAllBelow("unit");
+      renderTopics(`U${i}`);
+    };
+    container.appendChild(btn);
+  }
 }
 
-async function loadTopics(unitId) {
-  const data = await loadJSON();
+function renderTopics(unitId) {
   const container = document.getElementById("topic-container");
+  container.innerHTML = "<h2>Select a Topic</h2>";
   const seen = new Set();
-  for (let item of data) {
+  lessons.forEach(item => {
     if (item.unit_id === unitId && !seen.has(item.topic_id)) {
       seen.add(item.topic_id);
-      const button = document.createElement("button");
-      button.className = "topic-button";
-      button.textContent = item.topic_title;
-      button.onclick = () => {
-        window.location.href = `lessons.html?unit=${unitId}&topic=${item.topic_id}`;
+      const btn = document.createElement("button");
+      btn.className = "button";
+      btn.textContent = item.topic_title;
+      btn.onclick = () => {
+        clearAllBelow("topic");
+        renderLessons(unitId, item.topic_id);
       };
-      container.appendChild(button);
+      container.appendChild(btn);
     }
-  }
-}
-
-async function loadLessons(unitId, topicId) {
-  const data = await loadJSON();
-  const container = document.getElementById("lesson-container");
-  for (let item of data) {
-    if (item.unit_id === unitId && item.topic_id === topicId) {
-      const button = document.createElement("button");
-      button.className = "lesson-button";
-      button.textContent = `Lesson ${item.lesson_day}`;
-      button.onclick = () => {
-        window.location.href = `view.html?lesson=${item.lesson_id}`;
-      };
-      container.appendChild(button);
-    }
-  }
-}
-
-async function loadLesson(id) {
-  const data = await loadJSON();
-  const lesson = data.find(l => l.lesson_id === id);
-  if (!lesson) return document.body.innerHTML = "Lesson not found";
-
-  document.getElementById("topic-title").textContent = lesson.topic_title;
-  document.getElementById("objective").textContent = lesson.learning_objective;
-  document.getElementById("hook").textContent = lesson.hook_question;
-  document.getElementById("dol").textContent = lesson.DOL_prompt;
-
-  const vocab = document.getElementById("vocab-list");
-  vocab.innerHTML = "";
-  lesson.vocab_list.forEach(v => {
-    const li = document.createElement("li");
-    li.textContent = v.term;
-    vocab.appendChild(li);
   });
+}
 
-  document.getElementById("reading-1").innerHTML = `
-    <strong>${lesson.reading_1_outline.title}</strong><p>${lesson.reading_1_outline.summary}</p>`;
-  document.getElementById("reading-2").innerHTML = `
-    <strong>${lesson.reading_2_outline.title}</strong><p>${lesson.reading_2_outline.summary}</p>`;
+function renderLessons(unitId, topicId) {
+  const container = document.getElementById("lesson-container");
+  container.innerHTML = "<h2>Select a Lesson</h2>";
+  lessons.forEach(item => {
+    if (item.unit_id === unitId && item.topic_id === topicId) {
+      const btn = document.createElement("button");
+      btn.className = "button";
+      btn.textContent = `Lesson ${item.lesson_day}`;
+      btn.onclick = () => {
+        clearAllBelow("lesson");
+        renderLesson(item.lesson_id);
+      };
+      container.appendChild(btn);
+    }
+  });
+}
+
+function renderLesson(lessonId) {
+  const lesson = lessons.find(l => l.lesson_id === lessonId);
+  if (!lesson) return;
+
+  const container = document.getElementById("lesson-view");
+  container.innerHTML = `
+    <h2>${lesson.topic_title} — Lesson ${lesson.lesson_day}</h2>
+    <p><strong>Objective:</strong> ${lesson.learning_objective}</p>
+    <p><strong>Hook Question:</strong> ${lesson.hook_question}</p>
+    <h3>Vocabulary</h3>
+    <ul id="vocab-list">${lesson.vocab_list.map(v => `<li>${v.term}</li>`).join("")}</ul>
+    <h3>Reading 1: ${lesson.reading_1_outline.title}</h3>
+    <p>${lesson.reading_1_outline.summary}</p>
+    <h3>Reading 2: ${lesson.reading_2_outline.title}</h3>
+    <p>${lesson.reading_2_outline.summary}</p>
+    <h3>DOL Prompt</h3>
+    <p>${lesson.DOL_prompt}</p>
+  `;
 }
