@@ -2,18 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>World History Lesson Explorer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Lesson Viewer</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <h1>🌍 Explore World History Lessons</h1>
-
-  <div id="unitButtons"></div>
-  <div id="topicButtons"></div>
-  <div id="lessonButtons"></div>
-  <div id="lessonView"></div>
-
-  <script src="js/explorer.js"></script>
+  <div id="sidebar">
+    <h2>Units</h2>
+    <div id="unitButtons"></div>
+  </div>
+  <div id="main">
+    <div class="accordion" id="topicAccordion">
+      <button class="accordion-button" onclick="toggleAccordion('topicAccordion')">Select a Topic</button>
+      <div class="accordion-content" id="topicButtons"></div>
+    </div>
+    <div class="accordion" id="lessonAccordion">
+      <button class="accordion-button" onclick="toggleAccordion('lessonAccordion')">Select a Lesson</button>
+      <div class="accordion-content" id="lessonButtons"></div>
+    </div>
+    <div id="lessonView"></div>
+  </div>
+  <script src="js/script.js"></script>
 </body>
 </html>
