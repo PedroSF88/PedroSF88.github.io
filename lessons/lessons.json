@@ -599,3 +599,90 @@
   "secondary_lenses": ["Ideas", "Power", "Education"],
   "ai_guidance_hint": "Focus on how early Chinese thinkers shaped what it means to be a good person, a good leader, and a good society."
 }
+,
+{
+  "lesson_id": "U2_T1_A",
+  "unit_id": "U2",
+  "topic_id": "T1",
+  "topic_title": "Greece",
+  "lesson_day": "A",
+  "unit_question": "How did classical ideas, empires, and systems shape the values and institutions of future civilizations?",
+  "overarching_question": "How do the choices of the past shape the world we live in today?",
+  "learning_objective": "Students will describe the political, geographic, and cultural foundations of Classical Greece and explain how its ideas spread and endured.",
+  "success_criteria": [
+    "I can identify key features of Greek city-states and how geography shaped them.",
+    "I can explain the development of democracy and philosophy in Greece.",
+    "I can recognize how Greek ideas still influence us today."
+  ],
+  "image_description": "A mountainous coastline with independent cities: one with a bustling market and theater, another with soldiers training. Ships sail between islands while a statue of Athena rises above Athens.",
+  "hook_question": "Can a small city create ideas powerful enough to last 2,000 years?",
+  "vocab_list": [
+    { "term": "Polis", "link": "" },
+    { "term": "Direct Democracy", "link": "" },
+    { "term": "Philosophy", "link": "" },
+    { "term": "Agora", "link": "" },
+    { "term": "Acropolis", "link": "" },
+    { "term": "Citizen", "link": "" }
+  ],
+  "reading_1_outline": {
+    "title": "The Greek Polis",
+    "summary": "Explains the structure and independence of Greek city-states and how geography influenced their development.",
+    "keywords": ["Polis", "Acropolis", "Agora"]
+  },
+  "reading_2_outline": {
+    "title": "Athenian Democracy and Thought",
+    "summary": "Describes the creation of direct democracy and the emergence of Greek philosophy in the public sphere.",
+    "keywords": ["Direct Democracy", "Citizen", "Philosophy"]
+  },
+  "discussion_questions": [
+    "How did geography influence the way Greeks lived and governed?",
+    "What made Athens different from other city-states?"
+  ],
+  "DOL_prompt": "Pick one Greek idea (democracy, citizenship, or philosophy) and explain how it changed how people thought about power—and how it still affects us today.",
+  "secondary_lenses": ["Ideas", "Systems", "Geography"],
+  "ai_guidance_hint": "Focus on how small, independent city-states developed big ideas about thinking, power, and participation."
+}
+,
+{
+  "lesson_id": "U2_T1_B",
+  "unit_id": "U2",
+  "topic_id": "T1",
+  "topic_title": "Greece",
+  "lesson_day": "B",
+  "unit_question": "How did classical ideas, empires, and systems shape the values and institutions of future civilizations?",
+  "overarching_question": "How do the choices of the past shape the world we live in today?",
+  "learning_objective": "Students will analyze how warfare, culture, and empire helped spread and preserve Greek ideas, especially through Alexander the Great.",
+  "success_criteria": [
+    "I can explain how conflict shaped Greek alliances and divisions.",
+    "I can describe how Greek culture spread through conquest and trade.",
+    "I can analyze the lasting impact of Greek culture on later societies."
+  ],
+  "image_description": "Two scenes: one of hoplites marching in phalanx formation, and the other of Alexander the Great riding with maps, scrolls, and statues being loaded onto ships bound for distant lands.",
+  "hook_question": "Can war spread ideas just as much as peace can?",
+  "vocab_list": [
+    { "term": "Hoplite", "link": "" },
+    { "term": "Phalanx", "link": "" },
+    { "term": "Peloponnesian War", "link": "" },
+    { "term": "Alexander the Great", "link": "" },
+    { "term": "Hellenism", "link": "" },
+    { "term": "Cultural Diffusion", "link": "" }
+  ],
+  "reading_1_outline": {
+    "title": "War and Rivalry",
+    "summary": "Explores the military system of Greece, the Peloponnesian War, and how internal conflict weakened the city-states.",
+    "keywords": ["Hoplite", "Phalanx", "Peloponnesian War"]
+  },
+  "reading_2_outline": {
+    "title": "The Legacy of Alexander",
+    "summary": "Explains how Alexander’s conquests spread Greek ideas and blended them with other cultures to create Hellenism.",
+    "keywords": ["Alexander the Great", "Hellenism", "Cultural Diffusion"]
+  },
+  "discussion_questions": [
+    "How did war change Greece’s unity and power?",
+    "Why did Alexander’s empire spread Greek culture so effectively?"
+  ],
+  "DOL_prompt": "Explain how Greek culture spread beyond Greece and name one way it still influences your life or the modern world.",
+  "secondary_lenses": ["Conflict", "Culture", "Legacy"],
+  "ai_guidance_hint": "Focus on how Greek warfare and conquest helped spread ideas—and what those ideas became when mixed with others."
+}
+,
