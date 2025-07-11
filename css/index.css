@@ -1,7 +1,9 @@
+/* General Layout */
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: #f4f4f4;
+  background: #f5f7fa;
+  color: #222;
 }
 
 .layout {
@@ -9,67 +11,127 @@ body {
   min-height: 100vh;
 }
 
-aside#unitSidebar {
-  width: 280px;
-  background: #003366;
-  color: white;
-  padding: 1.5rem;
+/* Sidebar */
+#sidebar {
+  width: 320px;
+  background: #e2ecf6;
+  padding: 1rem;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
 }
 
-#unitSidebar h2 {
-  margin-top: 0;
-  font-size: 1.25rem;
+#lessonView {
+  flex: 1;
+  padding: 2rem;
+  background: #ffffff;
 }
 
-#unitButtons button {
-  display: block;
+/* Accordion Styles */
+.accordion {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.accordion-btn {
   width: 100%;
-  margin-bottom: 0.5rem;
-  padding: 0.75rem 1rem;
-  border: none;
-  background: #004080;
+  background: #336699;
   color: white;
   font-weight: bold;
-  border-radius: 6px;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.accordion-btn:hover {
+  background: #2b578a;
+}
+
+.accordion-content {
+  display: none;
+  padding-left: 1rem;
+}
+
+.accordion.open .accordion-content {
+  display: block;
+}
+
+/* Topic and Lesson Buttons */
+.topic-btn {
+  display: block;
+  width: 100%;
+  background: #dde6f0;
+  color: #003366;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  margin: 0.25rem 0;
+  text-align: left;
   cursor: pointer;
 }
 
-#unitButtons button:hover {
-  background: #0055aa;
+.lesson-buttons {
+  margin: 0.25rem 0 1rem 1rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
-.main {
-  flex: 1;
-  padding: 2rem;
+.lesson-btn {
+  background: #fff;
+  border: 1px solid #336699;
+  color: #003366;
+  font-weight: bold;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.section {
+.lesson-btn:hover {
+  background: #cce0f5;
+}
+
+/* Lesson View Styles */
+.lesson-section {
   margin-bottom: 2rem;
 }
 
-.section h2 {
-  margin-bottom: 1rem;
+h2, h3 {
   color: #003366;
+  margin-top: 1.25rem;
 }
 
-.nav-btn {
-  display: inline-block;
-  margin: 0.25rem;
+blockquote {
+  font-style: italic;
+  border-left: 4px solid #ccc;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #444;
+}
+
+/* Vocab Grid */
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.vocab-grid button {
+  background: #e0f0ff;
+  border: 1px solid #90caff;
   padding: 0.5rem 1rem;
-  border: 2px solid #003366;
-  border-radius: 6px;
-  background: white;
-  color: #003366;
+  text-align: center;
   font-weight: bold;
+  color: #003366;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.nav-btn:hover {
-  background: #eef6ff;
-}
-
-.nav-btn.selected {
-  background: #cce0ff;
-  border-color: #3366cc;
+.vocab-grid button:hover {
+  background: #d0eaff;
 }
