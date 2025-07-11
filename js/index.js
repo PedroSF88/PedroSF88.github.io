@@ -107,7 +107,7 @@ function renderLesson(data) {
 
     <div class="lesson-section">
       <h3>Readings</h3>
-      ${["reading_1_outline", "reading_2_outline"].map(key => {
+      ${["reading_1", "reading_2"].map(key => {
         const r = data[key];
         return `<div><h4>${r.title}</h4><p><em>${r.summary}</em></p></div>`;
       }).join("")}
