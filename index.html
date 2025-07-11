@@ -2,21 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Page</title>
+  <title>Select a Unit</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+    }
+    #unit-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .unit-button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      background-color: #0057b8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .unit-button:hover {
+      background-color: #003e91;
+    }
+  </style>
 </head>
 <body>
+
   <h1>Select a Unit</h1>
   <div id="unit-container"></div>
 
   <script>
     const unitCount = 6;
     const container = document.getElementById("unit-container");
+
     for (let i = 1; i <= unitCount; i++) {
-      const link = document.createElement("a");
-      link.href = `topics.html?unit=U${i}`;
-      link.innerHTML = `<img src="assets/unit${i}.png" alt="Unit ${i}" style="width:200px; margin:10px;">`;
-      container.appendChild(link);
+      const button = document.createElement("button");
+      button.className = "unit-button";
+      button.textContent = `Unit ${i}`;
+      button.onclick = () => {
+        window.location.href = `topics.html?unit=U${i}`;
+      };
+      container.appendChild(button);
     }
   </script>
+
 </body>
 </html>
