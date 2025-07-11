@@ -135,3 +135,19 @@ blockquote {
 .vocab-grid button:hover {
   background: #d0eaff;
 }
+
+.section-overview { background: #f0f8ff; }
+.section-image { background: #f9f9f9; }
+.section-hook { background: #eef7ee; }
+.section-vocab { background: #fff8e1; }
+.section-readings { background: #fcefe3; }
+.section-discussion { background: #eaf0ff; }
+.section-dol { background: #f5e1e1; }
+
+.lesson-section {
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
