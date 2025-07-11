@@ -23,7 +23,7 @@ fetch("lessons/lessons.json")
 
 function drawUnitButtons() {
   const unitDiv = document.getElementById("unitButtons");
-  unitDiv.innerHTML = "";
+  unitDiv.innerHTML = "<h2>Select a Unit</h2>";
 
   for (const unit_id in units) {
     const btn = document.createElement("button");
@@ -38,7 +38,7 @@ function drawUnitButtons() {
 
 function drawTopicButtons(unit_id) {
   const topicDiv = document.getElementById("topicButtons");
-  topicDiv.innerHTML = "";
+  topicDiv.innerHTML = "<h2>Select a Topic</h2>";
 
   const unit = units[unit_id];
   for (const topic_id in unit.topics) {
@@ -54,7 +54,7 @@ function drawTopicButtons(unit_id) {
 
 function drawLessonButtons(unit_id, topic_id) {
   const lessonDiv = document.getElementById("lessonButtons");
-  lessonDiv.innerHTML = "";
+  lessonDiv.innerHTML = "<h2>Select a Lesson</h2>";
 
   const { lessons } = units[unit_id].topics[topic_id];
 
@@ -62,49 +62,13 @@ function drawLessonButtons(unit_id, topic_id) {
     if (lessons[day]) {
       const btn = document.createElement("button");
       btn.textContent = `${day}: ${lessons[day].hook_question}`;
-      btn.onclick = () => renderLesson(lessons[day]);
+      btn.onclick = () => {
+        const lessonID = lessons[day].lesson_id;
+        window.location.href = `lesson.html?lesson_id=${lessonID}`;
+      };
       lessonDiv.appendChild(btn);
     }
   });
 
   document.getElementById("lessonView").innerHTML = "";
-}
-
-function renderLesson(data) {
-  const out = document.getElementById("lessonView");
-  out.innerHTML = `
-    <h2>${data.topic_title} (${data.lesson_id})</h2>
-    <h3>Learning Objective</h3>
-    <p>${data.learning_objective}</p>
-    <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
-
-    <h3>Intro Image</h3>
-    <img src="${data.image_url.replace('img:', 'images/')}" style="max-width:100%;" />
-    <p><em>${data.image_description}</em></p>
-
-    <h3>Hook Question</h3>
-    <blockquote>${data.hook_question}</blockquote>
-
-    <h3>Vocabulary</h3>
-    <ul>
-      ${data.vocab_list.map(v => `<li><a href="${v.link.replace('link:', '#')}" target="_blank">${v.term}</a></li>`).join("")}
-    </ul>
-
-    <h3>Readings</h3>
-    ${["reading_1_outline", "reading_2_outline"].map(key => {
-      const r = data[key];
-      return `<div><h4>${r.title}</h4><p><em>${r.summary}</em></p></div>`;
-    }).join("")}
-
-    <h3>Discussion Questions</h3>
-    <ul>${data.discussion_questions.map(q => `<li>${q}</li>`).join("")}</ul>
-
-    <h3>Demonstration of Learning</h3>
-    <p>${data.DOL_prompt}</p>
-  `;
-}
-
-function toggleAccordion(id) {
-  const acc = document.getElementById(id);
-  acc.classList.toggle("open");
 }
