@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f4f4f4;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+aside#unitSidebar {
+  width: 280px;
+  background: #003366;
+  color: white;
+  padding: 1.5rem;
+}
+
+#unitSidebar h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+#unitButtons button {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: #004080;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#unitButtons button:hover {
+  background: #0055aa;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 1rem;
+  color: #003366;
+}
+
+.nav-btn {
+  display: inline-block;
+  margin: 0.25rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #003366;
+  border-radius: 6px;
+  background: white;
+  color: #003366;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: #eef6ff;
+}
+
+.nav-btn.selected {
+  background: #cce0ff;
+  border-color: #3366cc;
+}
