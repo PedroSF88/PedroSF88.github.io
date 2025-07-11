@@ -7,7 +7,7 @@
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
-      max-width: 800px;
+      max-width: 1000px;
       margin: auto;
     }
     h1, h2, h3 {
@@ -25,14 +25,47 @@
     .button:hover {
       background-color: #254a9e;
     }
-    #vocab-list {
-      padding-left: 1.5rem;
+    .selected {
+      background-color: #2e7d32 !important;
+    }
+    .accordion {
+      background-color: #f1f1f1;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .accordion-header {
+      background-color: #e0e0e0;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .accordion-body {
+      display: none;
+      padding: 10px;
+    }
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .vocab-button {
+      padding: 10px;
+      background-color: #90caf9;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .vocab-button:hover {
+      background-color: #42a5f5;
     }
   </style>
 </head>
 <body>
   <h1>Curriculum Viewer</h1>
   <div id="unit-container"></div>
+  <div id="unit-question"></div>
   <div id="topic-container"></div>
   <div id="lesson-container"></div>
   <div id="lesson-view" style="margin-top: 2rem;"></div>
