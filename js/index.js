@@ -1,6 +1,6 @@
 const units = {};
 
-// Load all lessons from the JSON file
+// Load JSON and organize by Unit > Topic > Lesson
 fetch("lessons/lessons.json")
   .then(res => res.json())
   .then(allLessons => {
@@ -8,13 +8,7 @@ fetch("lessons/lessons.json")
       const data = allLessons[id];
       const { unit_id, topic_id } = data;
 
-      if (!units[unit_id]) {
-        units[unit_id] = {
-          unit_question: data.unit_question,
-          topics: {}
-        };
-      }
-
+      if (!units[unit_id]) units[unit_id] = { unit_question: data.unit_question, topics: {} };
       if (!units[unit_id].topics[topic_id]) {
         units[unit_id].topics[topic_id] = {
           topic_title: data.topic_title,
@@ -25,123 +19,109 @@ fetch("lessons/lessons.json")
       units[unit_id].topics[topic_id].lessons[data.lesson_day] = data;
     }
 
-    drawSidebar();
+    drawUnitAccordion();
   });
 
-// Render Units, Topics, and Lessons in Sidebar Accordion
-function drawSidebar() {
+// Render Unit/Topic Accordion Menu
+function drawUnitAccordion() {
   const container = document.getElementById("unitMenu");
   container.innerHTML = "";
 
-  const accordion = document.createElement("div");
-  accordion.className = "accordion";
-  accordion.id = "accordionUnits";
-
-  let unitIndex = 0;
-
   for (const unit_id in units) {
     const unit = units[unit_id];
-    const unitCollapseId = `collapseUnit${unitIndex}`;
+    const unitWrapper = document.createElement("div");
+    unitWrapper.className = "accordion";
 
-    const card = document.createElement("div");
-    card.className = "accordion-item";
+    const unitBtn = document.createElement("button");
+    unitBtn.className = "accordion-btn";
+    unitBtn.textContent = `${unit_id}: ${unit.unit_question}`;
+    unitBtn.onclick = () => unitWrapper.classList.toggle("open");
 
-    card.innerHTML = `
-      <h2 class="accordion-header" id="heading${unitIndex}">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#${unitCollapseId}" aria-expanded="false" aria-controls="${unitCollapseId}">
-          ${unit_id}: ${unit.unit_question}
-        </button>
-      </h2>
-      <div id="${unitCollapseId}" class="accordion-collapse collapse" aria-labelledby="heading${unitIndex}" data-bs-parent="#accordionUnits">
-        <div class="accordion-body" id="unitBody${unitIndex}">
-        </div>
-      </div>
-    `;
-
-    const bodyDiv = card.querySelector(`#unitBody${unitIndex}`);
+    const topicList = document.createElement("div");
+    topicList.className = "accordion-content";
 
     for (const topic_id in unit.topics) {
       const topic = unit.topics[topic_id];
 
-      const topicTitle = document.createElement("h6");
-      topicTitle.textContent = topic.topic_title;
-      bodyDiv.appendChild(topicTitle);
+      const topicBtn = document.createElement("button");
+      topicBtn.className = "topic-btn";
+      topicBtn.textContent = topic.topic_title;
+
+      const lessonSet = document.createElement("div");
+      lessonSet.className = "lesson-buttons";
 
       ["Day One", "Day Two"].forEach(day => {
-        const lesson = topic.lessons[day];
-        if (lesson) {
+        if (topic.lessons[day]) {
+          const lesson = topic.lessons[day];
           const btn = document.createElement("button");
-          btn.className = "btn btn-outline-primary btn-sm m-1";
+          btn.className = "lesson-btn";
           btn.textContent = `${day}`;
           btn.onclick = () => renderLesson(lesson);
-          bodyDiv.appendChild(btn);
+          lessonSet.appendChild(btn);
         }
       });
+
+      topicList.appendChild(topicBtn);
+      topicList.appendChild(lessonSet);
     }
 
-    accordion.appendChild(card);
-    unitIndex++;
+    unitWrapper.appendChild(unitBtn);
+    unitWrapper.appendChild(topicList);
+    container.appendChild(unitWrapper);
   }
-
-  container.appendChild(accordion);
 }
 
-// Display full lesson content
+// Render full lesson content
 function renderLesson(data) {
   const out = document.getElementById("lessonView");
-  out.innerHTML = `
-    <div class="p-4">
-      <h2 class="mb-3">${data.topic_title} (${data.lesson_id})</h2>
 
-      <div class="p-3 mb-3 bg-light rounded">
-        <h4>Learning Objective</h4>
-        <p>${data.learning_objective}</p>
-          <div class="p-3 mb-3 bg-light rounded">
-            <h3>Success Criteria</h3>
-            <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
-          </div> 
-      </div>
-      
-      <div class="p-3 mb-3 bg-light rounded">
-        <h4>${data.hook_question}</h4>
-      </div>
-      
-      <div class="p-3 mb-3 bg-white border rounded">
-        <h4>Intro Image</h4>
-        <img src="${data.image_url?.replace("img:", "images/") || ""}" alt="Intro Image" class="img-fluid mb-2" />
-      </div>
+out.innerHTML = `
+  <div class="lesson-section section-overview">
+    <h2>${data.topic_title} (${data.lesson_id})</h2>
+    <h3>Learning Objective</h3>
+    <p>${data.learning_objective}</p>
+    
+    <h3>Sucess Criteria</h3>
+    <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+  </div>
 
-      <div class="p-3 mb-3 bg-white border rounded">
-        <h4>Vocabulary</h4>
-        <div class="row row-cols-2 row-cols-md-3 g-2">
-          ${data.vocab_list.map(v => `
-            <div class="col">
-              <a class="btn btn-outline-secondary w-100" target="_blank" href="${v.link.replace("link:", "#")}">${v.term}</a>
-            </div>
-          `).join("")}
-        </div>
-      </div>
+  <div class="lesson-section section-hook">
+    <h3>${data.hook_question}</h3>
+  </div>
 
-      <div class="p-3 mb-3 bg-light rounded">
-        <h4>Readings</h4>
-        ${["reading_1", "reading_2"].map(key => {
-          const r = data[key];
-          return r
-            ? `<div class="mb-2"><h5>${r.title}</h5><p><em>${r.summary}</em></p></div>`
-            : "";
-        }).join("")}
-      </div>
+  <div class="lesson-section section-image">
+    <h3>Intro Image</h3>
+    <img src="${data.image_url?.replace('img:', 'images/') || ''}" style="max-width:100%;" />
+    <p><em>${data.image_description}</em></p>
+  </div>
 
-      <div class="p-3 mb-3 bg-white border rounded">
-        <h4>Discussion Questions</h4>
-        <ul>${data.discussion_questions.map(q => `<li>${q}</li>`).join("")}</ul>
-      </div>
 
-      <div class="p-3 mb-3 bg-light rounded">
-        <h4>Demonstration of Learning</h4>
-        <p>${data.DOL_prompt}</p>
-      </div>
+
+  <div class="lesson-section section-vocab">
+    <h3>Vocabulary</h3>
+    <div class="vocab-grid">
+      ${data.vocab_list.map(v => `<button onclick="window.open('${v.link.replace('link:', '#')}', '_blank')">${v.term}</button>`).join("")}
     </div>
-  `;
+  </div>
+
+  <div class="lesson-section section-readings">
+    <h3>Readings</h3>
+    ${["reading_1", "reading_2"].map(key => {
+      const r = data[key];
+      return r
+        ? `<div><h4>${r.title}</h4><p><em>${r.summary}</em></p></div>`
+        : "";
+    }).join("")}
+  </div>
+
+  <div class="lesson-section section-discussion">
+    <h3>Discussion Questions</h3>
+    <ul>${data.discussion_questions.map(q => `<li>${q}</li>`).join("")}</ul>
+  </div>
+
+  <div class="lesson-section section-dol">
+    <h3>Demonstration of Learning</h3>
+    <p>${data.DOL_prompt}</p>
+  </div>
+`;
 }
