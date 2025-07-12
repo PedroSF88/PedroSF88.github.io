@@ -80,7 +80,12 @@ out.innerHTML = `
     <h2>${data.topic_title} (${data.lesson_id})</h2>
     <h3>Learning Objective</h3>
     <p>${data.learning_objective}</p>
+    <h3>Sucess Criteria</h3>
     <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+  </div>
+
+  <div class="lesson-section section-hook">
+    <h3>${data.hook_question}</h3>
   </div>
 
   <div class="lesson-section section-image">
@@ -89,10 +94,7 @@ out.innerHTML = `
     <p><em>${data.image_description}</em></p>
   </div>
 
-  <div class="lesson-section section-hook">
-    <h3>Hook Question</h3>
-    <blockquote>${data.hook_question}</blockquote>
-  </div>
+
 
   <div class="lesson-section section-vocab">
     <h3>Vocabulary</h3>
