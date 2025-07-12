@@ -97,18 +97,19 @@ function renderLesson(data) {
       <div class="p-3 mb-3 bg-light rounded">
         <h4>Learning Objective</h4>
         <p>${data.learning_objective}</p>
-        <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+          <div class="p-3 mb-3 bg-light rounded">
+            <h3>Success Criteria</h3>
+            <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+          </div> 
       </div>
-
+      
+      <div class="p-3 mb-3 bg-light rounded">
+        <h4>${data.hook_question}</h4>
+      </div>
+      
       <div class="p-3 mb-3 bg-white border rounded">
         <h4>Intro Image</h4>
         <img src="${data.image_url?.replace("img:", "images/") || ""}" alt="Intro Image" class="img-fluid mb-2" />
-        <p class="fst-italic">${data.image_description}</p>
-      </div>
-
-      <div class="p-3 mb-3 bg-light rounded">
-        <h4>Hook Question</h4>
-        <blockquote class="blockquote">${data.hook_question}</blockquote>
       </div>
 
       <div class="p-3 mb-3 bg-white border rounded">
