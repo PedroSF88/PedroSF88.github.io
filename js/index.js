@@ -76,17 +76,22 @@ function renderLesson(data) {
   const out = document.getElementById("lessonView");
 
 out.innerHTML = `
+  
   <div class="lesson-section section-overview">
-    <h2>${data.topic_title} (${data.lesson_id})</h2>
+    <h2 style="text-align: center;">${data.topic_title}</h2>
+  </div>
+  
+  <div class="lesson-section section-overview">
     <h3>Learning Objective</h3>
     <p>${data.learning_objective}</p>
     
     <h3>Sucess Criteria</h3>
     <ul>${data.success_criteria.map(x => `<li>${x}</li>`).join("")}</ul>
+    <p>(${data.lesson_id})</p>
   </div>
 
   <div class="lesson-section section-hook">
-    <h3>${data.hook_question}</h3>
+    <h3 style="text-align: center;>${data.hook_question}</h3>
   </div>
 
   <div class="lesson-section section-image">
