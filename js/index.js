@@ -91,7 +91,7 @@ out.innerHTML = `
   </div>
 
   <div class="lesson-section section-hook">
-    <h3 style="text-align: center;>${data.hook_question}</h3>
+    <h3 style="text-align: center;">${data.hook_question}</h3>
   </div>
 
   <div class="lesson-section section-image">
