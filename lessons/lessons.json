@@ -1,0 +1,1504 @@
+[
+  {
+    "lesson_id": "U0T0_Intro_A",
+    "unit_id": "U0",
+    "topic_id": "T0",
+    "topic_title": "How Do We Know What We Know?",
+    "lesson_day": "Day One",
+    "unit_question": "How do we know what we know about the past?",
+      
+    "lesson_title": "Uncovering Prehistory: Clues from the Past",
+
+    "lesson_hook": "How do we study the past before any form writring was developed if there are no written records?",
+
+    "teks": [
+      "(1)(A) identify the major eras in world history and describe their defining characteristics",
+      "(2)(A) summarize the development of political, economic, and social characteristics of early societies",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(A) differentiate between, locate, and use valid primary and secondary sources",
+      "(22)(B) analyze information by sequencing, categorizing, identifying cause-and-effect relationships, comparing, contrasting, finding the main idea, summarizing, making generalizations and predictions, and drawing inferences and conclusions"
+    ],
+    
+    "learning_objective": "Students will explain how scientists and historians study the prehistoric past using physical evidence, and understand how this evidence helps us infer what early life was like.",
+    "learning_objective_fill_blank": "Students will explain how ________ and ________ study the prehistoric past using physical ________, and understand how this ________ helps us infer what early life was like.",
+    "learning_objective_blanks": [
+      "scientists",
+      "historians",
+      "evidence",
+      "evidence"
+    ],
+
+    "success_criteria": [
+      "I understand and can define the concept of prehistory vs. history.",
+      "I can identify how archaeological evidence is used to understand human behavior and societies in the past.",
+      "I can identify different types of physical evidence used in archaeology."
+    ],
+    "success_criteria_fill_blank": [
+      "I understand and can define the concept of ________ vs. ________.",
+      "I can identify how ________ evidence is used to understand human ________ and societies in the past.",
+      "I can identify different types of ________ evidence used in ________."
+    ],
+    "success_criteria_blanks": [
+      ["prehistory", "history"],
+      ["archaeological", "behavior"],
+      ["physical", "archaeology"]
+    ],
+
+    "image_description": "A layered cutaway showing three zones: Top — main focus of the image, modern archaeologists working at a site. Middle — layers of soil with pottery and tools. Bottom — buried fossils and a prehistoric burial.",
+    "image_url": "img:U0T0_intro_A",
+
+    "vocab_list": [
+      { "term": "hominin", "link": "link:hominin" },
+      { "term": "Archeology", "link": "https://www.nps.gov/common/uploads/nri/subject/fossils/684D509D-BD3E-A66F-6D06C795A9E0BF9D/684D509D-BD3E-A66F-6D06C795A9E0BF9D.jpg" },
+      { "term": "Archeological Field Work", "link": "link:Archeological_Field_Work" },
+      { "term": "Fossil", "link": "link:Fossil" },
+      { "term": "Context", "link": "link:Context" },
+      { "term": "Artifact", "link": "link:Artifact" }
+    ],
+
+    "reading_1": {
+      "title": "Studying the Past Without Words",
+      "text": "Before humans developed writing, the only clues about their lives came from what they left behind. Archaeologists, scientists who study past human life, examine remains such as stone tools, bones, and fire pits to piece together what happened thousands of years ago. These discoveries help us learn about prehistory—the time before written records.\n\nArchaeology began as a science in the 1800s, but people have always wondered about the past. In places like Olduvai Gorge in East Africa, famous discoveries of hominin fossils have helped us understand how early humans made and used tools more than 2 million years ago. Careful excavation of ancient campsites reveals not only what people ate but also how they moved, hunted in groups, and adapted to different environments.\n\nBy analyzing artifacts and the layers of soil where they are found, archaeologists can learn about climate, diets, and even family life. Each object adds, context, or a clue to the puzzle, helping us make inferences about how people survived and changed over time.",
+      "summary_fill_blank": "Before writing, clues like ________, ________, and fire pits were left behind. Archaeologists study these remains to learn about ________. Discoveries from places like ________ Gorge show how early humans used tools.",
+      "blanks": [
+        "tools",
+        "bones",
+        "prehistory",
+        "Olduvai"
+      ]
+    },
+
+    "reading_2": {
+      "title": "From Bones to Beliefs",
+      "text": "Not all clues are easy to understand. Sometimes archaeologists discover ancient burial sites filled with mysterious objects, or cave paintings showing animals and hunting scenes. At the Lascaux Caves in France, paintings over 17,000 years old reveal beliefs, rituals, and the importance of animals in Stone Age life.\n\nBy analyzing what is buried with people—such as ornaments, pottery, or animal bones—we can guess what ancient societies valued or believed. The famous 'Red Lady' burial in Wales, for example, included a person buried with red ochre and shell beads, suggesting ritual and care for the dead.\n\nExcavation takes patience and careful observation. Even a small fossil can reveal how people adapted to their environment, developed new skills, or changed their way of life over thousands of years. As more sites are uncovered, our understanding of prehistory and early societies continues to grow.",
+      "summary_fill_blank": "Some burial sites contain ________ or ________ that show what ancient people valued. Cave paintings at ________ reveal beliefs and rituals. Careful ________ and study of ________ helps us understand how people adapted.",
+      "blanks": [
+        "objects",
+        "paintings",
+        "Lascaux",
+        "excavation",
+        "fossils"
+      ]
+    },
+
+    "discussion_questions": [
+      "What kinds of things can we learn from physical evidence?",
+      "Why is it hard to be sure about what happened in prehistory?"
+    ],
+    "discussion_sentence_stems": [
+      "One thing we can learn from physical evidence is...",
+      "It is hard to be sure about prehistory because..."
+    ],
+
+    "DOL_prompt": "Explain what prehistory is and describe one way archaeologists figure out what life was like without written records.",
+    "DOL_sentence_stem": "Prehistory is... Archaeologists figure out what life was like by...",
+
+    "secondary_lenses": ["Evidence", "Tools", "Interpretation"],
+
+    "ai_guidance_hint": "Help students see how clues from the past help us infer meaning, even without written records."
+  },
+  {
+    "lesson_id": "U0T0_Intro_B",
+    "unit_id": "U0",
+    "topic_id": "T0",
+    "topic_title": "How Do We Know What We Know?",
+    "lesson_title": "From Prehistory to History: The Power of Written Records",
+    "lesson_day": "Day Two",
+    "unit_question": "How do we know what we know about the past?",
+
+    "lesson_hook": "Create the message using only symbols, like emojis or multiple simple drawings: The dog ate my math homework, but my teacher didn't believe me.",
+    
+    "teks": [
+      "(1)(A) identify the major eras in world history and describe their defining characteristics",
+      "(2)(A) summarize the development of political, economic, and social characteristics of early societies",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(A) differentiate between, locate, and use valid primary and secondary sources",
+      "(22)(B) analyze information by sequencing, categorizing, identifying cause-and-effect relationships, comparing, contrasting, finding the main idea, summarizing, making generalizations and predictions, and drawing inferences and conclusions"
+    ],
+    
+    "learning_objective": "Students will explain how the development of writing changed the way people recorded information, and will describe the difference between primary and secondary sources.",
+    "learning_objective_fill_blank": "Students will explain how the development of ________ changed the way people recorded ________, and will describe the difference between ________ and ________ sources.",
+    "learning_objective_blanks": [
+      "writing",
+      "information",
+      "primary",
+      "secondary"
+    ],
+
+    "success_criteria": [
+      "I can describe how writing helped preserve knowledge and ideas.",
+      "I can distinguish between a primary and a secondary source.",
+      "I can give examples of written records and explain how they help us understand history."
+    ],
+    "success_criteria_fill_blank": [
+      "I can describe how ________ helped preserve ________ and ideas.",
+      "I can distinguish between a ________ and a ________ source.",
+      "I can give examples of ________ records and explain how they help us understand ________."
+    ],
+    "success_criteria_blanks": [
+      ["writing", "knowledge"],
+      ["primary", "secondary"],
+      ["written", "history"]
+    ],
+
+    "image_description": "A timeline carved into a wall: left side shows symbols like emoji and cave art, the middle shows ancient scribes with scrolls, the right shows books and a digital tablet with glowing icons. Students in modern clothes are drawing their own symbols nearby.",
+    "image_url": "img:U0T0_Intro_B",
+
+    "vocab_list": [
+      { "term": "History", "link": "link:History" },
+      { "term": "Primary Source", "link": "link:Primary_Source" },
+      { "term": "Secondary Source", "link": "link:Secondary_Source" },
+      { "term": "Cuneiform", "link": "link:Cuneiform" },
+      { "term": "Scribe", "link": "link:Scribe" },
+      { "term": "Recordkeeping", "link": "link:Recordkeeping" }
+    ],
+
+    "reading_1": {
+      "title": "A New Language for the Ages",
+      "text": "When people first began to record information, they used simple drawings and symbols—much like how we use emojis today. Over time, these symbols evolved into full writing systems. The Sumerians created cuneiform, pressing wedge shapes into clay tablets to track trade and laws. Writing made it possible for knowledge, stories, and culture to be shared beyond a single family or village.\n\nScribes, who were trained to read and write, became some of the most important people in ancient societies. They helped rulers keep records, merchants send messages, and communities remember important events. As writing spread, it connected distant cultures and allowed for the first real histories to be written down.",
+      "summary_fill_blank": "Early writing systems began with ________ and symbols. ________ created cuneiform to track ________ and laws. ________ were people trained to read and write.",
+      "blanks": [
+        "drawings",
+        "Sumerians",
+        "trade",
+        "Scribes"
+      ]
+    },
+
+    "reading_2": {
+      "title": "Sources: Windows into the Past",
+      "text": "Now that we can read written records from the past, historians use different kinds of sources to understand what happened. A primary source is a piece of evidence created by someone who was actually there, like a letter, diary, or official document. A secondary source is written later by someone who studied the original records—like a textbook or a website.\n\nFor example, a clay tablet from ancient Mesopotamia is a primary source. A modern book explaining how people lived in Mesopotamia is a secondary source. Both types of sources help us put together the puzzle of history, but they each have their own strengths and weaknesses.",
+      "summary_fill_blank": "A ________ source is evidence from someone who was there. A ________ source is written later by someone studying the ________. Both help us understand ________.",
+      "blanks": [
+        "primary",
+        "secondary",
+        "past",
+        "history"
+      ]
+    },
+
+    "discussion_questions": [
+      "Why do you think ancient people started using symbols and writing? ",
+      "How would you decide if something is a primary or secondary source?",
+      "What might be a challenge when using only written records to study the past?"
+    ],
+    "discussion_sentence_stems": [
+      "Ancient people started using symbols and writing because...",
+      "I would decide if something is a primary or secondary source by...",
+      "A challenge of using only written records is..."
+    ],
+
+    "DOL_prompt": "Describe one way writing changed history and explain how a primary source is different from a secondary source.",
+    "DOL_sentence_stem": "Writing changed history by... A primary source is different from a secondary source because...",
+
+    "secondary_lenses": ["Communication", "Evidence", "Interpretation"],
+
+    "ai_guidance_hint": "Help students connect the evolution from symbols to full writing systems, and practice classifying different sources."
+  },
+  {
+    "lesson_id": "U1T1_A",
+    "unit_id": "U1",
+    "topic_id": "T1",
+    "topic_title": "Hunter-Gatherer Societies",
+    "lesson_title": "Hunter-Gatherers: Out of Africa and Early Survival",
+    "lesson_day": "Day One",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Scientists agree that the first humans lived in Africa. Why do you think people left their original home and spread to the rest of the world? 🌍🦣⛺",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences",
+      "(22)(C) explain the connections between ideas and historical contexts"
+    ],
+
+    "learning_objective": "Students will explain the Out of Africa theory and describe the basic lifestyle of Stone Age hunter-gatherers.",
+    "learning_objective_fill_blank": "Students will explain the ________ of ________ theory and describe the basic lifestyle of ________-________ in the ________ ________.",
+    "learning_objective_blanks": [
+      "Out",
+      "Africa",
+      "hunter",
+      "gatherers",
+      "Stone",
+      "Age"
+    ],
+
+    "success_criteria": [
+      "I can describe the evidence for the Out of Africa theory.",
+      "I can explain how and why early humans migrated to new environments.",
+      "I can describe daily life and survival strategies of hunter-gatherers."
+    ],
+    "success_criteria_fill_blank": [
+      "I can describe the evidence for the ________ of ________ theory.",
+      "I can explain how and why early humans ________ to new environments.",
+      "I can describe daily life and ________ strategies of hunter-gatherers."
+    ],
+    "success_criteria_blanks": [
+      ["Out", "Africa"],
+      ["migrated"],
+      ["survival"]
+    ],
+
+    "image_description": "A map of the world showing arrows tracing early human migration routes from Africa into the Middle East, Asia, Europe, Australia, and the Americas. Small groups camp, hunt, and gather along the migration paths.",
+    "image_url": "img:U1T1_A",
+
+    "vocab_list": [
+      { "term": "Out of Africa Theory", "link": "link:Out_of_Africa_Theory" },
+      { "term": "Migration", "link": "link:Migration" },
+      { "term": "Hunter-Gatherer", "link": "link:Hunter_Gatherer" },
+      { "term": "Stone Age", "link": "link:Stone_Age" },
+      { "term": "Paleolithic Era", "link": "link:Paleolithic_Era" },
+      { "term": "Adaptability", "link": "link:Adaptability" }
+    ],
+
+    "reading_1": {
+      "title": "Out of Africa: The First Great Journey",
+      "text": "Modern humans—Homo sapiens—first appeared in Africa about 200,000 years ago. According to the Out of Africa theory, our species started spreading from Africa into the rest of the world about 70,000–50,000 years ago. Archaeologists and geneticists have found clues in ancient bones, tools, and DNA that show how small bands of people traveled north into the Middle East, then east toward Asia and Australia, and finally into Europe and the Americas. These migrations were not fast—some journeys took thousands of years as people slowly moved, following animals and searching for better lands.\n\nEarly humans faced many challenges as they moved. They had to cross deserts, mountains, and even ice sheets during the last Ice Age. Over time, people adapted to new climates, invented new tools, and learned to survive in every environment on Earth.",
+      "summary_fill_blank": "The ________ of ________ theory says that modern humans first appeared in ________ and then spread around the world. Migrations took ________ of years and followed ________ and changing climates.",
+      "blanks": [
+        "Out",
+        "Africa",
+        "Africa",
+        "thousands",
+        "animals"
+      ]
+    },
+
+    "reading_2": {
+      "title": "How Did Hunter-Gatherers Live?",
+      "text": "Before farming, humans survived as hunter-gatherers during the Stone Age. They moved often, traveling in small groups to find food, water, and shelter. People hunted wild animals, caught fish, and gathered wild plants, fruits, and nuts. They used stone tools and fire to help them survive and protect themselves from harsh weather or predators. \n\nLife was challenging and required teamwork. Everyone shared food and helped each other learn important survival skills. Some days, people might walk for miles and find little to eat; other days, they might celebrate a big hunt or a harvest of berries. Adaptability—the ability to change and adjust—was the secret to their survival.",
+      "summary_fill_blank": "Hunter-gatherers traveled in ________ groups, moving often to find ________ and ________. They used ________ tools, fire, and ________ to survive.",
+      "blanks": [
+        "small",
+        "food",
+        "water",
+        "stone",
+        "adaptability"
+      ]
+    },
+
+    "discussion_questions": [
+      "What evidence do scientists use to support the Out of Africa theory?",
+      "Why did early humans leave Africa and migrate such long distances?",
+      "How did hunter-gatherers survive as they traveled into new environments?"
+    ],
+    "discussion_sentence_stems": [
+      "Scientists use evidence such as...",
+      "Early humans left Africa because...",
+      "Hunter-gatherers survived by..."
+    ],
+
+    "DOL_prompt": "Describe one reason why early humans migrated out of Africa, and one way they adapted to a new place.",
+    "DOL_sentence_stem": "One reason early humans migrated was... One way they adapted was...",
+
+    "secondary_lenses": ["Migration", "Adaptation", "Evidence"],
+
+    "ai_guidance_hint": "Encourage students to use migration and adaptation vocabulary and think about how survival required both."
+  },
+  {
+    "lesson_id": "U1T1_B",
+    "unit_id": "U1",
+    "topic_id": "T1",
+    "topic_title": "Hunter-Gatherer Societies",
+    "lesson_title": "Daily Life and Innovation in Stone Age Societies",
+    "lesson_day": "Day Two",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Your band of hunter-gatherers must decide where to camp, what to hunt, and how to work together. What do you think was most important for daily survival: teamwork, skill, or luck? Why? 🏕️🪨🍖",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences",
+      "(22)(C) explain the connections between ideas and historical contexts"
+    ],
+
+    "learning_objective": "Students will describe daily life, technology, and social structures in Stone Age hunter-gatherer societies, and explain how innovation and cooperation contributed to survival.",
+    "learning_objective_fill_blank": "Students will describe ________ life, ________, and ________ structures in Stone Age hunter-gatherer societies, and explain how ________ and ________ contributed to survival.",
+    "learning_objective_blanks": [
+      "daily",
+      "technology",
+      "social",
+      "innovation",
+      "cooperation"
+    ],
+
+    "success_criteria": [
+      "I can describe what daily life was like for Stone Age people.",
+      "I can explain the role of technology, fire control, and new tools in survival.",
+      "I can give examples of how teamwork and group decisions helped people adapt."
+    ],
+    "success_criteria_fill_blank": [
+      "I can describe what ________ life was like for Stone Age people.",
+      "I can explain the role of ________, fire control, and new ________ in survival.",
+      "I can give examples of how ________ and group decisions helped people ________."
+    ],
+    "success_criteria_blanks": [
+      ["daily"],
+      ["technology", "tools"],
+      ["teamwork", "adapt"]
+    ],
+
+    "image_description": "A busy Stone Age campsite: people build a fire, make stone tools, prepare food, and tell stories. Children watch and learn, while elders plan the next move. Hides, baskets, and paintings on a nearby rock wall are visible.",
+    "image_url": "img:U1T1_B",
+
+    "vocab_list": [
+      { "term": "Mobility", "link": "link:Mobility" },
+      { "term": "Innovation", "link": "link:Innovation" },
+      { "term": "Stone Tools", "link": "link:Stone_Tools" },
+      { "term": "Fire Control", "link": "link:Fire_Control" },
+      { "term": "Foraging", "link": "link:Foraging" },
+      { "term": "Oral Tradition", "link": "link:Oral_Tradition" },
+      { "term": "Clan", "link": "link:Clan" }
+    ],
+
+    "reading_1": {
+      "title": "A Day in the Life",
+      "text": "Each morning in a Stone Age camp began with a search for food. Women, men, and children all played a part—some set traps for small animals, while others gathered wild berries, roots, and nuts. Families lived in simple shelters built from branches, animal hides, or even caves. People made baskets, nets, and ropes to help carry supplies. They learned to follow animal tracks and understood how seasons affected the plants and herds nearby. \n\nMost groups moved frequently to avoid using up all the resources in one area. Their campsites left little behind except scattered stone tools and fire ashes. Evidence from sites like Blombos Cave in South Africa and Skhul in Israel shows that humans have been making and improving tools for over 70,000 years. Everyone, from the youngest to the oldest, worked together, sharing what they found and teaching survival skills through experience and storytelling.",
+      "summary_fill_blank": "Stone Age people worked together each day to find ________ and build ________. Their camps left behind stone ________ and ashes from ________. Teamwork and shared ________ kept the group strong.",
+      "blanks": [
+        "food",
+        "shelters",
+        "tools",
+        "fires",
+        "skills"
+      ]
+    },
+
+    "reading_2": {
+      "title": "Innovation and the Power of Fire",
+      "text": "Fire control was one of humanity’s greatest achievements. By 1 million years ago, early humans in Africa were using fire for warmth, cooking, and protection from wild animals. Sites like Wonderwerk Cave in South Africa have evidence of ancient hearths dating back nearly a million years. Fire also allowed people to survive colder climates as humans spread into Europe and Asia. \n\nStone tools changed over time—early hand axes, scrapers, and points became more refined and specialized, showing great creativity. Hunter-gatherer groups invented ways to store water, preserve meat, and weave clothing from plant fibers and animal hides. Without writing, elders passed down essential information using oral tradition—stories, songs, and cave art, like the famous animal paintings at Lascaux Cave in France, created over 17,000 years ago. Innovation, creativity, and group cooperation were the keys to survival for tens of thousands of years.",
+      "summary_fill_blank": "________ control gave warmth, safety, and helped people survive cold places. Over time, new ________ were invented. Stories, art, and songs shared knowledge as ________ ________.",
+      "blanks": [
+        "Fire",
+        "tools",
+        "oral",
+        "tradition"
+      ]
+    },
+
+    "discussion_questions": [
+      "Give one example of how innovation or teamwork helped Stone Age societies survive and grow.",
+      "What role did oral tradition and art play in daily life?",
+      "Which skill or innovation do you think was most important for a hunter-gatherer group? Why?"
+    ],
+    "discussion_sentence_stems": [
+      "One example of how innovation or teamwork helped is...",
+      "Oral tradition and art were important because...",
+      "The most important skill or innovation was... because..."
+    ],
+
+    "DOL_prompt": "Fire still plays a key role in our lives today. Describe one way fire helped Stone Age people and one way it helps us now other than in cooking food.",
+    "DOL_sentence_stem": "Fire helped Stone Age people by... Today, fire helps us by...",
+
+    "secondary_lenses": ["Technology", "Community", "Tradition"],
+
+    "ai_guidance_hint": "Encourage students to use historical examples and connect the role of fire control and innovation to survival and daily life."
+  },
+  {
+    "lesson_id": "U1T2_A",
+    "unit_id": "U1",
+    "topic_id": "T2",
+    "topic_title": "The Neolithic Revolution",
+    "lesson_title": "From Foraging to Farming: The Neolithic Revolution Begins",
+    "lesson_day": "Day One",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Which would be easier for you, to be a hunter-gatherer or a farmer, where you have to grow your own food? List two pros and two cons for whichever one you think is easier. 🌱🏕️🌾",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences",
+      "(22)(C) explain the connections between ideas and historical contexts"
+    ],
+
+    "learning_objective": "Students will explain what the Neolithic Revolution was and describe how the development of farming and domestication changed human life.",
+    "learning_objective_fill_blank": "Students will explain what the ________ ________ was and describe how the development of ________ and ________ changed human life.",
+    "learning_objective_blanks": [
+      "Neolithic",
+      "Revolution",
+      "farming",
+      "domestication"
+    ],
+
+    "success_criteria": [
+      "I can define the Neolithic Revolution and explain why it was a turning point.",
+      "I can describe how farming and animal domestication led to permanent settlements.",
+      "I can explain why people started to trade or barter and how it changed daily life."
+    ],
+    
+    "success_criteria_fill_blank": [
+      "I can define the ________ Revolution and explain why it was a ________ point.",
+      "I can describe how ________ and animal ________ led to ________ settlements.",
+      "I can explain why people started to ________ or ________ and how it changed daily life."
+    ],
+    
+    "success_criteria_blanks": [
+      ["Neolithic", "turning"],
+      ["farming", "domestication", "permanent"],
+      ["trade", "barter"]
+    ],
+
+    "image_description": "A busy Neolithic village: farmers plant seeds and harvest wheat, herders guide sheep and goats, and people trade goods like grain, pottery, and animal hides in a central market. Permanent homes, storage pits, and irrigation channels are visible. Children help gather crops and families store food in clay jars.",
+    "image_url": "img:U1T2_A",
+
+    "vocab_list": [
+      { "term": "Neolithic Revolution", "link": "link:Neolithic_Revolution" },
+      { "term": "Agriculture", "link": "link:Agriculture" },
+      { "term": "Domestication", "link": "link:Domestication" },
+      { "term": "Permanent Settlement", "link": "link:Permanent_Settlement" },
+      { "term": "Surplus", "link": "link:Surplus" },
+      { "term": "Barter", "link": "link:Barter" },
+      { "term": "Fertile Crescent", "link": "link:Fertile_Crescent" }
+    ],
+
+    "reading_1": {
+    "title": "A Revolution in Everyday Life",
+    "text": "Revolutions do not always mean wars. In this case the word 'revolution' means a big, important change that affects how people live. The Neolithic Revolution was a turning point in human history because it completely changed the way people got their food. For thousands of years, humans survived by moving from place to place as hunter-gatherers, searching for wild plants and animals. But around 10,000 BCE, in areas like the Fertile Crescent, some people discovered that they could plant seeds and grow crops. This was the start of agriculture, and it meant families no longer had to move every time the seasons changed.\n\nAlong with farming, people learned to domesticate, or tame and raise, animals such as sheep, goats, and cattle. Livestock were kept for meat, milk, wool, and as helpers with plowing and carrying loads. The domestication of dogs was different—dogs were first tamed from wolves, possibly as early as 15,000 years ago, to help humans with hunting, guarding camps, and companionship. Cats, meanwhile, became domesticated much later (around 8,000 years ago), mostly because they hunted mice and rats that invaded grain stores in farming villages. Both animals became important, but for very different reasons.\n\nPermanent settlements began to appear, with people building houses from mud bricks and wood, often close to rivers for water and fertile soil. These villages grew larger over generations and included not just homes, but storage pits, pottery workshops, and places for gathering. Settling in one place meant more predictable food and the ability to store surplus, but life was not always easier. Farmers now faced new challenges: they had to worry about droughts, floods, crop failure, and protecting their stored food and animals from thieves or wild predators. Diseases could also spread more easily when many people and animals lived close together. While the Neolithic Revolution brought stability and growth, it also created new problems to solve.",
+    
+    "summary_fill_blank": "The word ________ means a big change. The Neolithic ________ started when people began to ________ crops and ________ animals. This led to ________ settlements and new ways of living.",
+    "blanks": [
+        "revolution",
+        "Revolution",
+        "farm",
+        "domesticate",
+        "permanent"
+      ]
+    },
+
+    "reading_2": {
+      "title": "Surplus, Barter, and the Growth of Villages",
+    "text": "With farming and animal domestication, people were able to produce more food than they needed right away. This extra food was called a 'surplus.' Surplus food was a new idea—hunter-gatherers rarely had extra. Farmers could store surplus in clay jars, woven baskets, or underground pits for the times when crops failed or wild food was scarce. The ability to save food for later meant that families could survive tough seasons or years when the weather was bad. This also made it possible for villages to grow bigger, since more people could be fed.\n\nNot everyone in a village had to farm all the time. Some people became skilled in making pottery, weaving baskets, shaping tools from stone or bone, or building stronger homes. These skills led to the idea of 'specialization,' where different people had different jobs. For example, one person might be very good at making clay pots, while another could be an expert hunter or builder. Specialization meant that villages had more variety in the goods they could use and trade.\n\nBarter, or direct exchange of goods and services, became more common as villages grew. If one family had too much grain, they might trade with another family for animal hides, baskets, or tools. At first, bartering took place within villages, but soon it extended between neighboring communities. Sometimes, the things that people wanted to trade, like obsidian for cutting tools or seashells for jewelry, had to be carried over long distances. Over time, these simple exchanges laid the groundwork for trade networks, local markets, and even the first use of money much later.\n\nLife in a settled village brought both advantages and new challenges. On the one hand, people could build stronger houses, store food, raise bigger families, and invent new ways to work and create. On the other, they had to solve problems like protecting stored grain from pests and thieves, deciding what a fair trade was, keeping peace between families, and organizing large projects such as digging irrigation canals. The growth of villages led to more rules and the beginnings of local government. Barter and surplus did not just make life easier—they made it more complex and interconnected.",
+    "summary_fill_blank": "A ________ is extra food grown by farmers. People stored it in ________ jars or pits. Villagers traded goods through ________, which helped connect ________ and spread new ideas.",
+    "blanks": [
+      "surplus",
+      "clay",
+      "barter",
+      "villages"
+      ]
+    },
+
+    "discussion_questions": [
+      "What new problems did people have to solve as they settled in villages and had more food than they needed?",
+      "How did bartering and specialization change the way people lived and worked together in Neolithic villages?",
+      "Why do you think having a surplus of food made life both easier and more complicated?",
+      "What are some ways that living in a permanent settlement could have affected relationships between families and groups?"
+    ],
+
+    "discussion_sentence_stems": [
+      "One new problem people faced was...",
+      "Bartering and specialization changed life by...",
+      "Having a surplus made life easier because... but it also made life harder because...",
+      "Living in a permanent settlement affected relationships by..."
+    ],
+
+    "DOL_prompt": "Imagine you live in a Neolithic village. Your family has a surplus of grain, but another family has pottery and animal hides you need. A dispute arises over bartering these goods, and the idea of money does not yet exist. How might your village solve disagreements about what is a fair trade?",
+    
+    "DOL_sentence_stem": "The village could solve disagreements by...",
+
+    "secondary_lenses": ["Adaptation", "Innovation", "Community", "Trade"],
+
+    "ai_guidance_hint": "Encourage students to connect farming, surplus, and bartering to social changes, new challenges, and the meaning of revolution."
+  },
+  {
+    "lesson_id": "U1T2_B",
+    "unit_id": "U1",
+    "topic_id": "T2",
+    "topic_title": "The Neolithic Revolution",
+    "lesson_title": "Farming Changes the World: Community, Work, and Technology",
+    "lesson_day": "Day Two",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "List AND Describe the types of work you think people did in a Neolithic village (other than farmers, potters, hunters). 🏡🌾👩‍🌾",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences",
+      "(22)(C) explain the connections between ideas and historical contexts"
+    ],
+
+    "learning_objective": "Students will describe how the spread of agriculture led to new types of work, new social structures, and the beginnings of civilization.",
+    "learning_objective_fill_blank": "Students will describe how the spread of ________ led to new types of ________, new ________ structures, and the beginnings of ________.",
+    "learning_objective_blanks": [
+      "agriculture",
+      "work",
+      "social",
+      "civilization"
+    ],
+
+    "success_criteria": [
+      "I can explain how permanent villages allowed people to specialize in new jobs.",
+      "I can describe the effects of population growth and living close together.",
+      "I can identify early forms of technology and community organization that set the stage for civilization."
+    ],
+    "success_criteria_fill_blank": [
+      "I can explain how permanent villages allowed people to ________ in new jobs.",
+      "I can describe the effects of population ________ and living close together.",
+      "I can identify early forms of ________ and community ________ that set the stage for civilization."
+    ],
+    "success_criteria_blanks": [
+      ["specialize"],
+      ["growth"],
+      ["technology", "organization"]
+    ],
+
+    "image_description": "A growing Neolithic village with people building houses, tending gardens, working as potters and weavers, and mining copper from nearby rocks. A small marketplace shows families exchanging goods, and leaders meet to discuss village rules.",
+    "image_url": "img:U1T2_B",
+
+    "vocab_list": [
+      { "term": "Specialization", "link": "link:Specialization" },
+      { "term": "Social Structure", "link": "link:Social_Structure" },
+      { "term": "Technology", "link": "link:Technology" },
+      { "term": "Metallurgy", "link": "link:Metallurgy" },
+      { "term": "Population Growth", "link": "link:Population_Growth" },
+      { "term": "Civilization", "link": "link:Civilization" }
+    ],
+
+    "reading_1": {
+    "title": "Specialization and the Growth of Communities",
+    "text": "The Neolithic Revolution began in different parts of the world at different times. Permanent villages first appeared in places like the Fertile Crescent in the Middle East, in China, and in Central America, but not everywhere at once. While some communities began growing crops and raising animals, others continued as hunter-gatherers for thousands of years. Where reliable water and good soil were available, people built homes from mud bricks or wood and began to settle for longer periods. Over generations, some of these settlements grew from a few families to hundreds of people living together.\n\nWith more predictable food, people could specialize in different kinds of work—what historians call 'specialization.' Some became potters, weavers, toolmakers, builders, or traders. Specialization led to better tools and goods, as people improved their crafts. But living close together also created new problems: conflicts over land and water, or how to organize shared work. To solve these, many villages developed simple forms of government, like councils of elders or chosen leaders. These leaders made rules, settled arguments, and organized big community projects, such as digging irrigation canals or building storage pits for surplus food.\n\nReligion and shared beliefs also became more important as villages grew. People built shrines or sacred spaces, performed rituals, and celebrated harvests together. These practices helped unite the community, explain natural disasters, and give thanks for good fortune. By working together, organizing their society, and developing shared traditions, these early farming communities laid the foundations for the complex societies that would become the first civilizations.",
+    "summary_fill_blank": "The Neolithic Revolution began in places like the ________ ________, China, and ________ ________, but not everywhere at once. With more reliable food, people specialized in jobs like ________, weavers, or ________. Villages solved new problems by creating ________ and forming early ________. Shared beliefs and ________ also helped bring people together.",
+    "blanks": [
+      "Fertile",
+      "Crescent",
+      "Central",
+      "America",
+      "potters",
+      "traders",
+      "rules",
+      "governments",
+      "religion"
+    ]
+    },
+
+    "reading_2": {
+    "title": "Trade, Technology, and the Roots of Civilization",
+    "text": "As permanent villages grew, people developed new technologies and ways to work together. Farmers built stronger plows, dug irrigation ditches, and learned to control water for their crops. The invention of the wheel made it easier to move heavy loads and transport goods. In places where copper could be found—like the Middle East and parts of China—people learned to heat and shape metal, beginning the science of metallurgy. At first, copper was used for jewelry and small tools, but over time, people experimented and eventually created bronze, a much stronger metal. These inventions helped communities become more productive and opened the door for even greater changes in the future.\n\nHaving a surplus of food and goods meant that not everyone needed to farm. People who specialized as potters, weavers, or toolmakers could now trade their goods with others. Bartering became common in villages, markets, and even between communities far apart. For example, people in the Fertile Crescent traded grain for obsidian (volcanic glass used for making sharp tools), and Central American farmers traded crops like maize for pottery or shells. Bartering required trust, communication, and some form of agreement on what was fair.\n\nAs trading and villages grew, record keeping and organization became more important. Early people kept tallies on clay tablets or carved symbols into stones to keep track of goods and promises. Villages built public spaces for markets and gatherings, and some began to construct temples or shrines as religious and social centers. The need for order and fairness led to the beginnings of government, rules, and community leaders. Over generations, these advances—technology, trade, government, and religion—helped transform simple farming villages into the first civilizations, with cities, specialized workers, laws, and written records.",
+    "summary_fill_blank": "New technologies like the ________ and ________ ditches improved farming. Early ________ shaped copper for tools and jewelry. Bartering allowed villages to ________ goods with others. ________ keeping, public spaces, and early forms of ________ and ________ helped turn villages into civilizations.",
+    "blanks": [
+      "wheel",
+      "irrigation",
+      "metallurgists",
+      "trade",
+      "Record",
+      "government",
+      "religion"
+    ]
+    },
+
+    "discussion_questions": [
+      "How did specialization and technology change daily life in early villages?",
+      "What were some challenges and benefits of living in a larger, permanent community?",
+      "Why was the ability to shape metals such an important discovery?",
+      "How did early forms of organization (like leaders or councils) help villages become more like civilizations?"
+    ],
+    "discussion_sentence_stems": [
+      "Specialization and technology changed daily life by...",
+      "One challenge/benefit of larger communities was...",
+      "Shaping metals was important because...",
+      "Leaders and councils helped by..."
+    ],
+
+    "DOL_prompt": "Trade and barter became more common as Neolithic villages grew. Why do you think the development of record keeping and written agreements (like contracts) became necessary? How did these changes help create the need for laws and government?",
+    "DOL_sentence_stem": "Record keeping and agreements became necessary because... These changes helped create laws and government by..."
+
+  },
+  {
+    "lesson_id": "U1T3_A",
+    "unit_id": "U1",
+    "topic_id": "T3",
+    "topic_title": "Mesopotamia: The Land Between Two Rivers",
+    "lesson_title": "Geography, Settlement, and the Birth of Writing",
+    "lesson_day": "Day One",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Why would someone build a home between two rivers that sometimes flood unpredictably?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences",
+      "(22)(C) explain the connections between ideas and historical contexts"
+    ],
+
+    "learning_objective": "Students will describe how geography influenced the growth of cities in Mesopotamia and explain how writing and early governments developed to meet new challenges.",
+    "learning_objective_fill_blank": "Students will describe how ________ influenced the growth of ________ in Mesopotamia and explain how ________ and early ________ developed to meet new challenges.",
+    "learning_objective_blanks": [
+      "geography",
+      "cities",
+      "writing",
+      "governments"
+    ],
+
+    "success_criteria": [
+      "I can describe where Mesopotamia was and why people settled there.",
+      "I can explain how flooding shaped farming and city life in Mesopotamia.",
+      "I can describe why writing and government became necessary as cities grew."
+    ],
+
+      "success_criteria_fill_blank": [
+      "I can describe where ________ was and why people settled there.",
+      "I can explain how ________ shaped farming and city life in Mesopotamia.",
+      "I can describe why ________ and ________ became necessary as cities grew."
+    ],
+    "success_criteria_blanks": [
+      ["Mesopotamia"],
+      ["flooding"],
+      ["writing", "government"]
+    ],
+
+    "image_description": "A lively Mesopotamian riverside scene at sunrise: children play on the sandy banks while traders unload woven baskets filled with grain. In the bustling open-air market, potters shape clay jars, women gather at a communal well, and a scribe carefully presses a reed stylus into a clay tablet as curious townspeople look on. Date palms and mud-brick houses line the background, with a broad, shimmering river curving beyond. The mood is hopeful and busy, capturing the daily energy and teamwork of an ancient city.",
+    "image_url": "img:U1T3_A",
+
+    "vocab_list": [
+      { "term": "Mesopotamia", "link": "link:Mesopotamia" },
+      { "term": "Tigris and Euphrates Rivers", "link": "link:Tigris_Euphrates" },
+      { "term": "Middle East", "link": "link:Middle_East" },
+      { "term": "Irrigation", "link": "link:Irrigation" },
+      { "term": "City-State", "link": "link:City_State" },
+      { "term": "Silt", "link": "link:Silt" }
+    ],
+
+    "reading_1": {
+      "title": "Geography and Settlement in Mesopotamia",  
+      "text": "Mesopotamia, which means 'land between the rivers,' is located in the region of modern-day Iraq and parts of Syria, Turkey, and Iran, now commonly referred to as the Middle East. This area sits between the Tigris and Euphrates Rivers, two powerful waterways that brought both life and danger to the ancient people who settled there. Around 3500 BCE, small farming villages began to appear in the southern part of Mesopotamia. These communities grew into some of the world’s first cities, including Uruk, Ur, and Babylon. People were drawn to this land because the rivers flooded every year, leaving behind rich, dark silt that made farming possible even in the desert.\n\nHowever, life in Mesopotamia was not easy. The rivers could flood unpredictably, sometimes destroying fields, homes, and even entire villages. To survive and thrive, Mesopotamians became experts at controlling water. They invented irrigation systems: canals, levees, and reservoirs to bring water to their crops during dry times and to protect their villages from floods. As villages became cities, people from different backgrounds settled together, creating busy marketplaces and neighborhoods filled with many languages and traditions. Mesopotamia’s central location made it a crossroads for trade, linking the Mediterranean, Asia, and Africa. Over centuries, the innovations developed here—like irrigation, city planning, and written records—influenced civilizations throughout the ancient world.",
+
+      "summary_fill_blank": "Mesopotamia is the land between the ________ and ________ Rivers. The ________ made the land good for farming, but also caused dangerous ________. People built ________ to control water and protect their fields.",
+      "blanks": [
+        "Tigris",
+        "Euphrates",
+        "rivers",
+        "floods",
+        "irrigation canals"
+      ]
+    },
+
+    "reading_2": {
+      "title": "Writing and Early Government",
+      "text": "As cities like Uruk and Babylon grew, life in Mesopotamia became more complicated. People needed ways to organize building projects, manage trade, and solve arguments. Early governments formed as groups of leaders—sometimes priests, sometimes warrior-kings—took charge of making rules and keeping order. Each city-state had its own government and laws, often enforced by the city’s ruler. Governments were responsible for collecting taxes (often paid in grain or livestock), overseeing irrigation systems, and protecting the city from outside threats.\n\nOne of the greatest innovations from Mesopotamia was writing. The world’s first known writing system, called cuneiform, began around 3200 BCE. Scribes used sharpened reeds to press wedge-shaped marks into soft clay tablets, which were then dried in the sun. At first, writing was used to record trades, debts, and inventories—simple lists to help with business and storage. Over time, writing expanded to record laws, letters, stories, prayers, and contracts. Hammurabi, a famous Babylonian king, collected and published a long code of laws on stone monuments, making it one of the earliest legal systems in history. Writing changed Mesopotamian life by making it possible to pass down knowledge, communicate across distances, and create a shared identity for people from many backgrounds. The inventions of government and writing in Mesopotamia influenced civilizations throughout the ancient world.",
+      "summary_fill_blank": "Scribes used ________ to write on clay ________. Writing helped people keep ________, record ________, and share ________. Early ________ organized workers and made rules to keep order.",
+      "blanks": [
+        "cuneiform",
+        "tablets",
+        "records",
+        "laws",
+        "knowledge",
+        "governments"
+      ]
+    },
+
+  "discussion_questions": [
+  "What challenges and opportunities did the geography of Mesopotamia create for its people?",
+  "Why did writing and record keeping become important as Mesopotamian cities grew?",
+  "Read the excerpt from the Code of Hammurabi. What do you think this law reveals about life and values in ancient Babylon?"
+  ],
+
+  "Primary_Source": [
+  { "title": "Code of Hammurabi", "link": "link:Code_of_Hammurabi" }
+  ],
+
+  "discussion_sentence_stems": [
+    "The geography of Mesopotamia created challenges like... and opportunities like...",
+    "Writing and record keeping became important because...",
+    "The Code of Hammurabi shows that life in Babylon was... because...",
+    "The Ten Commandments and Hammurabi’s Code are similar because... but different because...",
+    "Religious beliefs might have influenced early laws by..."
+  ]
+  ,
+
+    "DOL_prompt": "Describe one way the geography of Mesopotamia shaped the lives of people there, and one reason why writing or government was needed in early cities.",
+    "DOL_sentence_stem": "Geography shaped life in Mesopotamia by... Writing (or government) was needed because...",
+
+    "secondary_lenses": ["Geography", "Technology", "Organization"],
+
+    "ai_guidance_hint": "Encourage students to connect environmental challenges, new technology, and the need for organization in large communities."
+  },
+  {
+    "lesson_id": "U1T3_B",
+    
+    "topic_id": "T3",
+    "topic_title": "Mesopotamia: The First Empires, Law, and Religion",
+    "lesson_title": "Empires, Law, and Belief in Ancient Mesopotamia",
+    "lesson_day": "Day Two",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "If you were the mayor of a large city, what rules would you make to keep life fair for everyone? List two rules and explain why you chose them.",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences",
+      "(22)(C) explain the connections between ideas and historical contexts",
+      "(22)(A) identify major religious and philosophical traditions and their impact"
+    ],
+
+    "learning_objective": "Students will analyze the rise of the first empires in Mesopotamia and explain how law and religion shaped daily life.",
+    "learning_objective_fill_blank": "Students will analyze the rise of the first ________ in Mesopotamia and explain how ________ and ________ shaped daily life.",
+    "learning_objective_blanks": [
+      "empires",
+      "law",
+      "religion"
+    ],
+
+    "success_criteria": [
+      "I can identify major empires of Mesopotamia and their achievements.",
+      "I can describe Hammurabi’s Code and explain why law codes are important.",
+      "I can explain the role of religion, temples, and priests in Mesopotamian society."
+    ],
+    "success_criteria_fill_blank": [
+      "I can identify major ________ of Mesopotamia and their achievements.",
+      "I can describe ________’s Code and explain why ________ codes are important.",
+      "I can explain the role of ________, temples, and ________ in Mesopotamian society."
+    ],
+    "success_criteria_blanks": [
+      ["empires"],
+      ["Hammurabi", "law"],
+      ["religion", "priests"]
+    ],
+
+    "image_description": "A view of ancient Babylon: the ziggurat rises in the center, with priests ascending wide steps and citizens gathering in a bustling plaza below. Stone steles inscribed with cuneiform laws stand near a statue of Hammurabi. Markets and homes spread out along streets, and distant walls protect the city.",
+    "img:U1T3_B": "TBA",
+
+    "vocab_list": [
+      { "term": "Empire", "link": "link:Empire" },
+      { "term": "Babylon", "link": "link:Babylon" },
+      { "term": "Sumer", "link": "link:Sumer" },
+      { "term": "Akkad", "link": "link:Akkad" },
+      { "term": "Assyria", "link": "link:Assyria" },
+      { "term": "Hammurabi’s Code", "link": "link:Code_of_Hammurabi" },
+      { "term": "Polytheism", "link": "link:Polytheism" },
+      { "term": "Ziggurat", "link": "link:Ziggurat" },
+      { "term": "Bronze", "link": "link:Bronze"}
+    ],
+
+    "reading_1": {
+    "title": "The Rise of Empires and Law",
+    "text": "As Mesopotamia’s city-states prospered, competition for land, water, and resources led to frequent conflict and, eventually, to the rise of the world’s first empires. Around 2330 BCE, Sargon, the ambitious ruler of Akkad, conquered many Sumerian cities and established a vast empire stretching across much of Mesopotamia. Sargon’s armies used new military tactics, including the first professional standing army and advanced bronze weapons. After Akkad’s decline, other groups—like the Babylonians and later the Assyrians—built their own powerful empires, each ruling over diverse peoples, cultures, and cities. Empires allowed rulers to organize large building projects, expand trade networks, and bring stability after periods of war.\n\nOne of the greatest achievements of ancient Babylon was the creation of a written law code by King Hammurabi around 1754 BCE. Hammurabi’s Code consisted of nearly 300 laws inscribed on stone pillars (steles) and displayed in public. The laws covered everything from trade and property rights to marriage, family matters, and punishments for crimes. This was revolutionary because it made laws clear, consistent, and known to all citizens—no longer could rules be changed or hidden by the powerful. However, not everyone was treated equally under the law; penalties often depended on social class, gender, or whether the accused was a slave or a free person. Law codes like Hammurabi’s shaped the way people lived, solved disputes, and understood justice—not only in Mesopotamia, but in civilizations that followed for thousands of years."
+  ,
+    "summary_fill_blank": "Sargon, ruler of ________, created the world’s first ________ by conquering rival city-states. Later, King ________ of Babylon wrote a set of nearly ________ ____ on stone ________. These laws covered topics like ________, crime, and ________, and were important because they made rules ________ and available to everyone, though punishments depended on ________ and status.",
+    "blanks": [
+      "Akkad",
+      "empire",
+      "Hammurabi",
+      "300",
+      "laws",
+      "steles",
+      "trade",
+      "family",
+      "public",
+      "class"
+    ]
+    },
+
+    "reading_2": {
+      "title": "Religion, Temples, and Daily Life",
+    "text": "In ancient Mesopotamia, religion was woven into every part of daily life. The Mesopotamians believed in a pantheon of gods and goddesses who controlled all aspects of nature and human fate: from the flooding of rivers to sickness, war, and the harvest. Each city-state chose a patron god or goddess, such as Inanna in Uruk or Marduk in Babylon, who was thought to protect the city in exchange for devotion and offerings.\n\nAt the heart of every major city stood a ziggurat, a towering stepped temple built of sun-dried bricks. These impressive structures served as both religious and community centers. Only priests and priestesses could enter the upper levels, where they performed complex rituals, cared for statues of the gods, and interpreted omens. Ordinary citizens visited the lower courts to leave offerings or pray for good fortune.\n\nReligion influenced Mesopotamian laws, art, and even government. Priests often advised kings and sometimes acted as rulers themselves. Myths and stories, such as the Epic of Gilgamesh, explained the origins of the world, the role of the gods, and what happened after death.\n\nThe Epic of Gilgamesh, one of the oldest stories in the world, was a long poem written on clay tablets. It follows the adventures of Gilgamesh, a legendary king of Uruk, and his companion Enkidu as they confront powerful gods, wrestle with the meaning of friendship, and seek answers to life’s greatest mysteries. Through a series of quests and trials, Gilgamesh learns about the limits of human power and the inevitability of death. Along the way, the gods cause a great flood, similar to stories that came later like that of Noah's Ark. Ultimately, after the death of Enkidu, Gilgamesh’s search for eternal life teaches him that no one can escape death, but that people can achieve a kind of immortality through their actions and the memories they leave behind.\n\nThe Epic of Gilgamesh offered Mesopotamians explanations for natural disasters, the origin of kingship, why humans must die, and how the actions of gods and mortals shaped their world.\n\nFestivals, ceremonies, and sacrifices marked the calendar and reinforced the unity of the community. As Mesopotamian empires grew, their religious beliefs and practices blended with those of conquered peoples, shaping traditions that would influence later civilizations and world religions.",
+    "summary_fill_blank": "Each Mesopotamian city-state honored a ________ god or goddess, believed to control the city’s ________. Ziggurats were large ________ built in city centers, where ________ performed rituals and interpreted omens. Religion shaped laws, ________, and government, with priests sometimes advising or acting as ________. Myths like the ________ of ________ helped people understand the world and their place in it.",
+    "blanks": [
+      "patron",
+      "protection",
+      "temples",
+      "priests",
+      "art",
+      "rulers",
+      "Epic",
+      "Gilgamesh"
+    ]
+    },
+
+    "discussion_questions": [
+      "What was the importance of law codes like Hammurabi’s Code for life in early empires?",
+      "How did religion influence laws, leaders, and daily life in Mesopotamia?",
+      "Read the excerpt from Hammurabi’s Code. How is justice in ancient Babylon similar to or different from modern justice?",
+      "Compare a law from Hammurabi’s Code with a rule from the Ten Commandments. How are they similar? How are they different? What do you think this says about the role of religion and government in early civilizations?"
+    ],
+
+    "primary_sources": [
+      { "title": "Code of Hammurabi", "link": "link:Code_of_Hammurabi" },
+      { "title": "The Ten Commandments", "link": "link:Ten_Commandments" }
+    ],
+
+    "discussion_sentence_stems": [
+      "Law codes like Hammurabi’s Code were important because...",
+      "Religion influenced laws and daily life by...",
+      "Justice in Babylon was similar to modern justice because... but different because...",
+      "Hammurabi’s Code and the Ten Commandments are similar because... and different because...",
+      "Religion and government both..."
+    ],
+
+    "DOL_prompt": "How did law codes and religion work together to create order in Mesopotamian society? Give one example of how this still matters today.",
+    "DOL_sentence_stem": "Law codes and religion created order by... This still matters because..."
+  },
+  {
+    "lesson_id": "U1T4_A",
+    "unit_id": "U1",
+    "topic_id": "T4",
+    "topic_title": "Ancient Egypt: Life Along the Nile",
+    "lesson_title": "Geography, the Nile, and the Pharaoh",
+    "lesson_day": "Day One",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Many civilizations in the past believed that the Sun and Moon were gods. Why do you think these beliefs made sense to people at the time? How might their daily experiences have influenced these ideas?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(15)(B) analyze the influence of physical and human geographic factors on major historical events",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences"
+    ],
+
+    "learning_objective": "Students will explain how the geography of the Nile River affected and shaped farming, settlement, and society in Ancient Egypt, and describe the role of the pharaoh.",
+    "learning_objective_fill_blank": "Students will explain how the geography of the ________ affected and shaped ________, ________, and society in Ancient ________, and describe the role of the ________.",
+    "learning_objective_blanks": [
+      "Nile River",
+      "farming",
+      "settlement",
+      "Egypt",
+      "pharaoh"
+    ],
+
+    "success_criteria": [
+      "I can identify the Nile River and explain why it was important for Egyptian civilization.",
+      "I can describe how the river’s floods affected farming and daily life.",
+      "I can explain who the pharaoh was and why this leader was important."
+    ],
+    "success_criteria_fill_blank": [
+      "I can identify the ________ River and explain why it was important for ________ civilization.",
+      "I can describe how the river’s ________ affected farming and daily life.",
+      "I can explain who the ________ was and why this leader was important."
+    ],
+    "success_criteria_blanks": [
+      ["Nile", "Egyptian"],
+      ["floods"],
+      ["pharaoh"]
+    ],
+
+    "image_description": "A sunlit scene along the banks of the Nile River: farmers harvest wheat with sickles, children play near the water, and fishermen cast nets from reed boats. In the background, workers build a large mud-brick granary while a procession leads toward a small temple with a statue of the pharaoh. Palm trees and green fields line the river, contrasting with the golden desert beyond.",
+    "img:U1T4_A": "TBA",
+
+    "vocab_list": [
+      { "term": "Nile River", "link": "link:Nile_River" },
+      { "term": "Cataract", "link": "link:Cataract" },
+      { "term": "Delta", "link": "link:Delta" },
+      { "term": "Mediterranean", "link": "link:Mediterranean" },
+      { "term": "Granary", "link": "link:Granary" },
+      { "term": "Pharaoh", "link": "link:Pharaoh" }
+    ],
+
+    "reading_1": {
+    "title": "Geography and Life Along the Nile",
+    "text": "Ancient Egypt was built around the Nile River, the world’s longest river, which flows over 4,000 miles north through eastern Africa before emptying into the Mediterranean Sea. The Nile’s journey through the Sahara desert creates a narrow ribbon of green—one of the only fertile regions in all of Egypt. For thousands of years, almost everyone in Egypt lived close to the river’s banks, where the land was flat, rich, and easy to farm.\n\nWhat made the Nile special was its annual flooding, which happened almost like clockwork every year between June and September. As the river overflowed, it spread water and thick, black silt across the land. When the waters receded, farmers planted wheat, barley, flax, and vegetables in the moist soil. The ancient Egyptians even invented one of the earliest calendars to predict the flooding, so they could plan their planting and harvests. Canals, ditches, and reservoirs stored and moved water to fields during dry months.\n\nThe river was the center of daily life and the main highway for boats carrying people, grain, animals, and goods up and down the country. Fishermen cast nets for fish, herders led cattle to drink, and reed boats glided past palm trees. However, the Nile could also bring disaster—if the floods were too low, crops failed and famine followed; if they were too high, villages might be swept away. To survive, people depended on teamwork and careful planning, and the river inspired some of Egypt’s oldest religious stories about the gods’ power to give and take life.",
+    "summary_fill_blank": "The ________ River is the world’s ________ river, running through the ________ desert and creating a ________ valley where most Egyptians lived. Each year, the river’s ________ brought rich ________ for farming, allowing people to grow crops like ________ and ________. Egyptians built ________, ditches, and ________ to control water. The Nile was also the main ________ for travel and trade, but unpredictable ________ could cause famine or disaster.",
+    "blanks": [
+      "Nile",
+      "longest",
+      "Sahara",
+      "fertile",
+      "floods",
+      "silt",
+      "wheat",
+      "barley",
+      "canals",
+      "reservoirs",
+      "highway",
+      "floods"
+    ]
+    },
+
+    "reading_2": {
+    "title": "The Pharaoh and the Organization of Society",
+    "text": "In ancient Egypt, the pharaoh was more than just a ruler—he or she was considered a living god, responsible for the country’s prosperity, order, and connection to the gods. Egyptians believed that the pharaoh controlled the flooding of the Nile and the success of the harvests. Pharaohs wore crowns that symbolized their rule over both Upper and Lower Egypt and were often depicted with the crook and flail, symbols of leadership and care for the people. Statues and temples showed pharaohs making offerings to the gods, and their names were recorded in long lists called cartouches, which appeared on monuments throughout the land.\n\nPharaohs directed enormous projects, such as building pyramids, temples, granaries, and irrigation systems. They appointed officials to collect taxes, manage food storage, enforce laws, and oversee the labor of thousands of workers. Priests played a powerful role in society, leading ceremonies, managing temple lands, and teaching religious beliefs. Scribes, who could read and write using hieroglyphics, kept records of everything from harvests to legal cases and religious texts.\n\nEgyptian society was organized like a pyramid, with the pharaoh and royal family at the top, followed by priests, scribes, soldiers, craftsmen, farmers, and laborers. Each group had important roles and responsibilities, but most people were farmers who worked the land. Many women managed households, could own property, and sometimes served as priestesses or even pharaohs. Religion united people in shared rituals and festivals, which helped maintain order and celebrate the turning of the seasons. By organizing society around the pharaoh and shared beliefs, Egypt remained a powerful and stable civilization for thousands of years.",
+    "summary_fill_blank": "The ________ was seen as both a ________ and a living god, believed to control the ________ and ensure good ________. Pharaohs wore ________ as symbols of their power and led huge projects like building ________ and ________. Officials, priests, and ________ helped manage the kingdom. Society was structured like a ________, with most people working as ________. Religion and shared ________ helped keep Egypt stable and united.",
+    "blanks": [
+      "pharaoh",
+      "ruler",
+      "Nile",
+      "harvests",
+      "crowns",
+      "pyramids",
+      "temples",
+      "scribes",
+      "pyramid",
+      "farmers",
+      "beliefs"
+    ]
+    },
+
+    "discussion_questions": [
+    "How did the geography of the Nile River shape the lives of ancient Egyptians?",
+    "Why was the Nile called the 'giver of life'? What challenges did people face even with regular floods?",
+    "How did the organization of society help Egypt become successful for so long?",
+    "What responsibilities did the pharaoh have? Why do you think people saw the pharaoh as a living god?",
+    "Read the excerpt from the Book of the Dead. What does it reveal about what ancient Egyptians believed happened after death?"
+    ],
+
+    "primary_sources": [
+      { "title": "Book of the Dead", "link": "link:Book_of_the_Dead" }
+    ],
+
+    "discussion_sentence_stems": [
+    "The geography of the Nile shaped Egyptian life by...",
+    "The Nile was the 'giver of life' because... but it also brought challenges like...",
+    "Egyptian society was successful for so long because...",
+    "The pharaoh was responsible for... People saw the pharaoh as a living god because...",
+    "The Book of the Dead shows that ancient Egyptians believed... after death, because..."
+    ],
+
+    "DOL_prompt": "Describe one way the Nile River helped and one way it challenged the people of ancient Egypt. Explain why the pharaoh was so important.",
+    "DOL_sentence_stem": "The Nile helped Egyptians by... but challenged them by... The pharaoh was important because..."
+  },
+  {
+    "lesson_id": "U1T4_B",
+    "unit_id": "U1",
+    "topic_id": "T4",
+    "topic_title": "Ancient Egypt: Monuments, Writing, and the Afterlife",
+    "lesson_title": "Beliefs, Pyramids, and Hieroglyphics",
+    "lesson_day": "Day Two",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "If you could design your own tomb or monument, what would you include so people remember you? Why are monuments important to societies?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(15)(B) analyze the influence of physical and human geographic factors on major historical events",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences"
+    ],
+
+    "learning_objective": "Students will explain the role of religion, monuments, and writing in ancient Egyptian society, and analyze how beliefs about the afterlife shaped culture and daily life.",
+    "learning_objective_fill_blank": "Students will explain the role of ________, ________, and ________ in ancient Egyptian society, and analyze how beliefs about the ________ shaped culture and daily life.",
+    "learning_objective_blanks": [
+      "religion",
+      "monuments",
+      "writing",
+      "afterlife"
+    ],
+
+    "success_criteria": [
+      "I can describe why the Egyptians built pyramids, tombs, and temples.",
+      "I can explain the importance of religion and beliefs about the afterlife.",
+      "I can identify how hieroglyphics were used and why writing mattered in ancient Egypt."
+    ],
+    "success_criteria_fill_blank": [
+      "I can describe why the Egyptians built ________, ________, and ________.",
+      "I can explain the importance of ________ and beliefs about the ________.",
+      "I can identify how ________ were used and why ________ mattered in ancient Egypt."
+    ],
+    "success_criteria_blanks": [
+      ["pyramids", "tombs", "temples"],
+      ["religion", "afterlife"],
+      ["hieroglyphics", "writing"]
+    ],
+
+    "image_description": "A pyramid rises on the horizon as workers haul stones up a ramp. Priests and mourners gather at a tomb entrance, performing rituals. Scribes carve hieroglyphics into a temple wall while children watch. In the distance, a procession leads toward a small temple surrounded by palm trees.",
+    "img:U1T4_B": "TBA",
+
+    "vocab_list": [
+      { "term": "Pyramid", "link": "link:Pyramid" },
+      { "term": "Mummification", "link": "link:Mummification" },
+      { "term": "Hieroglyphics", "link": "link:Hieroglyphics" },
+      { "term": "Afterlife", "link": "link:Afterlife" },
+      { "term": "Temple", "link": "link:Temple" },
+      { "term": "Scribe", "link": "link:Scribe" }
+    ],
+
+    "reading_1": {
+    "title": "Building for Eternity: Pyramids, Temples, and Tombs",
+    "text": "Ancient Egypt’s landscape is still dominated by awe-inspiring monuments built thousands of years ago. The most iconic of these are the pyramids—gigantic stone tombs constructed for the pharaohs, Egypt’s rulers who were considered living gods. Building a pyramid was a massive community effort. Architects planned the structure, skilled laborers shaped and moved huge limestone blocks, and farmers often worked on the projects during the Nile’s flood season, when their fields were underwater. At Giza, each pyramid was surrounded by smaller tombs for officials, temples for worship, and grand statues like the Sphinx. These sacred complexes were carefully aligned with the stars and the path of the sun, reflecting religious beliefs about eternity and the gods.\n\nEgyptians believed that death was not the end, but the beginning of a journey to the afterlife. To ensure the pharaoh’s soul reached the next world, his body was carefully preserved through mummification—a process of drying, treating, and wrapping the corpse. The dead were buried with treasures, food, and even furniture to use in the afterlife. Temples played a central role in both daily worship and major festivals, serving as homes for the gods and places where priests performed rituals to keep Egypt in harmony. Scribes, highly trained in reading and writing hieroglyphics, recorded prayers, offerings, and achievements on the walls of tombs and temples. Through these enduring monuments and writings, the Egyptians hoped to secure eternal life and preserve their memory for all time.",
+    "summary_fill_blank": "The ________ were giant tombs built for pharaohs, surrounded by temples and ________ for officials. Building these monuments required skilled workers, careful planning, and alignment with the ________. Egyptians practiced ________ to preserve the body for the afterlife and buried the dead with ________ and treasures. Priests led ceremonies in ________, while ________ used hieroglyphics to record prayers and history.",
+    "blanks": [
+      "pyramids",
+      "tombs",
+      "stars",
+      "mummification",
+      "food",
+      "temples",
+      "scribes"
+    ]
+    },
+    "reading_2": {
+    "title": "Religion and the Journey to the Afterlife",
+    "text": "Religion was the heart of ancient Egyptian life, shaping not only their view of the world but also their daily routines and hopes for eternity. Egyptians believed that each person had a soul that would journey through a mysterious underworld after death. This journey was filled with obstacles—gates, guardians, and monsters—but the dead were not left unprepared. Families placed the Book of the Dead in tombs: a collection of magical spells, prayers, and instructions meant to guide the soul safely through the dangers of the underworld. At the final test, the soul stood before Osiris, god of the dead, while its heart was weighed against the feather of truth. A heart heavy with wrongdoing meant the soul was destroyed forever, but a pure heart granted eternal life in the paradise known as the Field of Reeds.\n\nTo help the dead, families left offerings of bread, beer, fruit, and clothing, believing these gifts would feed and protect their loved ones. Religious festivals and ceremonies honored the gods and the spirits of ancestors, filling the calendar with music, processions, and public gatherings. Art and poetry celebrated the achievements of the dead and the generosity of the gods. By sharing these beliefs, Egyptians found comfort and unity, knowing that they were part of a tradition stretching back for generations. Their respect for the afterlife and their careful preparations show how important religion was in shaping Egyptian culture—and why their civilization endures in memory even today.",
+    "summary_fill_blank": "The ________ was placed in tombs to guide the soul through the ________. The soul was judged by the god ________ and its heart weighed against the ________ of truth. Families left offerings of ________ and clothing to help the dead. Festivals and ceremonies united people in honoring the ________ and remembering their ancestors.",
+    "blanks": [
+      "Book of the Dead",
+      "underworld",
+      "Osiris",
+      "feather",
+      "food",
+      "gods"
+    ]
+  },
+
+    "discussion_questions": [
+      "Why did Egyptians invest so much effort in building pyramids and temples?",
+      "How did beliefs about the afterlife shape Egyptian art and rituals?",
+      "Why do you think writing (hieroglyphics) was important for religion and daily life in Egypt?",
+      "Look at the image of ancient Egyptian hieroglyphics. What do you notice about the symbols, and what do you think they were used for? How can images like these help us learn about daily life and beliefs in ancient Egypt?"
+    ],
+
+    "primary_sources": [
+    { "title": "Hieroglyphic Inscription", "link": "link:Hieroglyphic_Inscription" }
+    ],
+
+    "discussion_sentence_stems": [
+      "Egyptians built pyramids and temples because...",
+      "Beliefs about the afterlife shaped Egyptian art and rituals by...",
+      "Writing was important for religion and daily life because...",
+      "By looking at the hieroglyphics, I notice... I think they were used for... Images like these help us learn about daily life and beliefs because..."
+    ],
+
+    "DOL_prompt": "Describe how religion, monuments, and writing all worked together in ancient Egypt. Give one example of how these are connected.",
+    "DOL_sentence_stem": "Religion, monuments, and writing worked together by... For example, ..."
+  },
+  {
+    "lesson_id": "U1T5_A",
+    "unit_id": "U1",
+    "topic_id": "T5",
+    "topic_title": "Indus Valley: Life in South Asia",
+    "lesson_title": "Geography, Cities, and Daily Life in the Indus Valley",
+    "lesson_day": "Day One",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Imagine you could design a brand new city. What would be the three most important things to include for people to have a good life? Why?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(15)(B) analyze the influence of physical and human geographic factors on major historical events",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences"
+    ],
+
+    "learning_objective": "Students will explain how geography influenced the rise of the Indus Valley civilization and describe how city planning and sanitation contributed to daily life.",
+    "learning_objective_fill_blank": "Students will explain how ________ influenced the rise of the Indus Valley civilization and describe how ________ ________ and ________ contributed to daily life.",
+    "learning_objective_blanks": [
+      "geography",
+      "city planning",
+      "sanitation"
+    ],
+
+    "success_criteria": [
+      "I can find the Indus River on a map and explain why people settled nearby.",
+      "I can describe how cities like Harappa and Mohenjo-Daro were planned and organized.",
+      "I can explain why sanitation and clean water were important for health and daily life."
+    ],
+    "success_criteria_fill_blank": [
+      "I can find the ________ River on a map and explain why people settled nearby.",
+      "I can describe how cities like ________ and ________ were planned and organized.",
+      "I can explain why ________ and clean water were important for health and daily life."
+    ],
+    "success_criteria_blanks": [
+      ["Indus"],
+      ["Harappa", "Mohenjo-Daro"],
+      ["sanitation"]
+    ],
+
+    "image_description": "A busy street scene in an ancient Indus Valley city: children play near a public well while merchants sell goods from carts. Brick houses line the paved roads, and women carry water jars on their heads. In the distance, workers repair a covered drain and a large public bath stands beside a marketplace shaded by trees.",
+    "img:U1T5_A": "TBA",
+
+    "vocab_list": [
+      { "term": "Indus River", "link": "link:Indus_River" },
+      { "term": "Harappa", "link": "link:Harappa" },
+      { "term": "Mohenjo-Daro", "link": "link:Mohenjo_Daro" },
+      { "term": "Sanitation", "link": "link:Sanitation" },
+      { "term": "City Planning", "link": "link:City_Planning" },
+      { "term": "Public Well", "link": "link:Public_Well" }
+    ],
+
+    "reading_1": {
+    "title": "Geography and the Birth of Civilization",
+    "text": "The Indus Valley civilization flourished along the banks of the Indus River, which winds through modern-day Pakistan and northwest India. This river starts high in the snowy Himalayas and flows hundreds of miles to the Arabian Sea. Each summer, the region was transformed by powerful monsoon rains and melting mountain snow, causing the river to flood and spread fertile silt across the land. These floods, while sometimes destructive, made the Indus plain one of the best places in the ancient world for farming. People learned to use canals, levees, and reservoirs to manage the river’s water—helping them grow crops like wheat, barley, peas, sesame, and even cotton, which was spun and woven into cloth.\n\nBecause much of the year was hot and dry, irrigation was essential for survival. Early farmers cooperated to build systems that kept their fields watered and protected from unexpected floods. Over time, small farming villages near the river grew into large, organized cities. The most famous, Harappa and Mohenjo-Daro, were remarkable for their straight streets laid out in a grid pattern, sturdy brick homes, public wells, and the world’s first known urban drainage and sanitation systems. City planners constructed huge granaries to store extra food and massive public baths that may have been used for cleanliness or religious rituals. For hundreds of years, the people of the Indus Valley built a civilization that relied on the river’s resources, inventive problem-solving, and community cooperation.",
+    "summary_fill_blank": "The ________ Valley civilization developed along a river that began in the ________ Mountains and emptied into the ________ Sea. Each year, ________ rains and melting ________ caused ________ floods that deposited ________ silt for farming. Farmers built ________, levees, and ________ to control water for crops like wheat and ________. Cities such as ________ and Mohenjo-Daro featured ________ streets, ________ houses, public ________, and the earliest known ________ and sanitation systems.",
+    "blanks": [
+      "Indus",
+      "Himalaya",
+      "Arabian",
+      "monsoon",
+      "snow",
+      "seasonal",
+      "fertile",
+      "canals",
+      "reservoirs",
+      "cotton",
+      "Harappa",
+      "grid",
+      "brick",
+      "wells",
+      "drainage"
+    ]
+    },
+    "reading_2": {
+    "title": "City Planning and Sanitation",
+    "text": "The cities of the Indus Valley civilization stood out in the ancient world for their advanced design and organization. City planners carefully laid out streets in a grid, so neighborhoods and marketplaces were arranged in neat rectangular blocks. Most houses were built with uniform, baked bricks and featured flat roofs, strong walls, and courtyards for light and fresh air. Many homes had their own wells for drawing clean water and private bathrooms with drains connected to covered sewer systems beneath the streets. Public wells and water tanks made clean water accessible to everyone, while large granaries stored food supplies for the whole community.\n\nOne of the greatest achievements of these cities was their sophisticated sanitation. Dirty water and waste were carried away from homes and workshops through covered drains, helping prevent disease and keep the streets clean. Public baths, some the size of swimming pools, were used for bathing, ceremonies, or possibly religious rituals. Granaries helped the city survive during bad harvests, droughts, or disasters. The attention to cleanliness, order, and public health in Indus Valley cities was unmatched anywhere else in the world for thousands of years. These achievements show that the people valued safety, cooperation, and the well-being of their entire community.",
+    "summary_fill_blank": "Indus Valley cities were famous for ________ design, with streets arranged in a ________ pattern. Homes were built from ________ bricks and included ________, bathrooms, and drains connected to ________ sewers. Public ________ provided water, and ________ stored surplus food. The advanced ________ systems carried waste away from homes and kept the cities ________ and healthy.",
+    "blanks": [
+      "planned",
+      "grid",
+      "baked",
+      "wells",
+      "covered",
+      "wells",
+      "granaries",
+      "sanitation",
+      "clean"
+    ]
+    },
+    "discussion_questions": [
+      "How did geography and climate influence where Indus Valley people built their cities?",
+      "What features made cities like Harappa and Mohenjo-Daro advanced for their time?",
+      "Why do you think sanitation and public health were so important in these ancient cities?",
+      "Look at the image of an Indus Valley city map. What details can you find about how the city was planned and how people lived?"
+    ],
+
+    "primary_sources": [
+      { "title": "Indus Valley City Map", "link": "link:Indus_City_Map" }
+    ],
+
+    "discussion_sentence_stems": [
+      "Geography and climate influenced city locations by...",
+      "Cities like Harappa and Mohenjo-Daro were advanced because...",
+      "Sanitation and public health were important because...",
+      "From the city map, I notice... This tells me that people in the Indus Valley..."
+    ],
+
+    "DOL_prompt": "Explain one way city planning or sanitation made life better for people in the Indus Valley. Give an example from the readings or the city map.",
+    "DOL_sentence_stem": "City planning or sanitation made life better by... For example, ..."
+  },
+  {
+    "lesson_id": "U1T5_B",
+    "unit_id": "U1",
+    "topic_id": "T5",
+    "topic_title": "Indus Valley: Life in South Asia",
+    "lesson_title": "Trade, Writing, and Theories of Decline",
+    "lesson_day": "Day Two",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "If archaeologists couldn’t read anything you wrote, what objects would you leave behind to show what mattered most in your life?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(15)(B) analyze the influence of physical and human geographic factors on major historical events",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences"
+    ],
+
+    "learning_objective": "Students will describe daily life, trade, and the use of writing in the Indus Valley civilization, and analyze possible reasons for its decline.",
+    "learning_objective_fill_blank": "Students will describe ________ life, ________, and the use of ________ in the Indus Valley civilization, and analyze possible reasons for its ________.",
+    "learning_objective_blanks": [
+      "daily",
+      "trade",
+      "writing",
+      "decline"
+    ],
+
+    "success_criteria": [
+      "I can describe daily life and important artifacts from the Indus Valley.",
+      "I can explain how people traded with other civilizations, including Mesopotamia.",
+      "I can discuss what makes the Indus script a mystery.",
+      "I can identify and compare theories about why the civilization declined."
+    ],
+    "success_criteria_fill_blank": [
+      "I can describe ________ life and important ________ from the Indus Valley.",
+      "I can explain how people ________ with other civilizations, including ________.",
+      "I can discuss what makes the Indus ________ a mystery.",
+      "I can identify and compare ________ about why the civilization ________."
+    ],
+    "success_criteria_blanks": [
+      ["daily", "artifacts"],
+      ["traded", "Mesopotamia"],
+      ["script"],
+      ["theories", "declined"]
+    ],
+
+    "image_description": "A table displays clay seals with carved animal designs and mysterious Indus script symbols. Nearby, a trader’s scales, beads, and pottery are arranged, while a toy cart and figurines show scenes from daily life. In the background, a path leads to a dock where boats are loaded with goods.",
+    "img:U1T5_B": "TBA",
+
+    "vocab_list": [
+      { "term": "Cipher", "link": "link:Cipher" },
+      { "term": "Seal", "link": "link:Seal" },
+      { "term": "Indus Script", "link": "link:Indus_Script" },
+      { "term": "Trade", "link": "link:Trade" },
+      { "term": "Mesopotamia", "link": "link:Mesopotamia" },
+      { "term": "Decline", "link": "link:Decline" }
+    ],
+
+    "reading_1": {
+    "title": "Daily Life and Artifacts in the Indus Valley",
+    "text": "Archaeologists have uncovered thousands of fascinating artifacts from Indus Valley sites, giving us a glimpse into how people lived over 4,000 years ago. Everyday life centered around sturdy brick houses with flat roofs, shaded courtyards, and wells for clean water. Families grew wheat, barley, peas, and cotton in the fertile river plains, stored surplus grain in huge granaries, and raised cattle, sheep, goats, and water buffalo. Skilled craftspeople made pottery with painted designs, jewelry from gold, copper, and colorful stones, as well as tools for farming and building. Children played with clay animal figurines, wheeled carts, marbles, and dice—some of which have been found almost perfectly preserved.\n\nOne of the most remarkable finds is the collection of carved stone seals, decorated with images of bulls, elephants, rhinoceroses, or unicorn-like animals, and a mysterious writing system known as the Indus script. These seals may have been used to mark goods, show ownership, or serve a religious purpose, but because the script remains undeciphered, their exact meaning is still unknown. Public buildings such as large halls, granaries, and possible bathhouses suggest a strong sense of community, though archaeologists have yet to identify clear temples or royal palaces. The wide range of artifacts paints a picture of a society that valued art, craftsmanship, play, and cooperation.",
+    "summary_fill_blank": "Archaeologists found ________ houses with ________ roofs and courtyards in the Indus Valley. Families raised ________, grew crops, and stored grain in large ________. Craftspeople made pottery, ________ from gold and stones, and useful ________. Children played with ________ carts, marbles, and animal ________. Seals carved with animals and the undeciphered ________ ________ may have marked goods or had other purposes.",
+    "blanks": [
+      "brick",
+      "flat",
+      "livestock",
+      "granaries",
+      "jewelry",
+      "tools",
+      "wheeled",
+      "figurines",
+      "Indus",
+      "script"
+    ]
+    },
+    "reading_2": {
+    "title": "Trade, Writing, and Theories of Decline",
+    "text": "The Indus Valley civilization was connected to distant cultures through active trade. Archaeologists have discovered Indus seals in Mesopotamian cities and Mesopotamian goods, such as silver, beads, and pottery, in Indus settlements. Traders used boats to navigate rivers and coastlines, while bullock carts and pack animals transported goods across land. They exchanged items like grain, cloth, beads, metals, and pottery, showing that the Indus Valley was part of a vibrant international trading network.\n\nOne of the greatest mysteries of the Indus civilization is its writing. The Indus script appears on hundreds of seals, tablets, and pottery pieces. It consists of short lines of symbols and animal motifs, but because no bilingual inscriptions have been found, scholars have not been able to decipher its meaning. This leaves important questions about Indus government, religion, and daily life unanswered.\n\nThe reasons for the civilization’s decline are still debated. Some scientists believe that major climate change—such as a shift in the monsoon pattern—caused rivers to dry up, which made farming and trade impossible. Others point to catastrophic flooding, earthquakes, or disease. There is also evidence of possible invasion or migration by people from the west, which may have weakened the cities. Since the Indus script cannot be read, the story of how this advanced civilization ended remains a puzzle.",
+    "summary_fill_blank": "Indus Valley people ________ with distant cultures by boat and ________. Archaeologists found Indus ________ in ________ and Mesopotamian goods in Indus cities. The ________ script is still a ________, so details about government and daily life are unknown. Possible causes for decline include climate ________, ________ disasters, disease, or outside ________.",
+    "blanks": [
+      "traded",
+      "cart",
+      "seals",
+      "Mesopotamia",
+      "Indus",
+      "mystery",
+      "change",
+      "natural",
+      "migration"
+    ]
+    },
+
+    "discussion_questions": [
+      "What can we learn about daily life from the artifacts found in the Indus Valley?",
+      "How does trade connect the Indus Valley to other civilizations?",
+      "Why is the Indus script considered a mystery, and how does this affect what we know?",
+      "Look at the image of the Indus seals. What do you notice about the designs and symbols? How do you think people used these objects?"
+    ],
+
+    "primary_sources": [
+      { "title": "Indus Seal Collection", "link": "link:Indus_Seal_Collection" }
+    ],
+
+    "discussion_sentence_stems": [
+      "Artifacts tell us that daily life in the Indus Valley was...",
+      "Trade connected the Indus Valley to other civilizations by...",
+      "The Indus script is a mystery because... This affects what we know by...",
+      "Looking at the seals, I notice... I think people used them for..."
+    ],
+
+    "DOL_prompt": "Choose one artifact from the Indus Valley and explain what it can tell us about the people who made it. What questions remain unanswered about this civilization?",
+    "DOL_sentence_stem": "One artifact from the Indus Valley is... It shows that people... But we still don’t know..."
+  },
+  {
+    "lesson_id": "U1T6_A",
+    "unit_id": "U1",
+    "topic_id": "T6",
+    "topic_title": "Early China: Civilization Along the Yellow River",
+    "lesson_title": "The Huang He, Shang Dynasty, and Ancestor Worship",
+    "lesson_day": "Day One",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Chose one of the two: \n\n 1) Write a story that your parents, grandparents, or other family members tell about your family or that has been passed down. \n\n OR \n\n 2) Write a story about something that has happened in your life that you want to remember. Why is it important to remember these stories?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(15)(B) analyze the influence of physical and human geographic factors on major historical events",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences"
+    ],
+
+    "learning_objective": "Students will explain how the Huang He (Yellow River) shaped the rise of early Chinese civilization, describe daily life during the Shang dynasty, and analyze the importance of ancestor worship.",
+    "learning_objective_fill_blank": "Students will explain how the ________ ________ shaped the rise of early Chinese civilization, describe daily life during the ________ dynasty, and analyze the importance of ________ worship.",
+    "learning_objective_blanks": [
+      "Huang He",
+      "Shang",
+      "ancestor"
+    ],
+
+    "success_criteria": [
+      "I can find the Huang He (Yellow River) on a map and explain why people settled there.",
+      "I can describe what life was like during the Shang dynasty.",
+      "I can explain what ancestor worship was and why it was important."
+    ],
+    "success_criteria_fill_blank": [
+      "I can find the ________ ________ on a map and explain why people settled there.",
+      "I can describe what life was like during the ________ dynasty.",
+      "I can explain what ________ worship was and why it was important."
+    ],
+    "success_criteria_blanks": [
+      ["Huang He", "Yellow River"],
+      ["Shang"],
+      ["ancestor"]
+    ],
+
+    "image_description": "A scene along the Huang He (Yellow River): rice paddies stretch along the riverbanks, with villagers tending crops and carrying baskets. In the background, a walled city rises, with people working bronze tools and a family offering food and incense at an outdoor altar. On a table, a turtle shell and bones with ancient writing hint at early Chinese rituals.",
+    "img:U1T6_A": "TBA",
+
+    "vocab_list": [
+      { "term": "Huang He (Yellow River)", "link": "link:Huang_He" },
+      { "term": "Dynasty", "link": "link:Dynasty" },
+      { "term": "Oracle Bone", "link": "link:Oracle_Bone" },
+      { "term": "Shang Dynasty", "link": "link:Shang_Dynasty" },
+      { "term": "Ancestor Worship", "link": "link:Ancestor_Worship" }
+    ],
+
+    "reading_1": {
+      "title": "The Huang He and the Birth of Chinese Civilization",
+      "text": "The Huang He, or Yellow River, stretches over 3,000 miles across northern China and has long been known as the cradle of Chinese civilization. The river gets its name from the yellowish silt, called loess, that it carries from the mountains and deposits across the plains, turning the land into some of the most fertile farmland in Asia. Early peoples settled along its banks as early as 5000 BCE, building villages and learning to farm millet, wheat, and, in the south, rice. While the river’s rich soil made large harvests possible, the Huang He was also unpredictable—its frequent and powerful floods sometimes wiped out entire communities. For this reason, it earned the nickname 'China’s Sorrow.'\n\nSurviving and thriving in such a challenging environment required teamwork and innovation. Farmers and villagers built levees, dikes, and a network of irrigation canals to try to control the floods and bring water to their fields during dry periods. As the population grew, small villages developed into walled towns and cities, and people began to trade surplus crops and goods. By around 1600 BCE, the Shang dynasty unified much of the region along the river. The Shang kings ruled from fortified cities, commanded armies, and oversaw advanced bronze working, religious rituals, and the earliest known system of Chinese writing, inscribed on oracle bones and bronze vessels.",
+      "summary_fill_blank": "The ________ ________, known as the Yellow River, was called the cradle of Chinese civilization because it brought ________ silt that made the land fertile. However, it was also known as 'China’s ________' due to destructive ________. Early peoples built ________, dikes, and ________ to control the water and protect their villages. By about 1600 BCE, the ________ dynasty ruled large parts of the region, known for its bronze work and early ________.",
+      "blanks": [
+        "Huang He",
+        "yellow",
+        "Sorrow",
+        "floods",
+        "levees",
+        "canals",
+        "Shang",
+        "writing"
+      ]
+    },
+
+    "reading_2": {
+    "title": "Daily Life, Ancestor Worship, and Oracle Bones",
+    "text": "Life during the Shang dynasty revolved around farming, family, and tradition. Most people were farmers who planted millet, wheat, and rice, raised pigs, chickens, and water buffalo, and sometimes fished in local rivers. People also wove silk from silkworms, a craft that made Chinese cloth prized in distant lands for its softness and beauty. Craftspeople created finely cast bronze weapons, ritual vessels, tools, and ornaments. While nobles and kings lived in large, sturdy homes within walled cities and controlled the land around them, most families lived in small mud-brick houses with thatched roofs in rural villages.\n\nCentral to Shang society was the belief in ancestor worship. Families believed their ancestors’ spirits had the power to protect, guide, or punish them, and so they offered food, wine, incense, and sometimes music at home altars to keep the spirits happy. Before making important decisions, people—especially kings and priests—sought advice from their ancestors and the gods using oracle bones. These were usually cattle shoulder blades or turtle shells. Questions about farming, war, weather, or family were carved onto the bones, which were then heated until they cracked. Priests read the patterns of cracks to interpret answers from the spirit world. These oracle bones are the earliest evidence of Chinese writing, showing how closely daily life, government, and religion were connected in Shang China.",
+    "summary_fill_blank": "In the Shang dynasty, most people were ________ who grew crops like millet, wheat, and ________, and raised ________ and livestock. Craftspeople made ________ weapons, tools, and beautiful ________ cloth. Ancestor ________ was an important part of daily life; families offered ________ and incense at home altars. Kings and priests used ________ bones—heated and cracked—to ask questions of the ancestors and ________, creating the first evidence of Chinese ________.",
+    "blanks": [
+      "farmers",
+      "rice",
+      "pigs",
+      "bronze",
+      "silk",
+      "worship",
+      "food",
+      "oracle",
+      "gods",
+      "writing"
+    ]
+    },
+
+    "discussion_questions": [
+      "How did the geography of the Huang He (Yellow River) help and challenge early Chinese settlers?",
+      "What kinds of jobs and activities did people do during the Shang dynasty?",
+      "Why do you think ancestor worship was important in Shang society?",
+      "Look at the image of an oracle bone. What do you notice about the writing and symbols? How might people have used these bones in daily life?"
+    ],
+
+    "primary_sources": [
+      { "title": "Oracle Bone Inscription", "link": "link:Oracle_Bone_Inscription" }
+    ],
+
+    "discussion_sentence_stems": [
+      "The geography of the Huang He helped settlers by... but also challenged them by...",
+      "During the Shang dynasty, people worked as... and did activities like...",
+      "Ancestor worship was important because...",
+      "Looking at the oracle bone, I notice... I think people used it to..."
+    ],
+
+    "DOL_prompt": "Explain how the Huang He, ancestor worship, or oracle bones influenced life in early China. Use an example from the lesson.",
+    "DOL_sentence_stem": "The Huang He (Yellow River) influenced life by... Ancestor worship and oracle bones were important because..."
+  },
+  {
+    "lesson_id": "U1T6_B",
+    "unit_id": "U1",
+    "topic_id": "T6",
+    "topic_title": "Early China: Civilization Along the Yellow River",
+    "lesson_title": "Bronze, Dynasties, and the Mandate of Heaven",
+    "lesson_day": "Day Two",
+    "unit_question": "What foundational choices changed the way humans lived and survived?",
+
+    "lesson_hook": "Many rulers of past civilizations claimed that God or the gods gave them the power to rule. Why do you think people believed these claims? What reasons or evidence might have made those beliefs seem convincing at the time?",
+
+    "teks": [
+      "(2)(A) summarize the development of the political, economic, and social characteristics of early civilizations",
+      "(3)(A) describe the major political, religious, and cultural influences of various civilizations",
+      "(8)(A) locate places and regions of historical significance",
+      "(15)(B) analyze the influence of physical and human geographic factors on major historical events",
+      "(21)(B) analyze cause-and-effect relationships, compare and contrast, and draw inferences"
+    ],
+
+    "learning_objective": "Students will analyze the role of bronze technology, dynastic leadership, and the Mandate of Heaven in early Chinese civilization.",
+    "learning_objective_fill_blank": "Students will analyze the role of ________ technology, ________ leadership, and the ________ of Heaven in early Chinese civilization.",
+    "learning_objective_blanks": [
+      "bronze",
+      "dynastic",
+      "Mandate"
+    ],
+
+    "success_criteria": [
+      "I can explain how bronze working changed life in ancient China.",
+      "I can describe the role of dynasties and kingship in early Chinese society.",
+      "I can explain the idea of the Mandate of Heaven and how it justified the rule of kings."
+    ],
+    "success_criteria_fill_blank": [
+      "I can explain how ________ working changed life in ancient China.",
+      "I can describe the role of ________ and kingship in early Chinese society.",
+      "I can explain the idea of the ________ of Heaven and how it justified the rule of kings."
+    ],
+    "success_criteria_blanks": [
+      ["bronze"],
+      ["dynasties"],
+      ["Mandate"]
+    ],
+
+    "image_description": "A workshop scene where artisans cast bronze vessels using molds and open flames. Nearby, a king sits on a throne, surrounded by officials and banners bearing symbols of heaven. In another corner, a crowd watches as a noble presents a bronze inscription to the court. Outside, a procession brings food and gifts as tribute to the ruler.",
+    "img:U1T6_B": "TBA",
+
+    "vocab_list": [
+      { "term": "Bronze Weapons", "link": "link:Bronze_Weapons" },
+      { "term": "Artisans", "link": "link:Artizans" },
+      { "term": "Mandate of Heaven", "link": "link:Mandate_of_Heaven" },
+      { "term": "Tribute", "link": "link:Tribute" },
+      { "term": "Inscription", "link": "link:Inscription" }
+    ],
+
+"reading_1": {
+  "title": "Bronze Technology and Dynastic Power",
+  "text": "The Shang and Zhou dynasties were early Chinese civilizations known for their innovations in bronze technology. Bronze is an alloy, a metal created by mixing copper and tin—which is stronger and more durable than stone or pure copper. The use of bronze gave these societies a major advantage in both war and daily life. Artisans under royal control crafted bronze weapons, tools, and beautifully decorated ritual vessels used in ceremonies to honor ancestors and communicate with the spirit world. Because kings controlled access to bronze resources, including mines and workshops, they were able to centralize power and display their wealth and divine authority.\n\nThis control over technology created a system where political power and religious belief were tightly connected. Bronze objects were often buried in royal tombs or presented as tribute by local nobles, reinforcing the king’s dominance. The ability to organize labor, collect tribute, and lead large building or warfare campaigns required a strong dynasty, a family that held power across generations. Over time, this pattern of dynastic rule became a defining feature of Chinese civilization. As one dynasty weakened, another would rise, often justifying its takeover by showing it could govern more effectively or maintain harmony with the heavens.",
+  "summary_fill_blank": "The Shang and Zhou dynasties were early Chinese civilizations known for their advanced ________ technology. Bronze weapons and ritual vessels strengthened their control over ________ and religious life. Kings who controlled the bronze ________ also controlled power and ________. Dynastic rule meant the same ________ held power for generations, but when a dynasty weakened, it could be replaced by a ________ one.",
+  "blanks": [
+    "bronze",
+    "warfare",
+    "workshops",
+    "beliefs",
+    "family",
+    "stronger"
+  ]
+},
+  "reading_2": {
+  "title": "The Mandate of Heaven and Political Legitimacy",
+  "text": "The Zhou dynasty introduced one of the most important ideas in Chinese political history: the Mandate of Heaven. This concept explained why some rulers gained power while others lost it. According to this belief, a ruler (usually a king or emperor) received the right to govern from the heavens—not through bloodline alone, but by demonstrating virtue, fairness, and the ability to maintain order. This idea helped unite people by giving a moral reason to support or reject a ruler.\n\nIf a ruler governed wisely—protecting the people, keeping peace, and being just—he was believed to still hold the Mandate. But if he became corrupt, greedy, or failed to respond to disasters like famine or invasion, the people might believe the gods had withdrawn their support. Natural disasters or rebellion were seen as signs that the Mandate had been lost. As a result, this belief gave people a reason to accept new rulers who promised better leadership.\n\nThe Mandate of Heaven created a cycle in Chinese history: dynasties would rise, grow strong, and eventually decline. When they failed, they were replaced by others claiming the Mandate. This cycle justified political change while still emphasizing order and stability. It shaped how Chinese people understood legitimacy, leadership, and their connection to the divine for over 2,000 years.",
+  "summary_fill_blank": "The Zhou dynasty introduced the ________ of Heaven—the belief that a ruler’s right to govern came from the ________. Rulers had to be just and protect the ________ to keep the Mandate. Signs like rebellion or ________ could mean the Mandate was lost. This idea explained the rise and ________ of dynasties and justified new ________.",
+  "blanks": [
+    "Mandate",
+    "heavens",
+    "people",
+    "disaster",
+    "fall",
+    "leadership"
+  ]
+  },
+
+  "discussion_questions": [
+  "How did bronze technology affect life and power in early China?",
+  "Why do you think dynasties and powerful families ruled for generations?",
+  "What was the Mandate of Heaven, and how did it help explain the rise and fall of rulers?",
+  "Look at the image of a Zhou bronze vessel and inscription. What do you notice about the designs and symbols? How might these objects have shown the king’s authority?"
+  ],
+
+  "primary_sources": [
+    { "title": "Zhou Bronze Vessel with Inscription", "link": "link:Zhou_Bronze_Vessel" }
+  ],
+
+  "discussion_sentence_stems": [
+  "Bronze technology affected life and power by...",
+  "Dynasties and powerful families ruled for generations because...",
+  "The Mandate of Heaven was... and it explained the rise and fall of rulers by...",
+  "Looking at the bronze vessel and inscription, I notice... I think these objects showed authority by..."
+  ],
+
+  "DOL_prompt": "Describe how bronze, dynastic rule, or the Mandate of Heaven influenced ancient Chinese society. Give one example.",
+  "DOL_sentence_stem": "Bronze, dynastic rule, or the Mandate of Heaven influenced society by... For example, ..."
+  }
+]
