@@ -36,7 +36,14 @@
   max-height: 90vh;
   overflow-y: auto;
 }
-
+/* On small screens, make each card 100% wide */
+@media (max-width: 576px) {
+  .card-list .card {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
 /* Section header styling */
 .card .section-header {
   font-weight: bold;
