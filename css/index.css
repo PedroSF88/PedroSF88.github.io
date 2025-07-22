@@ -37,11 +37,25 @@
   overflow-y: auto;
 }
 /* On small screens, make each card 100% wide */
+/* Make cards fill the screen on small devices */
 @media (max-width: 576px) {
+  /* 1) Hide the sidebar so cards get full width */
+  #sidebar {
+    display: none;
+  }
+
+  /* 2) Ensure main content takes full width */
+  main {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* 3) Force each card to be exactly the viewport width */
   .card-list .card {
-    flex: 0 0 100% !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    flex: 0 0 100vw;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;    /* include padding in width */
   }
 }
 /* Section header styling */
