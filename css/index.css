@@ -1,153 +1,129 @@
-/* General Layout */
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #f5f7fa;
-  color: #222;
-}
-
-.layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-/* Sidebar */
+/* Sidebar fixed size */
 #sidebar {
-  width: 320px;
-  background: #e2ecf6;
-  padding: 1rem;
-  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  width: 240px;
+  flex: 0 0 240px;
+  max-width: 240px;
+  min-width: 240px;
+  background: #f8f9fa;
+  height: 100vh;
   overflow-y: auto;
 }
 
-#lessonView {
-  flex: 1;
-  padding: 2rem;
-  background: #ffffff;
-}
-
-/* Accordion Styles */
-.accordion {
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #ccc;
-}
-
-.accordion-btn {
-  width: 100%;
-  background: #336699;
-  color: white;
-  font-weight: bold;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 4px;
-  text-align: left;
-  cursor: pointer;
-  margin-bottom: 0.5rem;
-  transition: background 0.2s ease;
-}
-
-.accordion-btn:hover {
-  background: #2b578a;
-}
-
-.accordion-content {
-  display: none;
-  padding-left: 1rem;
-}
-
-.accordion.open .accordion-content {
-  display: block;
-}
-
-/* Topic and Lesson Buttons */
-.topic-btn {
-  display: block;
-  width: 100%;
-  background: #dde6f0;
-  color: #003366;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  margin: 0.25rem 0;
-  text-align: left;
-  cursor: pointer;
-}
-
-.lesson-buttons {
-  margin: 0.25rem 0 1rem 1rem;
+/* Horizontal snap‑scroll list of cards */
+.card-list {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 1rem;
+}
+.card-list::-webkit-scrollbar {
+  height: 6px;
+}
+.card-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
 }
 
-.lesson-btn {
-  background: #fff;
-  border: 1px solid #336699;
-  color: #003366;
+/* Cards size to content, capped */
+.card-list .card {
+  flex: 0 0 auto;
+  width: 80%;
+  max-width: 600px;
+  scroll-snap-align: start;
+  border-radius: .75rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Section header styling */
+.card .section-header {
   font-weight: bold;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
+  margin-bottom: .75rem;
+  padding: .5rem;
+  border-radius: .25rem;
+  color: #333;
 }
 
-.lesson-btn:hover {
-  background: #cce0f5;
+/* Background & header shade per section */
+.section-title {
+  background: #e3f2fd;
+}
+.section-title .section-header {
+  background: #bbdefb;
+  margin-top: 2rem; 
 }
 
-/* Lesson View Styles */
-.lesson-section {
+.section-title .section-content {
+  background: #e3f2fd;
+}
+
+.section-task {
+  font-style: italic;
+  margin-top: 5rem;
+}
+
+.center {
+  margin: auto;
+  width:80%;
+}
+
+.bottom {
+  margin: auto;
+  width:100%;
   margin-bottom: 2rem;
 }
 
-h2, h3 {
-  color: #003366;
-  margin-top: 1.25rem;
+.left {
+  text-align: left;
+  width:80%;
 }
 
-blockquote {
-  font-style: italic;
-  border-left: 4px solid #ccc;
-  padding-left: 1rem;
-  margin: 1rem 0;
-  color: #444;
+.section-objective {
+  background: #f1f8e9;
+}
+.section-objective .section-header {
+  background: #c8e6c9;
 }
 
-/* Vocab Grid */
-.vocab-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+.section-teks {
+  background: #fff3e0;
+}
+.section-teks .section-header {
+  background: #ffe0b2;
 }
 
-.vocab-grid button {
-  background: #e0f0ff;
-  border: 1px solid #90caff;
-  padding: 0.5rem 1rem;
-  text-align: center;
-  font-weight: bold;
-  color: #003366;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+.section-image {
+  background: #e8eaf6;
+}
+.section-image .section-header {
+  background: #c5cae9;
 }
 
-.vocab-grid button:hover {
-  background: #d0eaff;
+.section-vocab {
+  background: #fce4ec;
+}
+.section-vocab .section-header {
+  background: #f8bbd0;
 }
 
-.section-overview { background: #f0f8ff; }
-.section-image { background: #f9f9f9; }
-.section-hook { background: #eef7ee; }
-.section-vocab { background: #fff8e1; }
-.section-readings { background: #fcefe3; }
-.section-discussion { background: #eaf0ff; }
-.section-dol { background: #f5e1e1; }
-
-.lesson-section {
-  padding: 1rem 1.5rem;
-  border-radius: 6px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+.section-readings {
+  background: #e0f7fa;
+}
+.section-readings .section-header {
+  background: #b2ebf2;
 }
 
+.section-discussion {
+  background: #f3e5f5;
+}
+.section-discussion .section-header {
+  background: #e1bee7;
+}
+.section-DOL {
+  background: #c9e6fe;
+}
+.section-DOL .section-header {
+  background: #b7cef7;
+}
