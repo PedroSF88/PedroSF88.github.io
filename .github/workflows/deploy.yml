@@ -3,31 +3,34 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - master  # or main, depending on your branch name
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Pull down your code
       - uses: actions/checkout@v4
 
-      # Inject secrets into index.js by replacing placeholders
       - name: Inject Supabase Keys
         run: |
           sed -i "s|SUPABASE_URL_PLACEHOLDER|${{ secrets.SUPABASE_URL }}|g" js/index.js
           sed -i "s|SUPABASE_ANON_KEY_PLACEHOLDER|${{ secrets.SUPABASE_ANON_KEY }}|g" js/index.js
 
-      # Upload static files for Pages
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
   deploy:
+    # GitHub Pages requires a deployment environment to be set
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     needs: build
     permissions:
       pages: write
       id-token: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/deploy-pages@v4
+      - id: deployment
+        uses: actions/deploy-pages@v4
