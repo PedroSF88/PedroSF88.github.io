@@ -20,8 +20,10 @@
   // be defined in a separate script tag before this script runs. If they
   // aren't provided, the placeholders below will be used instead. Replace
   // these strings with your actual Supabase project URL and anonymous key.
-  const SUPABASE_URL = window.SUPABASE_URL || 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = "SUPABASE_URL_PLACEHOLDER";
+  const SUPABASE_ANON_KEY = "SUPABASE_ANON_KEY_PLACEHOLDER";
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // Ensure the Supabase client library is available. It is loaded via a CDN
   // script tag in index.html. If the library isn't present, notify the user.
