@@ -1,265 +1,378 @@
 ;(async function() {
-  // Load & nest by unit/topic
-  const lessons = await fetch('lessons/lessons.json').then(r => r.json());
-  const data = {};
-  lessons.forEach(l => {
-    data[l.unit_id]         ??= {};
-    data[l.unit_id][l.topic_id] ??= [];
-    data[l.unit_id][l.topic_id].push(l);
-  });
+  "use strict";
+  /**
+   * This script fetches curriculum data from a Supabase backend and renders it
+   * into a simple interactive lesson viewer. Each unit appears in the sidebar,
+   * clicking a unit reveals its topics, and selecting a topic displays the
+   * lesson outline defined in the `lesson_outline` JSON column of the
+   * `topic_teks` table. The viewer is designed to be flexible enough to
+   * accommodate the new lesson format described in the updated database
+   * schema.
+   *
+   * To connect to your own Supabase project you must provide a URL and
+   * anonymous key. You can do this by defining `window.SUPABASE_URL` and
+   * `window.SUPABASE_ANON_KEY` prior to loading this script, or by editing
+   * the placeholder values below. If these values are not set correctly the
+   * application will display an error message and no data will be loaded.
+   */
 
-  // Element refs
+  // Attempt to read Supabase credentials from global variables. These should
+  // be defined in a separate script tag before this script runs. If they
+  // aren't provided, the placeholders below will be used instead. Replace
+  // these strings with your actual Supabase project URL and anonymous key.
+  const SUPABASE_URL = window.SUPABASE_URL || 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+
+  // Ensure the Supabase client library is available. It is loaded via a CDN
+  // script tag in index.html. If the library isn't present, notify the user.
+  if (!window.supabase) {
+    console.error('Supabase client library not found. Make sure the script tag for @supabase/supabase-js is included.');
+    return;
+  }
+
+  // Initialize the Supabase client. This will throw if the URL or key are
+  // empty strings. If you see errors here, update the placeholders above.
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Grab DOM references up front for speed and clarity.
   const unitMenu   = document.getElementById('unitMenu');
   const topicMenu  = document.getElementById('topicMenu');
   const lessonMenu = document.getElementById('lessonMenu');
   const cardList   = document.getElementById('cardList');
 
+  /**
+   * Utility: remove all child nodes from the given elements. This is used to
+   * reset portions of the interface when switching between units or topics.
+   * @param  {...HTMLElement} els DOM elements to clear
+   */
+  function clear(...els) {
+    els.forEach(e => e && e.replaceChildren());
+  }
 
-  // Utility to clear areas
-  const clear = (...els) => els.forEach(e => e.replaceChildren());
+  /**
+   * Fetch units and topics from Supabase. Units are ordered by the
+   * `unit_number` field to ensure a stable ordering in the UI. Topics are
+   * fetched without any particular order; if you wish to order them you may
+   * add an `.order(...)` call here. When complete, the function calls
+   * `buildUnitMenu` to render the unit selector.
+   */
+  async function loadData() {
+    try {
+      // Fetch all curriculum units. The `unit_number` column allows you to
+      // control ordering; if absent the units will be displayed in the order
+      // returned by the database.
+      const { data: units, error: unitErr } = await supabase
+        .from('curriculum_units')
+        .select('*')
+        .order('unit_number', { ascending: true });
+      if (unitErr) throw unitErr;
 
-  // Build Unit buttons
-  Object.keys(data).forEach(u => {
-    const btn = document.createElement('button');
-    btn.textContent = u;
-    btn.className = 'btn btn-outline-primary w-100 mb-2';
-    btn.onclick = () => selectUnit(u);
-    unitMenu.append(btn);
-  });
+      // Fetch all topics. Each row in the `topic_teks` table represents a
+      // lesson within a unit and contains a JSON lesson outline along with
+      // associated TEKS and other metadata.
+      const { data: topics, error: topicErr } = await supabase
+        .from('topic_teks')
+        .select('*');
+      if (topicErr) throw topicErr;
 
-  function selectUnit(unit) {
-    clear(topicMenu, lessonMenu, cardList);
-    Object.entries(data[unit]).forEach(([t, arr]) => {
+      // Build a map of unit_id to { unit, topics: [] }. This makes it easy to
+      // traverse units and their associated topics later on.
+      const unitMap = {};
+      units.forEach(u => {
+        unitMap[u.id] = { unit: u, topics: [] };
+      });
+      topics.forEach(t => {
+        const container = unitMap[t.unit_id];
+        if (container) {
+          container.topics.push(t);
+        }
+      });
+
+      // Render the unit buttons in the sidebar.
+      buildUnitMenu(unitMap);
+    } catch (err) {
+      console.error('Error loading curriculum data:', err);
+      clear(cardList);
+      const errorMessage = document.createElement('p');
+      errorMessage.className = 'text-danger';
+      errorMessage.textContent = 'Failed to load lessons. Please check your Supabase configuration.';
+      cardList.append(errorMessage);
+    }
+  }
+
+  /**
+   * Build the unit selector. Each unit appears as a button; selecting a unit
+   * populates the topic list. The sidebar menus are cleared when a new unit
+   * is selected.
+   * @param {Object<string, {unit: Object, topics: Array}>} unitMap
+   */
+  function buildUnitMenu(unitMap) {
+    clear(unitMenu, topicMenu, lessonMenu, cardList);
+    Object.values(unitMap).forEach(({ unit, topics }) => {
       const btn = document.createElement('button');
-      btn.textContent = arr[0].topic_title;
+      btn.textContent = unit.unit_title || unit.id;
+      btn.className = 'btn btn-outline-primary w-100 mb-2';
+      btn.onclick = () => selectUnit(unit, topics);
+      unitMenu.append(btn);
+    });
+  }
+
+  /**
+   * When a unit is selected, populate the topic list. The old lesson list and
+   * card list are cleared to reflect the change. Each topic becomes a button
+   * that triggers the rendering of its lesson when clicked.
+   *
+   * @param {Object} unit The selected unit
+   * @param {Array} topics A list of topic records belonging to the unit
+   */
+  function selectUnit(unit, topics) {
+    clear(topicMenu, lessonMenu, cardList);
+    topics.forEach(topic => {
+      const btn = document.createElement('button');
+      btn.textContent = topic.topic_title || topic.id;
       btn.className = 'btn btn-outline-secondary w-100 mb-2';
-      btn.onclick = () => selectTopic(unit, t);
+      btn.onclick = () => renderLesson(topic);
       topicMenu.append(btn);
     });
   }
 
-  function selectTopic(unit, topicId) {
-    clear(lessonMenu, cardList);
-    data[unit][topicId].forEach(l => {
-      const btn = document.createElement('button');
-      btn.textContent = `${l.lesson_day ? ` ${l.lesson_title}` : ''}`;
-      btn.className = 'btn btn-outline-success w-100 mb-2';
-      btn.onclick = () => renderLesson(l);
-      lessonMenu.append(btn);
-    });
-  }
-
-  function renderLesson(l) {
+  /**
+   * Render a lesson given a topic record. The function parses the
+   * `lesson_outline` field, which may arrive as a string or a native JSON
+   * object, and then generates a series of cards corresponding to each
+   * segment. The first card shows the lesson title, objective, success
+   * criteria and TEKS. Subsequent cards reflect the lesson segments in
+   * `lesson_outline.lesson_segments`.
+   *
+   * Unknown segment types are displayed verbatim in a preformatted block to
+   * aid debugging new content structures.
+   *
+   * @param {Object} topic A record from the `topic_teks` table
+   */
+  function renderLesson(topic) {
     clear(cardList);
-
-    // Define each section card
-    const sections = [
-      {
-        cls:    'section-title',
-        header: `<br><h3>${l.lesson_title}</h3>`,
-        html:   `<div class=\"section-content\ center\"> <h3>${l.lesson_hook}</h3></div>
-                <div data-bs-toggle=\"collapse\" href=\"#TWPS_Col\" class=\"section-task\ section-header\"> &#129417; Task: Think, Write, Pair, Share: </div>
-                <div id=\"TWPS_Col\" class=\"collapse\ center\">
-                <div class=\"left\" p>   
-                <strong>Think</strong> about the question.
-                <br> <strong>Write</strong> down your ideas.
-                <br> <strong>Discuss</strong> your ideas with a partner.
-                <br> <strong>Share</strong> your group's ideas with the class.</p></div> </div> <div class="bottom">${l.lesson_id}</div>`
-      },
-      {
-        cls:    'section-objective',
-        header: `<br> Learning Objective`,
-        html:   `<p>${l.learning_objective}</p>
-                 <div class=\"section-header\">Success Criteria</div>
-                 <ul>${l.success_criteria.map(x => `<li>${x}</li>`).join('')}</ul>
-                 <div data-bs-toggle=\"collapse\" href=\"#LOSC_Col\" class=\"section-task\ section-header\"> &#128021; Task: Fill-in-the-blanks: </div>
-                 <div id=\"LOSC_Col\" class=\"collapse\ center\" p>
-                <strong>Read</strong> the contents above (LO and SC).
-                <br><strong>Find</strong> the missing words.
-                <br><strong>Write</strong> the correct words in the worksheets.</p>
-                </div>
-                 <div data-bs-toggle=\"collapse\" href=\"#teksCol\"class=\"section-header mt-3\" style=\"color: blue;\">TEKS</div>
-                 <div id=\"teksCol\" class=\"collapse\"><ul>${l.teks.map(x => `<li>${x}</li>`).join('')}</ul></div> <div class="bottom">${l.lesson_id}</div>`               
-      },
-      {
-        cls:    'section-image',
-        header: 'Image Analysis',
-        html:   `<img src=\"${l.image_url}\" class=\"img-fluid rounded\">
-                <div data-bs-toggle=\"collapse\" href=\"#img_Col\" class=\"section-task\ section-header\"> &#128025; Task: Describe the image: </div>
-                 <div id=\"img_Col\" class=\"collapse\ center\" p>
-                 <strong>Analyze</strong> the image above. Finish the following sentences:
-                 <br>
-                 <br>
-                <strong>I see...</strong> <br>*<i>Describe the image: WHO or WHAT do you see in it? <br>Point out the details.</i><br> 
-                <br><strong>I think...</strong> <br>*<i>Make Sense of it: What might it mean?</i>
-                </p></div>
-                <div class="bottom">${l.lesson_id}</div>`
-      },
-      {
-        cls:    'section-readings',
-        header: 'Reading 1',
-        html: ['reading_1']
-                  .filter(k => l[k])
-                  .map((k,i) => `<div class="mb-3">
-                             <div class=\"section-header\">
-                               <strong>${l[k].title}</strong> <br>
-                             </div>                             
-                             <div id="readingCol${i}">
-                               <p>${l[k].text}</p>
-                             </div>
-                              <div data-bs-toggle=\"collapse\" href=\"#read_1_Col\" class=\"section-task\ section-header\"> &#129412; Task: Fill-in-the-blanks: </div>
-                              <div id=\"read_1_Col\" class=\"collapse\ center\" p>
-                              <strong>Read</strong> the contents above (Reading 1).
-                              <br><strong>Find</strong> the missing words for the reading summary.
-                              <br><strong>Write</strong> the correct words in the worksheets.</p>
-                            </div>
-                           </div><div class="bottom">${l.lesson_id}</div>`).join('')
-      },
-      {
-        cls:    'section-vocab',
-        header: 'Vocabulary',
-        html:   (() => {
-          // Instructions and matching in same card
-        const task_one = ` <div class=\"section-header\"> &#128037; Task: Vocabulary Matching</div> 
-        <p><strong>Open</strong> each link and <strong>review</strong> each site. <strong> Select the vocabulary term from the dropdown that matches the link.</strong> Click <strong>Submit</strong> to check your answers.</p>`;
-
-        const task_two = ` <div class=\"section-header\">&#128051; Task: Definitions </div> <p><strong>Write</strong> a definition for each <strong>vocab</strong> based on the information from each site. <strong>Use at least three (3) of the vocab terms to describe the previous image.</strong> </p>`;
-
-          // Prepare the vocab terms with their original indices
-          const terms = l.vocab_list.map((v,i) => ({ term: v.term, idx: i }));
-          // Shuffle the terms array for the dropdowns
-          const shuffled = [...terms].sort(() => Math.random() - 0.5);
-
-          // Build a row for each link
-          const rows = l.vocab_list.map((v, linkIdx) => `
-            <li class="mb-3">
-              <strong>Link ${linkIdx + 1}</strong>
-              <button 
-                class="btn btn-sm btn-outline-primary ms-2 mb-2" 
-                onclick="window.open('${v.link}','_blank')"
-              >Open</button>
-              <select id="match-${linkIdx}" 
-                      class="form-select form-select-sm w-auto d-inline-block ms-3">
-                <option value="">– select term –</option>
-                ${shuffled.map(t => 
-                  `<option value="${t.idx}">${t.term}</option>`
-                ).join('')}
-              </select>
-
-              <div id="feedback-${linkIdx}" class="mt-1"></div>
-            </li>
-          `).join('');
-
-          return `
-            ${task_one}
-            <ul>${rows}</ul>
-            <button id="vocabSubmit" class="btn btn-primary btn-sm mt-3">Submit</button>
-            <div id="vocabScore" class="mt-2 fw-bold"></div>
-            ${task_two}
-            <div class="bottom">${l.lesson_id}</div>
-          `;
-        })()
-      },
-      {
-        cls:    'section-readings',
-        header: 'Reading 2',
-        html: ['reading_2']
-                  .filter(k => l[k])
-                  .map((k,i) => `<div class="mb-3">
-                             <div class=\"section-header\" >
-                               <strong>${l[k].title}</strong> <br>
-                             </div>                             
-                             <div id="readingCol${i}">
-                               <p>${l[k].text}</p>
-                             </div>
-                             <div data-bs-toggle=\"collapse\" href=\"#read_2_Col\" class=\"section-task\ section-header\"> &#129409; Task: Fill-in-the-blanks: </div>
-                              <div id=\"read_2_Col\" class=\"collapse\ center\" p>
-                              <strong>Read</strong> the contents above (Reading 2).
-                              <br><strong>Find</strong> the missing words for the reading summary.
-                              <br><strong>Write</strong> the correct words in the worksheets.</p>
-                            </div>
-                           </div> <div class="bottom">${l.lesson_id}</div>`).join('')
-      },
-      {
-        cls:    'section-discussion',
-        header: 'Discussion Questions',
-        html:   `<ul>${l.discussion_questions.map(q => `<li>${q}</li>`).join('')}</ul>                
-                <div data-bs-toggle=\"collapse\" href=\"#DQs_Col\" class=\"section-task\ section-header\"> &#129416; Task: Think, Write, Pair, Share: </div>                
-                  <div id=\"DQs_Col\" class=\"collapse\">
-                    <div class=\"left\ center\" p>   
-                      <strong>Think</strong> about the question.
-                      <br> <strong>Write</strong> down your ideas.
-                      <br> <strong>Discuss</strong> your ideas with a partner.
-                      <br> <strong>Share</strong> your group's ideas with the class.</p>
-                    </div>
-                    <div><a data-bs-toggle=\"collapse\" href=\"#DQhelp_Col\">Help</a>
-                    </div>
-                  </div>
-                  <div id=\"DQhelp_Col\" class=\"collapse\"><ul>${l.discussion_sentence_stems.map(x => `<li>${x}</li>`).join('')}</ul>
-                  </div> <div class="bottom">${l.lesson_id}</div>`
-
-      },
-      {
-        cls:    'section-DOL',
-        header: 'DOL/ Exit Ticket',
-        html:   `<p>${l.DOL_prompt}</p>
-                <div data-bs-toggle=\"collapse\" href=\"#DOLQ_Col\" class=\"section-task\ section-header\"> &#129421; Task: Answer the Question </div>                
-                  <div id=\"DOLQ_Col\" class=\"collapse\">
-                    <div class=\"left\ center\" p>   
-                      <strong>Think</strong> about the question.
-                      <br> <strong>Write</strong> down your ideas.
-                      <br> <strong>Turn in</strong> your assignment/ worksheet.</p>
-                    </div>
-                <a data-bs-toggle=\"collapse\" href=\"#DOLhelpCol\">Help</a>
-                <div id=\"DOLhelpCol\" class=\"collapse\"><p>${l.DOL_sentence_stem}</p></div> 
-                </div>
-                <div class="bottom">${l.lesson_id}</div>`
+    let outline = topic.lesson_outline;
+    if (!outline) {
+      const msg = document.createElement('p');
+      msg.textContent = 'No lesson data available for this topic.';
+      cardList.append(msg);
+      return;
+    }
+    // If the lesson outline is stored as a string, attempt to parse it.
+    if (typeof outline === 'string') {
+      try {
+        outline = JSON.parse(outline);
+      } catch (parseErr) {
+        console.error('Invalid lesson_outline JSON:', parseErr);
+        const msg = document.createElement('p');
+        msg.className = 'text-danger';
+        msg.textContent = 'This lesson contains invalid data and cannot be displayed.';
+        cardList.append(msg);
+        return;
       }
-    ];
+    }
 
-    // Append each as a card
+    // Build an array of section definitions. Each entry has a class, a header
+    // and HTML content. We'll iterate this array to create DOM nodes.
+    const sections = [];
+
+    // Title, objective and success criteria card. Also displays TEKS if
+    // available.
+    sections.push({
+      cls: 'section-title',
+      header: `<h3>${outline.lesson_title || topic.topic_title}</h3>`,
+      html: (() => {
+        let html = '';
+        if (outline.lesson_objective) {
+          html += `<p><strong>Objective:</strong> ${outline.lesson_objective}</p>`;
+        }
+        if (Array.isArray(outline.success_criteria) && outline.success_criteria.length) {
+          html += '<p><strong>Success Criteria:</strong></p><ul>';
+          outline.success_criteria.forEach(item => {
+            html += `<li>${item}</li>`;
+          });
+          html += '</ul>';
+        }
+        // Display TEKS if present. The matched_teks column may be JSON
+        // encoded or a plain array. We convert it to an array of strings.
+        let teksList = [];
+        if (Array.isArray(topic.matched_teks)) {
+          teksList = topic.matched_teks;
+        } else if (typeof topic.matched_teks === 'string') {
+          try {
+            const parsed = JSON.parse(topic.matched_teks);
+            if (Array.isArray(parsed)) teksList = parsed;
+          } catch (_) {
+            // not parseable; ignore
+          }
+        }
+        if (teksList.length) {
+          html += `<div class="section-header mt-3" style="color: blue; cursor: pointer;" data-bs-toggle="collapse" href="#teksCol">TEKS</div>`;
+          html += '<div id="teksCol" class="collapse"><ul>';
+          teksList.forEach(teks => {
+            html += `<li>${teks}</li>`;
+          });
+          html += '</ul></div>';
+        }
+        return html;
+      })()
+    });
+
+    // Vocabulary card. Show each term with its definition. The new lesson
+    // structure does not include external links like the previous version,
+    // instead it provides definitions directly.
+    if (Array.isArray(outline.vocabulary) && outline.vocabulary.length) {
+      const vocabHtml = '<ul>' + outline.vocabulary.map(v => `<li><strong>${v.term}:</strong> ${v.def}</li>`).join('') + '</ul>';
+      sections.push({
+        cls: 'section-vocab',
+        header: 'Vocabulary',
+        html: vocabHtml
+      });
+    }
+
+    // Generate a card for each lesson segment. Each segment is an object
+    // containing a single key (e.g., warm_up, image_analysis, reading_1). The
+    // content varies depending on the segment type; this switch assigns a
+    // header, class and body accordingly.
+    if (Array.isArray(outline.lesson_segments)) {
+      outline.lesson_segments.forEach((seg, idx) => {
+        const key = Object.keys(seg)[0];
+        const content = seg[key];
+        let header = '';
+        let html = '';
+        let cls = '';
+        switch (key) {
+          case 'warm_up':
+            header = 'Warm Up';
+            cls = 'section-discussion';
+            if (content.question) {
+              html += `<p>${content.question}</p>`;
+            }
+            if (content.instructions) {
+              html += `<p><em>${content.instructions}</em></p>`;
+            }
+            break;
+
+          case 'image_analysis':
+            header = 'Image Analysis';
+            cls = 'section-image';
+            // For each visual entry we display the description and image if
+            // available. Some properties of the object are not visuals (like
+            // instructions); we skip those.
+            Object.entries(content).forEach(([k, v]) => {
+              if (k.startsWith('visual_')) {
+                html += '<div class="mb-3">';
+                if (v.description) {
+                  html += `<p><strong>${v.type ? v.type.charAt(0).toUpperCase() + v.type.slice(1) : ''}</strong>: ${v.description}</p>`;
+                }
+                if (v.url_to_image && v.url_to_image !== '@image_placeholder') {
+                  html += `<img src="${v.url_to_image}" alt="${v.description || ''}" class="img-fluid rounded mb-2">`;
+                } else {
+                  html += '<div class="mb-2 p-2 border rounded text-muted text-center">Image unavailable</div>';
+                }
+                html += '</div>';
+              }
+            });
+            if (content.instructions) {
+              html += `<p><em>${content.instructions}</em></p>`;
+            }
+            break;
+
+          case 'reading_1':
+          case 'reading_2':
+          case 'reading_3':
+            header = content.title || key.replace('_', ' ').replace(/\b\w/g, s => s.toUpperCase());
+            cls = 'section-readings';
+            if (content.text) {
+              html += `<p>${content.text}</p>`;
+            }
+            if (content.instructions) {
+              html += `<p><em>${content.instructions}</em></p>`;
+            }
+            if (content.discussion_question) {
+              html += `<p><strong>Discussion Question:</strong> ${content.discussion_question}</p>`;
+            }
+            break;
+
+          case 'odd_one_out':
+            header = 'Odd One Out';
+            cls = 'section-image';
+            Object.entries(content).forEach(([k, v]) => {
+              if (k.startsWith('visual_')) {
+                html += '<div class="mb-3">';
+                if (v.description) {
+                  html += `<p><strong>${v.type ? v.type.charAt(0).toUpperCase() + v.type.slice(1) : ''}</strong>: ${v.description}</p>`;
+                }
+                if (v.url_to_image && v.url_to_image !== '@image_placeholder') {
+                  html += `<img src="${v.url_to_image}" alt="${v.description || ''}" class="img-fluid rounded mb-2">`;
+                } else {
+                  html += '<div class="mb-2 p-2 border rounded text-muted text-center">Image unavailable</div>';
+                }
+                html += '</div>';
+              }
+            });
+            if (content.instructions) {
+              html += `<p><em>${content.instructions}</em></p>`;
+            }
+            break;
+
+          case 'cause_effect':
+            header = 'Cause & Effect';
+            cls = 'section-image';
+            Object.entries(content).forEach(([k, v]) => {
+              if (k.startsWith('visual_')) {
+                html += '<div class="mb-3">';
+                if (v.description) {
+                  html += `<p><strong>${v.type ? v.type.charAt(0).toUpperCase() + v.type.slice(1) : ''}</strong>: ${v.description}</p>`;
+                }
+                if (v.url_to_image && v.url_to_image !== '@image_placeholder') {
+                  html += `<img src="${v.url_to_image}" alt="${v.description || ''}" class="img-fluid rounded mb-2">`;
+                } else {
+                  html += '<div class="mb-2 p-2 border rounded text-muted text-center">Image unavailable</div>';
+                }
+                html += '</div>';
+              }
+            });
+            if (content.instructions) {
+              html += `<p><em>${content.instructions}</em></p>`;
+            }
+            break;
+
+          case 'exit_ticket':
+            header = 'Exit Ticket';
+            cls = 'section-DOL';
+            if (content.prompt) {
+              html += `<p>${content.prompt}</p>`;
+            }
+            if (content.instructions) {
+              html += `<p><em>${content.instructions}</em></p>`;
+            }
+            break;
+
+          default:
+            // Unknown or unhandled segments are printed raw to help developers
+            // understand new structures. They appear in an 'objective'-styled
+            // card.
+            header = key.replace(/_/g, ' ').replace(/\b\w/g, s => s.toUpperCase());
+            cls = 'section-objective';
+            html = `<pre>${JSON.stringify(content, null, 2)}</pre>`;
+        }
+        sections.push({ cls, header, html });
+      });
+    }
+
+    // Finally, render the cards into the DOM. Each card uses Bootstrap's
+    // `card` class along with custom section classes defined in index.css to
+    // provide distinct coloring and spacing.
     sections.forEach(sec => {
       const card = document.createElement('div');
       card.className = `card p-3 ${sec.cls}`;
       card.innerHTML = `<div class="section-header">${sec.header}</div>${sec.html}`;
       cardList.append(card);
     });
-    // Attach submit handler (immediately after cardList.append(...) loops)
-      const submit = document.getElementById('vocabSubmit');
-      if (submit) {
-        submit.addEventListener('click', () => {
-          const total = l.vocab_list.length;
-          let correct = 0;
-
-          for (let i = 0; i < total; i++) {
-            const sel      = document.getElementById(`match-${i}`);
-            const fb       = document.getElementById(`feedback-${i}`);
-            const chosen   = parseInt(sel.value, 10);
-
-            // reset
-            sel.classList.remove('is-valid','is-invalid');
-            fb.textContent = '';
-
-            if (chosen === i) {
-              correct++;
-              sel.classList.add('is-valid');
-              fb.innerHTML = '<span class="text-success small">Correct!</span>';
-            } else {
-              sel.classList.add('is-invalid');
-              fb.innerHTML = '<span class="text-danger small">Incorrect</span>';
-            }
-          }
-
-          document.getElementById('vocabScore').textContent =
-            `You got ${correct} out of ${total} correct.`;
-        });
-      }
-
-    
-    // Populate modals
-    document.getElementById('stemsBody').innerHTML =
-      `<ul>${l.discussion_sentence_stems.map(s => `<li>${s}</li>`).join('')}</ul>`;
-    document.getElementById('dolStemsBody').innerHTML =
-      `<ul>${l.DOL_sentence_stem.map(s => `<li>${s}</li>`).join('')}</ul>`;
   }
+
+  // Kick off data loading when the script runs. Without awaiting this call
+  // here, the UI would not populate on page load.
+  loadData();
 })();

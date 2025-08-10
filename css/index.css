@@ -148,3 +148,86 @@
 .section-DOL .section-header {
   background: #b7cef7;
 }
+/* Chat Widget */
+#chatWidget {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  font-family: sans-serif;
+  z-index: 1000;
+}
+#chatToggle {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+  cursor: pointer;
+}
+#chatWindow {
+  background: white;
+  width: 300px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: .25rem;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,.1);
+  margin-top: .5rem;
+}
+#chatWindow.hidden { display: none; }
+#chatWindow header {
+  background: #f1f1f1;
+  padding: .5rem;
+  font-weight: bold;
+}
+#chatLog {
+  flex: 1;
+  padding: .5rem;
+  overflow-y: auto;
+}
+#chatForm {
+  display: flex;
+  border-top: 1px solid #eee;
+}
+#chatInput {
+  flex: 1;
+  border: none;
+  padding: .5rem;
+}
+#chatInput:focus { outline: none; }
+#chatForm button {
+  border: none;
+  background: #28a745;
+  color: white;
+  padding: 0 .75rem;
+  cursor: pointer;
+}
+/* Chat Widget */
+#chatWidget {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+#chatToggle {
+  background: #007bff; color: #fff;
+  border: none; padding: .5rem;
+  border-radius: .25rem; cursor: pointer;
+}
+#chatWindow.hidden { display: none; }
+#chatWindow {
+  display: flex; flex-direction: column;
+  background: #fff; border: 1px solid #ccc;
+  border-radius: .25rem; margin-top: .5rem;
+  height: 400px;
+}
+#loginPane { padding: 1rem; }
+.login-step { display: flex; gap: .5rem; margin-bottom: 1rem; }
+#loginPane form { display: flex; flex-direction: column; }
+.hidden { display: none !important; }
+#chatPane { display: flex; flex-direction: column; flex: 1; }
