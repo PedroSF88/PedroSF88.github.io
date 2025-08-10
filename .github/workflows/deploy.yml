@@ -15,8 +15,8 @@ jobs:
       # Inject secrets into index.js by replacing placeholders
       - name: Inject Supabase Keys
         run: |
-          sed -i "s|SUPABASE_URL_PLACEHOLDER|${{ secrets.SUPABASE_URL }}|g" index.js
-          sed -i "s|SUPABASE_ANON_KEY_PLACEHOLDER|${{ secrets.SUPABASE_ANON_KEY }}|g" index.js
+          sed -i "s|SUPABASE_URL_PLACEHOLDER|${{ secrets.SUPABASE_URL }}|g" js/index.js
+          sed -i "s|SUPABASE_ANON_KEY_PLACEHOLDER|${{ secrets.SUPABASE_ANON_KEY }}|g" js/index.js
 
       # Upload static files for Pages
       - uses: actions/upload-pages-artifact@v3
