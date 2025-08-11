@@ -5,8 +5,8 @@
    */
 
   // Read Supabase credentials from globals (index.html) with safe fallbacks
-  const SUPABASE_URL = secret.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
-  const SUPABASE_ANON_KEY = secret.SUPABASE_ANON_KEY || 'Your_API_Key';
+  const SUPABASE_URL = SUPABASE_URL_PLACEHOLDER|| 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+  const SUPABASE_ANON_KEY = SUPABASE_ANON_KEY_PLACEHOLDER || 'Your_API_Key';
 
   if (!window.supabase) {
     console.error('Supabase client library not found. Include @supabase/supabase-js before this script.');
