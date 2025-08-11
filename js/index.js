@@ -7,9 +7,9 @@
   // Read Supabase credentials from globals (index.html) with safe fallbacks
 
   import { createClient } from '@supabase/supabase-js'
-  const supabaseUrl = SUPABASE_URL_PLACEHOLDER
-  const supabaseKey = process.env.SUPABASE_ANON_KEY_PLACEHOLDER
-  const supabase = createClient(supabaseUrl, supabaseKey)
+  const SUPABASE_URL = window.SUPABASE_URL || 'https://your-default-project.supabase.co';
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'your-default-anon-key';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   if (!window.supabase) {
     console.error('Supabase client library not found. Include @supabase/supabase-js before this script.');
