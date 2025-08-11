@@ -13,9 +13,6 @@
     console.error('Supabase client library not found. Include @supabase/supabase-js before this script.');
     return;
   }
-
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
   // DOM refs
   const unitMenu   = document.getElementById('unitMenu');
   const topicMenu  = document.getElementById('topicMenu');
