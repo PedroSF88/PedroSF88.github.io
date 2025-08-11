@@ -7,40 +7,30 @@
   // Read Supabase credentials from globals (index.html) with safe fallbacks
   const SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
   const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
+
   if (!window.supabase) {
     console.error("Supabase client library not found. Include @supabase/supabase-js before this script.");
     return;
   }
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ---- DOM Refs ----
+  // DOM refs
   const unitMenu   = document.getElementById("unitMenu");
   const topicMenu  = document.getElementById("topicMenu");
   const lessonMenu = document.getElementById("lessonMenu");
   const cardList   = document.getElementById("cardList");
 
-  // ---- Visuals lookup: `${topic_id}|${visual_id}` -> link_to_image ----
+  // visuals lookup: `${topic_id}|${visual_id}` -> link_to_image
   let visualsMap = {};
 
-  // ---- Utils ----
-  function clear(...els) {
-    els.forEach((e) => e && e.replaceChildren());
-  }
-
+  // utils
+  function clear(...els) { els.forEach((e) => e && e.replaceChildren()); }
   function safeParseJSON(val) {
     if (!val) return null;
     if (typeof val === "object") return val;
-    if (typeof val === "string") {
-      try {
-        return JSON.parse(val);
-      } catch {
-        return null;
-      }
-    }
+    if (typeof val === "string") { try { return JSON.parse(val); } catch { return null; } }
     return null;
   }
-
-  // Normalize TEKS to an array of objects {teks, text, uuid}
   function normalizeTeks(matched) {
     if (!matched) return [];
     if (Array.isArray(matched)) return matched.filter((x) => x && typeof x === "object");
@@ -52,7 +42,6 @@
     }
     return [];
   }
-
   function renderTEKSList(items) {
     if (!items.length) return "";
     let html = '<ul class="mb-0">';
@@ -65,17 +54,13 @@
     html += "</ul>";
     return html;
   }
-
-  // Normalize discussion questions into [{level:'L1', text:'...'}, ...]
   function normalizeDiscussionQs(content) {
     if (!content) return [];
-    // Preferred fields used by your JSON: discussion_question_L1/L2/L3
     const viaFields = ["discussion_question_L1", "discussion_question_L2", "discussion_question_L3"]
       .map((k, i) => (content[k] ? { level: `L${i + 1}`, text: content[k] } : null))
       .filter(Boolean);
     if (viaFields.length) return viaFields;
 
-    // Or a combined property discussion_questions as obj/array/string
     const dq = content.discussion_questions ?? content.discussion_question;
     if (!dq) return [];
     if (typeof dq === "object" && !Array.isArray(dq)) {
@@ -92,7 +77,6 @@
     if (typeof dq === "string") return [{ level: "L1", text: dq }];
     return [];
   }
-
   function renderDiscussionQsList(items) {
     if (!items.length) return "";
     return `
@@ -104,17 +88,11 @@
       </div>
     `;
   }
-
   function shuffle(arr) {
     const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j]]; }
     return a;
   }
-
-  // Resolve image URL from visuals_map or the segment object
   function resolveImg(topic, visualKey, obj) {
     let url = null;
     if (topic && topic.id) url = visualsMap[`${topic.id}|${visualKey}`] || null;
@@ -122,13 +100,11 @@
     return url;
   }
 
-  // ---- Data load ----
+  // data load
   async function loadData() {
     try {
       const { data: units, error: unitErr } = await supabase
-        .from("curriculum_units")
-        .select("*")
-        .order("unit_number", { ascending: true });
+        .from("curriculum_units").select("*").order("unit_number", { ascending: true });
       if (unitErr) throw unitErr;
 
       const { data: topics, error: topicErr } = await supabase.from("topic_teks").select("*");
@@ -138,19 +114,13 @@
       if (visualsErr) throw visualsErr;
 
       visualsMap = {};
-      (visuals || []).forEach((v) => {
-        const key = `${v.topic_id}|${v.visual_id}`;
-        visualsMap[key] = v.link_to_image;
+      (visuals || []).forEach(v => {
+        visualsMap[`${v.topic_id}|${v.visual_id}`] = v.link_to_image;
       });
 
-      // Map units -> topics
       const unitMap = {};
-      units.forEach((u) => {
-        unitMap[u.id] = { unit: u, topics: [] };
-      });
-      topics.forEach((t) => {
-        if (unitMap[t.unit_id]) unitMap[t.unit_id].topics.push(t);
-      });
+      (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
+      (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
 
       buildUnitMenu(unitMap);
     } catch (err) {
@@ -163,7 +133,6 @@
     }
   }
 
-  // ---- UI build ----
   function buildUnitMenu(unitMap) {
     clear(unitMenu, topicMenu, lessonMenu, cardList);
     Object.values(unitMap).forEach(({ unit, topics }) => {
@@ -175,7 +144,7 @@
     });
   }
 
-  // Sort topics numerically by leading number in title (e.g., "1. ..." then "2. ...")
+  // sort topics by leading number in title
   function selectUnit(unit, topics) {
     clear(topicMenu, lessonMenu, cardList);
     const getNum = (t) => {
@@ -183,8 +152,7 @@
       return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
     };
     const sorted = (topics || []).slice().sort((a, b) => getNum(a) - getNum(b));
-
-    sorted.forEach((topic) => {
+    sorted.forEach(topic => {
       const btn = document.createElement("button");
       btn.textContent = topic.topic_title || topic.id;
       btn.className = "btn btn-outline-secondary w-100 mb-2";
@@ -196,7 +164,6 @@
   function renderLesson(topic) {
     clear(cardList);
 
-    // Parse outline
     let outline = topic.lesson_outline;
     if (!outline) {
       const msg = document.createElement("p");
@@ -204,14 +171,14 @@
       cardList.append(msg);
       return;
     }
-    outline = typeof outline === "string" ? safeParseJSON(outline) || {} : outline;
+    outline = typeof outline === "string" ? (safeParseJSON(outline) || {}) : outline;
 
     const sections = [];
 
-    // 1) Warm Up FIRST
+    // Warm Up first
     let warmUpPushed = false;
     if (Array.isArray(outline.lesson_segments)) {
-      const warmUpSeg = outline.lesson_segments.find((seg) => Object.keys(seg)[0] === "warm_up");
+      const warmUpSeg = outline.lesson_segments.find(seg => Object.keys(seg)[0] === "warm_up");
       if (warmUpSeg) {
         const content = warmUpSeg["warm_up"] || {};
         let html = "";
@@ -222,7 +189,7 @@
       }
     }
 
-    // 2) LO / SC / TEKS
+    // Title / Objective / SC / TEKS
     const teksItems = normalizeTeks(topic.matched_teks);
     const teksCollapseId = `teksCol_${topic.id || Math.random().toString(36).slice(2)}`;
     sections.push({
@@ -235,60 +202,46 @@
         }
         if (outline && Array.isArray(outline.success_criteria) && outline.success_criteria.length) {
           html += "<p><strong>Success Criteria:</strong></p><ul>";
-          outline.success_criteria.forEach((item) => {
-            html += `<li>${item}</li>`;
-          });
+          outline.success_criteria.forEach(item => { html += `<li>${item}</li>`; });
           html += "</ul>";
         }
         if (teksItems.length) {
-          html += `<div class="section-header mt-3" style="color: blue; cursor: pointer;" data-bs-toggle="collapse" href="#${teksCollapseId}">TEKS</div>`;
+          html += `<div class="section-header mt-3" style="color: #42EAFF; cursor: pointer;" data-bs-toggle="collapse" href="#${teksCollapseId}">TEKS</div>`;
           html += `<div id="${teksCollapseId}" class="collapse">${renderTEKSList(teksItems)}</div>`;
         }
         return html;
-      })(),
+      })()
     });
 
-    // 3) Vocabulary + Matching (table)
+    // Vocabulary + emoji matching
     const vocabList = Array.isArray(outline?.vocabulary) ? outline.vocabulary : [];
     if (vocabList.length) {
-      // Vocabulary + defs card
-      const vocabHtml =
-        "<ul>" + vocabList.map((v) => `<li><strong>${v.term}:</strong> ${v.def}</li>`).join("") + "</ul>";
+      const vocabHtml = '<ul>' + vocabList.map(v => `<li><strong>${v.term}:</strong> ${v.def}</li>`).join('') + '</ul>';
       sections.push({ cls: "section-vocab", header: "Vocabulary", html: vocabHtml });
 
-      // Emoji Matching table (every term once)
       const vocabEmojis = safeParseJSON(topic.vocab_emojis) || topic.vocab_emojis || null;
       if (vocabEmojis && Array.isArray(vocabEmojis) && vocabEmojis.length) {
         const byTerm = new Map();
-        vocabEmojis.forEach((entry) => {
+        vocabEmojis.forEach(entry => {
           if (!entry || !entry.term || !Array.isArray(entry.sets)) return;
           byTerm.set(entry.term, entry.sets);
         });
 
-        // One random set per vocab term that has sets
-        const selected = (vocabList || [])
-          .map((v) => {
-            const sets = byTerm.get(v.term);
-            if (!sets || !sets.length) return null;
-            const chosen = sets[Math.floor(Math.random() * sets.length)];
-            return {
-              term: v.term,
-              def: v.def,
-              emojis: chosen.emojis || [],
-              explanations: chosen.explanations || [],
-            };
-          })
-          .filter(Boolean);
+        // one random set PER vocab term (every term once, if sets exist)
+        const selected = (vocabList || []).map(v => {
+          const sets = byTerm.get(v.term);
+          if (!sets || !sets.length) return null;
+          const chosen = sets[Math.floor(Math.random() * sets.length)];
+          return { term: v.term, def: v.def, emojis: chosen.emojis || [], explanations: chosen.explanations || [] };
+        }).filter(Boolean);
 
         if (selected.length) {
           const matchCollapseId = `emojiMatch_${topic.id || Math.random().toString(36).slice(2)}`;
-          const termOptions = vocabList
-            .map((v) => `<option value="${encodeURIComponent(v.term)}">${v.term}</option>`)
-            .join("");
+          const termOptions = vocabList.map(v => `<option value="${encodeURIComponent(v.term)}">${v.term}</option>`).join('');
           const maxEmojis = selected.reduce((m, it) => Math.max(m, it.emojis.length), 0);
 
-          let gameHtml = "";
-          gameHtml += `<div class="section-header mt-3" style="color: blue; cursor: pointer;" data-bs-toggle="collapse" href="#${matchCollapseId}">Emoji Matching (${selected.length})</div>`;
+          let gameHtml = '';
+          gameHtml += `<div class="section-header mt-3" style="color: #42EAFF; cursor: pointer;" data-bs-toggle="collapse" href="#${matchCollapseId}">Emoji Matching (${selected.length})</div>`;
           gameHtml += `<div id="${matchCollapseId}" class="collapse">`;
           gameHtml += `<div class="table-responsive"><table class="table table-striped align-middle mb-2"><thead><tr>`;
           for (let c = 0; c < maxEmojis; c++) gameHtml += `<th scope="col">Emoji ${c + 1}</th>`;
@@ -296,28 +249,20 @@
           gameHtml += `</tr></thead><tbody>`;
 
           selected.forEach((item, idx) => {
-            const rowId = `${matchCollapseId}_row_${idx}`;
             const selectId = `${matchCollapseId}_select_${idx}`;
             const resultId = `${matchCollapseId}_result_${idx}`;
-            gameHtml += `<tr id="${rowId}">`;
-
-            // Emoji cells (pad to maxEmojis with blanks for alignment)
+            gameHtml += `<tr>`;
             for (let c = 0; c < maxEmojis; c++) {
               const e = item.emojis[c];
               gameHtml += `<td>${e ? `<span style="font-size:1.25rem;">${e}</span>` : ""}</td>`;
             }
-
-            // Dropdown of all terms
             gameHtml += `<td>
-                <select id="${selectId}" class="form-select">
-                  <option value="">— Select —</option>
-                  ${termOptions}
-                </select>
-              </td>`;
-
-            // Result cell (explanations appear here if correct)
+              <select id="${selectId}" class="form-select">
+                <option value="">— Select —</option>
+                ${termOptions}
+              </select>
+            </td>`;
             gameHtml += `<td id="${resultId}" class="small text-muted"></td>`;
-
             gameHtml += `</tr>`;
           });
 
@@ -325,36 +270,25 @@
           gameHtml += `<button id="${matchCollapseId}_check" class="btn btn-primary">Submit & Check</button>`;
           gameHtml += `</div>`;
 
-          sections.push({
-            cls: "section-vocab",
-            header: "Definitions",
-            html: gameHtml,
-          });
+          sections.push({ cls: "section-vocab", header: "Definitions", html: gameHtml });
 
-          // Attach behavior
           setTimeout(() => {
             const btnCheck = document.getElementById(`${matchCollapseId}_check`);
             if (!btnCheck) return;
             btnCheck.onclick = () => {
               selected.forEach((item, idx) => {
-                const selectId = `${matchCollapseId}_select_${idx}`;
-                const resultId = `${matchCollapseId}_result_${idx}`;
-                const selEl = document.getElementById(selectId);
-                const resEl = document.getElementById(resultId);
+                const selEl = document.getElementById(`${matchCollapseId}_select_${idx}`);
+                const resEl = document.getElementById(`${matchCollapseId}_result_${idx}`);
                 const chosen = selEl?.value || "";
                 const isRight = decodeURIComponent(chosen) === item.term;
-
-                if (resEl) {
-                  if (isRight) {
-                    const bullets = (item.explanations || []).map((x) => `<li>${x}</li>`).join("");
-                    resEl.innerHTML = `<div class="text-success"><strong>Correct!</strong></div>${
-                      bullets ? `<ul class="mb-0">${bullets}</ul>` : ""
-                    }`;
-                    resEl.classList.remove("text-muted");
-                  } else {
-                    resEl.textContent = "Try again";
-                    resEl.classList.add("text-muted");
-                  }
+                if (!resEl) return;
+                if (isRight) {
+                  const bullets = (item.explanations || []).map(x => `<li>${x}</li>`).join('');
+                  resEl.innerHTML = `<div class="text-success"><strong>Correct!</strong></div>${bullets ? `<ul class="mb-0">${bullets}</ul>` : ''}`;
+                  resEl.classList.remove("text-muted");
+                } else {
+                  resEl.textContent = "Try again";
+                  resEl.classList.add("text-muted");
                 }
               });
             };
@@ -363,23 +297,20 @@
       }
     }
 
-    // 4) Remaining segments (excluding warm_up)
+    // remaining segments (excluding warm_up already shown)
     if (Array.isArray(outline.lesson_segments)) {
-      outline.lesson_segments.forEach((seg) => {
+      outline.lesson_segments.forEach(seg => {
         const key = Object.keys(seg)[0];
         if (key === "warm_up" && warmUpPushed) return;
 
         const content = seg[key];
-        let header = "";
-        let html = "";
-        let cls = "";
+        let header = "", html = "", cls = "";
 
         const renderVisualBlock = (k, v) => {
           const desc = v.description || '';
           const imgUrl = resolveImg(topic, k, v);
           let s = '<div class="mb-3">';
           if (imgUrl) {
-            // overlay tooltip on hover
             s += `
               <div class="img-wrap" aria-label="${desc.replace(/"/g,'&quot;')}">
                 <img src="${imgUrl}" alt="${(v.type || 'visual') + (desc ? (': ' + desc) : '')}">
@@ -397,72 +328,50 @@
 
         switch (key) {
           case "image_analysis":
-            header = "Image Analysis";
-            cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => {
-              if (k.startsWith("visual_")) html += renderVisualBlock(k, v);
-            });
+            header = "Image Analysis"; cls = "section-image";
+            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
             if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
             break;
-
           case "compare_contrast":
-            header = "Compare & Contrast";
-            cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => {
-              if (k.startsWith("visual_")) html += renderVisualBlock(k, v);
-            });
+            header = "Compare & Contrast"; cls = "section-image";
+            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
             if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
             break;
-
           case "odd_one_out":
-            header = "Odd One Out";
-            cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => {
-              if (k.startsWith("visual_")) html += renderVisualBlock(k, v);
-            });
+            header = "Odd One Out"; cls = "section-image";
+            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
             if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
             break;
-
           case "cause_effect":
-            header = "Cause & Effect";
-            cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => {
-              if (k.startsWith("visual_")) html += renderVisualBlock(k, v);
-            });
+            header = "Cause & Effect"; cls = "section-image";
+            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
             if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
             break;
-
           case "reading_1":
           case "reading_2":
-          case "reading_3": {
-            header = content.title || key.replace("_", " ").replace(/\b\w/g, (s) => s.toUpperCase());
+          case "reading_3":
+            header = content.title || key.replace("_", " ").replace(/\b\w/g, s => s.toUpperCase());
             cls = "section-readings";
             if (content.text) html += `<p>${String(content.text).replace(/\n/g, "<br>")}</p>`;
             if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            const dqItems = normalizeDiscussionQs(content);
-            html += renderDiscussionQsList(dqItems);
+            html += renderDiscussionQsList(normalizeDiscussionQs(content));
             break;
-          }
-
           case "exit_ticket":
-            header = "Exit Ticket";
-            cls = "section-DOL";
+            header = "Exit Ticket"; cls = "section-DOL";
             if (content.prompt) html += `<p>${content.prompt}</p>`;
             if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
             break;
-
           default:
-            header = key.replace(/_/g, " ").replace(/\b\w/g, (s) => s.toUpperCase());
+            header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
             cls = "section-objective";
             html = `<pre>${JSON.stringify(content, null, 2)}</pre>`;
         }
-
         sections.push({ cls, header, html });
       });
     }
 
-    // Render cards
-    sections.forEach((sec) => {
+    // render cards
+    sections.forEach(sec => {
       const card = document.createElement("div");
       card.className = `card p-3 ${sec.cls}`;
       card.innerHTML = `<div class="section-header">${sec.header}</div>${sec.html}`;
