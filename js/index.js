@@ -375,14 +375,23 @@
         let cls = "";
 
         const renderVisualBlock = (k, v) => {
+          const desc = v.description || '';
+          const imgUrl = resolveImg(topic, k, v);
           let s = '<div class="mb-3">';
-          if (v.description) {
-            s += `<p><strong>${v.type ? v.type.charAt(0).toUpperCase() + v.type.slice(1) : ""}</strong>: ${v.description}</p>`;
+          if (imgUrl) {
+            // overlay tooltip on hover
+            s += `
+              <div class="img-wrap" aria-label="${desc.replace(/"/g,'&quot;')}">
+                <img src="${imgUrl}" alt="${(v.type || 'visual') + (desc ? (': ' + desc) : '')}">
+                <div class="img-caption">
+                  ${v.type ? `<strong>${v.type.charAt(0).toUpperCase()+v.type.slice(1)}:</strong> ` : ''}${desc}
+                </div>
+              </div>
+            `;
+          } else {
+            s += '<div class="mb-2 p-2 border rounded text-muted text-center">Image unavailable</div>';
           }
-          const img = resolveImg(topic, k, v);
-          if (img) s += `<img src="${img}" alt="${v.description || ""}" class="img-fluid rounded mb-2">`;
-          else s += '<div class="mb-2 p-2 border rounded text-muted text-center">Image unavailable</div>';
-          s += "</div>";
+          s += '</div>';
           return s;
         };
 
