@@ -5,8 +5,8 @@
    */
 
   // Read Supabase credentials from globals (index.html) with safe fallbacks
-  const SUPABASE_URL = window.SUPABASE_URL || 'https://your-default-project.supabase.co';
-  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'your-default-anon-key';
+  const SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   if (!window.supabase) {
