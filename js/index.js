@@ -258,7 +258,7 @@
 
           let gameHtml = '';
           gameHtml += `<div class="section-header mt-3";">(${selected.length})</div>`;
-          gameHtml += `<div class="table-responsive"><table class="table table-striped align-middle mb-2"><thead><tr>`;
+          gameHtml += `<div class="table-responsive"><table class="table emoji-matching-table table-striped align-middle mb-2"><thead><tr>`;
           for (let c = 0; c < maxEmojis; c++) gameHtml += `<th scope="col">Emoji ${c + 1}</th>`;
           gameHtml += `<th scope="col" style="min-width:220px;">Your Answer</th><th scope="col">Result</th>`;
           gameHtml += `</tr></thead><tbody>`;
@@ -269,7 +269,7 @@
             gameHtml += `<tr>`;
             for (let c = 0; c < maxEmojis; c++) {
               const e = item.emojis[c];
-              gameHtml += `<td>${e ? `<span style="font-size:2.5rem;">${e}</span>` : ""}</td>`;
+              gameHtml += `<td>${e ? `<span class=\"emoji-large\">${e}</span>` : ""}</td>`;
             }
             gameHtml += `<td>
               <select id="${selectId}" class="form-select">

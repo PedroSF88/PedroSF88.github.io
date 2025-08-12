@@ -222,6 +222,17 @@ body {
 .btn-outline-secondary { color: #148da7 !important; border-color: #148da7 !important; }
 
 /* ===== Emoji matching table ===== */
+.table.emoji-matching-table {
+  font-size: 0.95rem;
+}
+.table.emoji-matching-table td,
+.table.emoji-matching-table th {
+  font-size: 0.95rem;
+}
+.table.emoji-matching-table .emoji-large {
+  font-size: 2.5rem !important;
+  line-height: 1.1;
+}
 .table {
   color: inherit;                          /* inherit from card for contrast */
   --bs-table-striped-bg: rgba(0,0,0,0.05);
@@ -249,7 +260,16 @@ body {
   position: relative; display: inline-block; width: 100%; max-width: 100%;
   border-radius: 16px; overflow: hidden; border: 1px solid rgba(0,0,0,0.12);
 }
-.img-wrap img { display: block; width: 100%; height: auto; }
+.img-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 50vw;
+  max-height: 50vh;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: contain;
+}
 .img-caption {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: 12px 14px;
