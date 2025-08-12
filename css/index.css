@@ -1,3 +1,95 @@
+/* Selected topic title in sidebar */
+.selected-topic-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #f8efca;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  flex: 0 0 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  margin: 0 auto 1.5rem auto;
+  z-index: 10;
+}
+/* Sidebar collapse styles */
+.sidebar {
+  transition: width 0.3s cubic-bezier(.4,0,.2,1), min-width 0.3s cubic-bezier(.4,0,.2,1);
+  position: relative;
+  justify-content: center;
+  display: block;
+}
+.sidebar.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.sidebar.collapsed h5,
+.sidebar.collapsed #unitMenu,
+.sidebar.collapsed #topicMenu {
+  display: none;
+}
+.sidebar.collapsed .sidebar-toggle {
+  opacity: 1;
+  pointer-events: auto;
+  position: fixed;
+  left: 0.5rem;
+  top: 1.5rem;
+  z-index: 2000;
+}
+
+/* Hamburger button styles */
+.sidebar-toggle {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 1001;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar-toggle span,
+.sidebar-toggle span:before,
+.sidebar-toggle span:after {
+  display: block;
+  background: #fff;
+  height: 4px;
+  width: 28px;
+  border-radius: 2px;
+  position: absolute;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+.sidebar-toggle span {
+  position: relative;
+}
+.sidebar-toggle span:before {
+  content: '';
+  top: -10px;
+}
+.sidebar-toggle span:after {
+  content: '';
+  top: 10px;
+}
+/* Collapse toggle text color */
+.section-header[data-bs-toggle="collapse"] {
+  color: #004cff !important;
+}
 /* ===== Layout: single scrollbar (main only) ===== */
 html, body { height: 100%; }
 body {
@@ -5,40 +97,76 @@ body {
   height: 100vh;
   overflow: hidden;                 /* page itself doesn't scroll */
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
-  background: #0b1020;              /* keep dark backdrop */
+  background: #e7e0dc;              /* deep blue background */
 }
 
 /* App shell */
 .app { display: flex; height: 100%; width: 100%; }
 
-/* Sidebar (no own scrollbar) */
+/* Sidebar (scrollable) */
 .sidebar {
-  width: 320px; flex: 0 0 320px;
-  border-right: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(180deg, rgba(11,16,32,0.92) 0%, rgba(11,16,32,0.65) 100%);
-  color: #e6edf7; overflow: hidden; padding: 16px;
+  width: 320px;
+  flex: 0 0 320px;
+  border-right: 1px solid #51829b;
+  background: linear-gradient(180deg, #0f2530 0%, #041730 100%);
+  color: #ffffff; padding: 16px;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.sidebar {
+  max-height: 100vh;
 }
 .sidebar h5 { margin: 0 0 8px; font-size: 18px; letter-spacing: .2px; }
+.sidebar a, .sidebar .btn, .sidebar h5 {
+  color: #fff !important;
+  text-shadow: 0 1px 2px #04173044;
+}
 .sidebar .btn { font-size: 16px; }
 
 /* Main: the ONLY scrollbar */
-.main { flex: 1 1 auto; min-width: 0; height: 100%; overflow-y: auto; padding: 24px; }
+.main { flex: 1 1 auto; min-width: 0; height: 100%; overflow-y: auto; padding: 24px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.main::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
 
 /* ===== Type scale / spacing (same structure, a bit larger) ===== */
 .main, .sidebar { font-size: 18px; }
-.card p, .card li { font-size: 20px; line-height: 1.6; }
+.card p, .card li {
+  font-size: inherit;
+  line-height: inherit;
+}
 .card ul { padding-left: 1.2rem; }
 
 /* ===== Card base (keep your look, not gradients) ===== */
 .card {
-  color: #111;                         /* default; overridden per card color for contrast */
+  /* Responsive font size: grows with card, but never exceeds 2.2rem */
+  font-size: clamp(2rem, 2vw, 1.8rem);
+  line-height: 1.5;
+  color: #041730;                      /* deep blue for text */
   border-radius: 20px;
   box-shadow: 0 24px 50px rgba(0,0,0,0.28);
-  padding: 24px;
-  margin: 20px 0;
-  max-width: min(1200px, 100%); width: 100%;
-  aspect-ratio: 16 / 9;                /* slide feel */
-  display: flex; flex-direction: column; justify-content: flex-start;
+  padding: 3vw 4vw;
+  margin: 5vw 0;
+  max-width: 96vw;
+  width: 100%;
+  min-height: 70vh;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   border: 1px solid rgba(0,0,0,0.06);
 }
 
@@ -48,7 +176,7 @@ body {
   padding: 10px 14px;
   margin: -8px -8px 14px -8px;         /* make the strip edge-to-edge inside card */
   border-radius: 14px;
-  color: #fff;                         /* overridden per card if needed */
+  color: #f8efca;                      /* light yellow for section headers */
 }
 
 /* ===== New palette (card bg + darker header strip) =====
@@ -56,29 +184,30 @@ body {
    Adjust any hex pairs you want, but keep header ~15–20% darker.
 */
 
+
 /* Title / LO / SC / TEKS */
-.card.section-title              { background-color: #F4D35E; color: #1b1608; }
-.card.section-title .section-header { background-color: #D7B94E; }
+.card.section-title              { background-color: #ca6b2c; color: #f8efca; }
+.card.section-title .section-header { background-color: #c65412; color: #f8efca; }
 
 /* Warm Up / Discussion */
-.card.section-discussion         { background-color: #EE964B; color: #1f1209; }
-.card.section-discussion .section-header { background-color: #D58341; }
+.card.section-discussion         { background-color: #0b5b84; color: #f8efca; }
+.card.section-discussion .section-header { background-color: #073a5a; color: #f8efca; }
 
 /* Vocabulary */
-.card.section-vocab              { background-color: #99C1DE; color: #0f2432; }
-.card.section-vocab .section-header { background-color: #7EAED0; }
+.card.section-vocab              { background-color: #148da7; color: #f8efca; }
+.card.section-vocab .section-header { background-color: #0b5b84; color: #f8efca; }
 
 /* Readings */
-.card.section-readings           { background-color: #5DADE2; color: #071823; }
-.card.section-readings .section-header { background-color: #4A8CC3; }
+.card.section-readings           { background-color: #f8efca; color: #041730; }
+.card.section-readings .section-header { background-color: #f6d88a; color: #041730; }
 
 /* Image-based activities (image_analysis / compare_contrast / odd_one_out / cause_effect) */
-.card.section-image              { background-color: #4C956C; color: #07140d; }
-.card.section-image .section-header { background-color: #3E7C59; }
+.card.section-image              { background-color: #eb9c43; color: #041730; }
+.card.section-image .section-header { background-color: #e28514; color: #f8efca; }
 
 /* Exit Ticket / DOL */
-.card.section-DOL                { background-color: #F95738; color: #2a0a04; }
-.card.section-DOL .section-header { background-color: #D1482E; }
+.card.section-DOL                { background-color: #f4472e; color: #f8efca; }
+.card.section-DOL .section-header { background-color: #a62a1a; color: #f8efca; }
 
 /* Ensure links inside bright cards stay readable */
 .card a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
@@ -86,8 +215,11 @@ body {
 /* ===== Buttons (keep Bootstrap look but tune colors a bit) ===== */
 .btn { border-radius: 14px !important; padding: 10px 14px !important; font-size: 16px !important; }
 .btn-primary { background: #4A8CC3 !important; border-color: #4A8CC3 !important; }
+.btn-primary { background: #148da7 !important; border-color: #148da7 !important; color: #f8efca !important; }
 .btn-outline-primary { color: #0b1020 !important; border-color: #0b1020 !important; }
+.btn-outline-primary { color: #0b5b84 !important; border-color: #0b5b84 !important; }
 .btn-outline-secondary { color: #0b1020 !important; border-color: rgba(0,0,0,0.25) !important; }
+.btn-outline-secondary { color: #148da7 !important; border-color: #148da7 !important; }
 
 /* ===== Emoji matching table ===== */
 .table {
@@ -98,6 +230,12 @@ body {
 }
 .table th { color: rgba(0,0,0,0.7); font-weight: 700; }
 .table td { vertical-align: middle; }
+
+/* Ensure all borders are visible for emoji matching table */
+.table, .table th, .table td {
+  border: 1px solid rgba(0,0,0,0.32) !important;
+  border-collapse: collapse;
+}
 
 /* Selects look consistent across card colors */
 .form-select {

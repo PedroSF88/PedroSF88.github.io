@@ -17,7 +17,6 @@
   // DOM refs
   const unitMenu   = document.getElementById("unitMenu");
   const topicMenu  = document.getElementById("topicMenu");
-  const lessonMenu = document.getElementById("lessonMenu");
   const cardList   = document.getElementById("cardList");
 
   // visuals lookup: `${topic_id}|${visual_id}` -> link_to_image
@@ -79,12 +78,15 @@
   }
   function renderDiscussionQsList(items) {
     if (!items.length) return "";
+    const dqCollapseId = `discussionQs_${Math.random().toString(36).slice(2)}`;
     return `
       <div class="mt-2">
-        <p class="mb-1"><strong>Discussion Questions</strong></p>
-        <ul class="mb-0">
-          ${items.map((it) => `<li><span class="badge bg-secondary me-2">${it.level}</span>${it.text}</li>`).join("")}
-        </ul>
+        <div class="section-header mt-3" style="color: #42EAFF; cursor: pointer;" data-bs-toggle="collapse" href="#${dqCollapseId}">Discussion Questions</div>
+        <div id="${dqCollapseId}" class="collapse">
+          <ul class="mb-0">
+            ${items.map((it) => `<li><span class="badge bg-secondary me-2">${it.level}</span>${it.text}</li>`).join("")}
+          </ul>
+        </div>
       </div>
     `;
   }
@@ -134,7 +136,7 @@
   }
 
   function buildUnitMenu(unitMap) {
-    clear(unitMenu, topicMenu, lessonMenu, cardList);
+    clear(unitMenu, topicMenu, cardList);
     Object.values(unitMap).forEach(({ unit, topics }) => {
       const btn = document.createElement("button");
       btn.textContent = unit.unit_title || unit.id;
@@ -146,7 +148,7 @@
 
   // sort topics by leading number in title
   function selectUnit(unit, topics) {
-    clear(topicMenu, lessonMenu, cardList);
+    clear(topicMenu, cardList);
     const getNum = (t) => {
       const m = String(t.topic_title || "").match(/^\s*(\d+)/);
       return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
@@ -156,13 +158,28 @@
       const btn = document.createElement("button");
       btn.textContent = topic.topic_title || topic.id;
       btn.className = "btn btn-outline-secondary w-100 mb-2";
-      btn.onclick = () => renderLesson(topic);
+      btn.onclick = () => {
+        renderLesson(topic);
+        // Collapse sidebar and show topic title, hide menu
+        const sidebar = document.querySelector('.sidebar');
+        const topicTitle = document.getElementById('selectedTopicTitle');
+        sidebar.classList.add('collapsed');
+        topicTitle.style.display = '';
+        document.getElementById('unitMenu').style.display = 'none';
+        document.getElementById('topicMenu').style.display = 'none';
+        document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
+      };
       topicMenu.append(btn);
     });
   }
 
   function renderLesson(topic) {
     clear(cardList);
+    // Set selected topic title in sidebar
+    const selectedTopicTitle = document.getElementById('selectedTopicTitle');
+    if (selectedTopicTitle) {
+      selectedTopicTitle.textContent = topic.topic_title || '';
+    }
 
     let outline = topic.lesson_outline;
     if (!outline) {
@@ -236,25 +253,23 @@
         }).filter(Boolean);
 
         if (selected.length) {
-          const matchCollapseId = `emojiMatch_${topic.id || Math.random().toString(36).slice(2)}`;
           const termOptions = vocabList.map(v => `<option value="${encodeURIComponent(v.term)}">${v.term}</option>`).join('');
           const maxEmojis = selected.reduce((m, it) => Math.max(m, it.emojis.length), 0);
 
           let gameHtml = '';
-          gameHtml += `<div class="section-header mt-3" style="color: #42EAFF; cursor: pointer;" data-bs-toggle="collapse" href="#${matchCollapseId}">Emoji Matching (${selected.length})</div>`;
-          gameHtml += `<div id="${matchCollapseId}" class="collapse">`;
+          gameHtml += `<div class="section-header mt-3";">(${selected.length})</div>`;
           gameHtml += `<div class="table-responsive"><table class="table table-striped align-middle mb-2"><thead><tr>`;
           for (let c = 0; c < maxEmojis; c++) gameHtml += `<th scope="col">Emoji ${c + 1}</th>`;
           gameHtml += `<th scope="col" style="min-width:220px;">Your Answer</th><th scope="col">Result</th>`;
           gameHtml += `</tr></thead><tbody>`;
 
           selected.forEach((item, idx) => {
-            const selectId = `${matchCollapseId}_select_${idx}`;
-            const resultId = `${matchCollapseId}_result_${idx}`;
+            const selectId = `emojiMatch_select_${idx}`;
+            const resultId = `emojiMatch_result_${idx}`;
             gameHtml += `<tr>`;
             for (let c = 0; c < maxEmojis; c++) {
               const e = item.emojis[c];
-              gameHtml += `<td>${e ? `<span style="font-size:1.25rem;">${e}</span>` : ""}</td>`;
+              gameHtml += `<td>${e ? `<span style="font-size:2.5rem;">${e}</span>` : ""}</td>`;
             }
             gameHtml += `<td>
               <select id="${selectId}" class="form-select">
@@ -267,18 +282,17 @@
           });
 
           gameHtml += `</tbody></table></div>`;
-          gameHtml += `<button id="${matchCollapseId}_check" class="btn btn-primary">Submit & Check</button>`;
-          gameHtml += `</div>`;
+          gameHtml += `<button id="emojiMatch_check" class="btn btn-primary">Submit & Check</button>`;
 
-          sections.push({ cls: "section-vocab", header: "Definitions", html: gameHtml });
+          sections.push({ cls: "section-vocab", header: "Emoji Matching", html: gameHtml });
 
           setTimeout(() => {
-            const btnCheck = document.getElementById(`${matchCollapseId}_check`);
+            const btnCheck = document.getElementById(`emojiMatch_check`);
             if (!btnCheck) return;
             btnCheck.onclick = () => {
               selected.forEach((item, idx) => {
-                const selEl = document.getElementById(`${matchCollapseId}_select_${idx}`);
-                const resEl = document.getElementById(`${matchCollapseId}_result_${idx}`);
+                const selEl = document.getElementById(`emojiMatch_select_${idx}`);
+                const resEl = document.getElementById(`emojiMatch_result_${idx}`);
                 const chosen = selEl?.value || "";
                 const isRight = decodeURIComponent(chosen) === item.term;
                 if (!resEl) return;

@@ -10,12 +10,14 @@
 <body>
   <div class="app">
     <aside class="sidebar">
+  <div id="selectedTopicTitle" class="selected-topic-title mb-3"></div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <span></span>
+      </button>
       <h5>Units</h5>
       <div id="unitMenu" class="mb-4"></div>
       <h5>Topics</h5>
       <div id="topicMenu" class="mb-4"></div>
-      <h6>Lessons</h6>
-      <div id="lessonMenu"></div>
     </aside>
     <div class="main">
       <div id="cardList"></div>
@@ -28,5 +30,26 @@
     window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
   </script>
   <script src="js/index.js"></script>
+</body>
+<script>
+  const sidebar = document.querySelector('.sidebar');
+  const toggleBtn = document.getElementById('sidebarToggle');
+  const topicTitle = document.getElementById('selectedTopicTitle');
+  toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    // When sidebar is collapsed, show the topic title and hide the menu
+    if (sidebar.classList.contains('collapsed')) {
+      topicTitle.style.display = '';
+      document.getElementById('unitMenu').style.display = 'none';
+      document.getElementById('topicMenu').style.display = 'none';
+      document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
+    } else {
+      topicTitle.style.display = 'none';
+      document.getElementById('unitMenu').style.display = '';
+      document.getElementById('topicMenu').style.display = '';
+      document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = '');
+    }
+  });
+</script>
 </body>
 </html>
