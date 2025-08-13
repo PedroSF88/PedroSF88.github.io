@@ -132,8 +132,9 @@
       visualsMap = {};
       (visuals || []).forEach(v => {
         // Store links using the same key format used in lesson data
-        const vKey = `visual_${v.visual_id}`;
-        visualsMap[`${v.topic_id}|${vKey}`] = v.link_to_image;
+        const link = v.link_to_image || v.url_to_image;
+        if (!link || link === "@image_placeholder") return;
+        visualsMap[`${v.topic_id}|visual_${v.visual_id}`] = link;
       });
 
       const unitMap = {};
@@ -194,8 +195,9 @@
         console.error('Failed to load visuals:', visualsErr.message);
       } else {
         (visuals || []).forEach(v => {
-          const vKey = `visual_${v.visual_id}`;
-          visualsMap[`${v.topic_id}|${vKey}`] = v.link_to_image;
+          const link = v.link_to_image || v.url_to_image;
+          if (!link || link === "@image_placeholder") return;
+          visualsMap[`${v.topic_id}|visual_${v.visual_id}`] = link;
         });
       }
     }
