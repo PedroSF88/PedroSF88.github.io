@@ -98,8 +98,21 @@
   }
   function resolveImg(topic, visualKey, obj) {
     let url = null;
-    if (topic && topic.id) url = visualsMap[`${topic.id}|${visualKey}`] || null;
-    if (!url && obj && obj.url_to_image && obj.url_to_image !== "@image_placeholder") url = obj.url_to_image;
+    if (topic && topic.id) {
+      // visuals are stored in the lookup with keys like `${topic.id}|visual_1`
+      // but some DB rows may only store the numeric id, so try both
+      url = visualsMap[`${topic.id}|${visualKey}`]
+        || visualsMap[`${topic.id}|${String(visualKey).replace(/^visual_/, '')}`]
+        || null;
+    }
+    if (!url && obj) {
+      // Support both `link_to_image` (new field) and `url_to_image` (legacy)
+      if (obj.link_to_image && obj.link_to_image !== "@image_placeholder") {
+        url = obj.link_to_image;
+      } else if (obj.url_to_image && obj.url_to_image !== "@image_placeholder") {
+        url = obj.url_to_image;
+      }
+    }
     return url;
   }
 
@@ -118,7 +131,9 @@
 
       visualsMap = {};
       (visuals || []).forEach(v => {
-        visualsMap[`${v.topic_id}|${v.visual_id}`] = v.link_to_image;
+        // Store links using the same key format used in lesson data
+        const vKey = `visual_${v.visual_id}`;
+        visualsMap[`${v.topic_id}|${vKey}`] = v.link_to_image;
       });
 
       const unitMap = {};
@@ -169,6 +184,20 @@
       p.textContent = 'Failed to load topics: ' + topicErr.message;
       cardList.append(p);
       return { units, topics: [] };
+    }
+    // Fetch visuals tied to the topics and populate visualsMap for image lookup
+    const topicIds = (topics || []).map(t => t.id);
+    visualsMap = {};
+    if (topicIds.length) {
+      const { data: visuals, error: visualsErr } = await supabase.from('visuals_data').select('*').in('topic_id', topicIds);
+      if (visualsErr) {
+        console.error('Failed to load visuals:', visualsErr.message);
+      } else {
+        (visuals || []).forEach(v => {
+          const vKey = `visual_${v.visual_id}`;
+          visualsMap[`${v.topic_id}|${vKey}`] = v.link_to_image;
+        });
+      }
     }
     return { units, topics };
   }
