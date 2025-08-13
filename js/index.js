@@ -113,7 +113,8 @@
         url = obj.url_to_image;
       }
     }
-    return url;
+    // Encode spaces and other URI components so that image links remain valid
+    return url ? encodeURI(url) : url;
   }
 
   // data load
