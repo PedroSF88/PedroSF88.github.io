@@ -502,8 +502,11 @@
     });
   }
 
-  // Initial load
+  // Initial load: show content-area buttons if available, otherwise load data directly
   const contentAreas = await fetchContentAreas();
-  renderContentAreaButtons(contentAreas);
-  // Do not call loadData() here, only load units/topics after content area is selected
+  if (contentAreas.length) {
+    renderContentAreaButtons(contentAreas);
+  } else {
+    await loadData();
+  }
 })();
