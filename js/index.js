@@ -113,6 +113,16 @@
         url = obj.url_to_image;
       }
     }
+    // Encode any unsafe characters in the URL's path so that images load reliably
+    if (url) {
+      try {
+        const u = new URL(url, window.location.href);
+        u.pathname = u.pathname.split('/').map(encodeURIComponent).join('/');
+        return u.toString();
+      } catch {
+        return encodeURI(url);
+      }
+    }
     return url;
   }
 
