@@ -113,9 +113,26 @@
         url = obj.url_to_image;
       }
     }
-    // Encode spaces and other URI components so that image links remain valid
-    return url ? encodeURI(url) : url;
-  }
+    // Encode any unsafe characters in the URL's path so that images load reliably
+    if (url) {
+      try {
+        const u = new URL(url, window.location.href);
+        // Avoid double-encoding: decode each segment first, then encode it
+        u.pathname = u.pathname
+          .split('/')
+          .map(seg => encodeURIComponent(decodeURIComponent(seg)))
+          .join('/');
+        return u.toString(); // preserves query and hash
+      } catch {
+        // Fallback: try not to double-encode whole URL
+        try {
+          return encodeURI(decodeURI(url));
+        } catch {
+          return encodeURI(url);
+        }
+      }
+    }
+    return url;
 
   // data load
   async function loadData() {
