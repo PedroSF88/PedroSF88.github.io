@@ -117,14 +117,22 @@
     if (url) {
       try {
         const u = new URL(url, window.location.href);
-        u.pathname = u.pathname.split('/').map(encodeURIComponent).join('/');
-        return u.toString();
+        // Avoid double-encoding: decode each segment first, then encode it
+        u.pathname = u.pathname
+          .split('/')
+          .map(seg => encodeURIComponent(decodeURIComponent(seg)))
+          .join('/');
+        return u.toString(); // preserves query and hash
       } catch {
-        return encodeURI(url);
+        // Fallback: try not to double-encode whole URL
+        try {
+          return encodeURI(decodeURI(url));
+        } catch {
+          return encodeURI(url);
+        }
       }
     }
     return url;
-  }
 
   // data load
   async function loadData() {
