@@ -10,16 +10,18 @@
 <body>
   <div class="app">
     <aside class="sidebar">
-  <div id="selectedTopicTitle" class="selected-topic-title mb-3"></div>
+      <div id="selectedTopicTitle" class="selected-topic-title mb-3"></div>
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
         <span></span>
       </button>
+      <!-- Content area buttons will be rendered in main, not here -->
       <h5>Units</h5>
       <div id="unitMenu" class="mb-4"></div>
       <h5>Topics</h5>
       <div id="topicMenu" class="mb-4"></div>
     </aside>
     <div class="main">
+      <div id="contentAreaMenu"></div>
       <div id="cardList"></div>
     </div>
   </div>

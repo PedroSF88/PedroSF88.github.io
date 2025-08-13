@@ -18,6 +18,7 @@
   const unitMenu   = document.getElementById("unitMenu");
   const topicMenu  = document.getElementById("topicMenu");
   const cardList   = document.getElementById("cardList");
+  const contentAreaMenu = document.getElementById("contentAreaMenu");
 
   // visuals lookup: `${topic_id}|${visual_id}` -> link_to_image
   let visualsMap = {};
@@ -133,6 +134,65 @@
       p.textContent = "Failed to load lessons. Please check your Supabase configuration.";
       cardList.append(p);
     }
+  }
+
+  async function fetchContentAreas() {
+    const { data, error } = await supabase.from('curriculum_units').select('content_area').neq('content_area', null).order('content_area', { ascending: true });
+    if (error) {
+      clear(unitMenu, topicMenu, cardList);
+      const p = document.createElement('p');
+      p.className = 'text-danger';
+      p.textContent = 'Failed to load content areas: ' + error.message;
+      cardList.append(p);
+      return [];
+    }
+    // Unique content areas
+    const unique = Array.from(new Set((data || []).map(u => u.content_area))).filter(Boolean);
+    return unique;
+  }
+
+  async function fetchUnitsAndTopicsByContentArea(contentArea) {
+    const { data: units, error: unitErr } = await supabase.from('curriculum_units').select('*').eq('content_area', contentArea).order('unit_number', { ascending: true });
+    if (unitErr) {
+      clear(unitMenu, topicMenu, cardList);
+      const p = document.createElement('p');
+      p.className = 'text-danger';
+      p.textContent = 'Failed to load units: ' + unitErr.message;
+      cardList.append(p);
+      return { units: [], topics: [] };
+    }
+    const { data: topics, error: topicErr } = await supabase.from('topic_teks').select('*').in('unit_id', units.map(u => u.id));
+    if (topicErr) {
+      clear(unitMenu, topicMenu, cardList);
+      const p = document.createElement('p');
+      p.className = 'text-danger';
+      p.textContent = 'Failed to load topics: ' + topicErr.message;
+      cardList.append(p);
+      return { units, topics: [] };
+    }
+    return { units, topics };
+  }
+
+  function renderContentAreaButtons(contentAreas) {
+    // Render in main area, not sidebar
+    let html = '<div class="mb-3">';
+    contentAreas.forEach(area => {
+      html += `<button class='btn btn-outline-dark me-2 mb-2' data-area='${area}'>${area}</button>`;
+    });
+    html += '</div>';
+    contentAreaMenu.innerHTML = html;
+    contentAreaMenu.querySelectorAll('button[data-area]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const area = btn.getAttribute('data-area');
+        // Hide content area buttons after selection
+        contentAreaMenu.innerHTML = '';
+        const { units, topics } = await fetchUnitsAndTopicsByContentArea(area);
+        const unitMap = {};
+        (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
+        (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
+        buildUnitMenu(unitMap);
+      });
+    });
   }
 
   function buildUnitMenu(unitMap) {
@@ -393,5 +453,8 @@
     });
   }
 
-  loadData();
+  // Initial load
+  const contentAreas = await fetchContentAreas();
+  renderContentAreaButtons(contentAreas);
+  // Do not call loadData() here, only load units/topics after content area is selected
 })();
