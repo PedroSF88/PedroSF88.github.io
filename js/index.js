@@ -18,7 +18,6 @@
   const unitMenu   = document.getElementById("unitMenu");
   const topicMenu  = document.getElementById("topicMenu");
   const cardList   = document.getElementById("cardList");
-  const contentAreaMenu = document.getElementById("contentAreaMenu");
 
   // visuals lookup: `${topic_id}|${visual_id}` -> link_to_image
   let visualsMap = {};
@@ -135,18 +134,24 @@
     return url;
 
   // data load
-  async function loadData() {
+  // Update loadData to add debug output
+  async function loadData(requestId) {
     try {
+      console.log('Loading data for requestId:', requestId);
       const { data: units, error: unitErr } = await supabase
-        .from("curriculum_units").select("*").order("unit_number", { ascending: true });
+        .from('curriculum_units').select('*').eq('request_id', requestId).order('unit_number', { ascending: true });
+      console.log('Units:', units, 'Error:', unitErr);
       if (unitErr) throw unitErr;
-
-      const { data: topics, error: topicErr } = await supabase.from("topic_teks").select("*");
+      const unitIds = (units || []).map(u => u.id);
+      const { data: topics, error: topicErr } = await supabase
+        .from('topic_teks').select('*').in('unit_id', unitIds);
+      console.log('Topics:', topics, 'Error:', topicErr);
       if (topicErr) throw topicErr;
-
-      const { data: visuals, error: visualsErr } = await supabase.from("visuals_data").select("*");
+      const topicIds = (topics || []).map(t => t.id);
+      const { data: visuals, error: visualsErr } = await supabase
+        .from('visuals_data').select('*').in('topic_id', topicIds);
+      console.log('Visuals:', visuals, 'Error:', visualsErr);
       if (visualsErr) throw visualsErr;
-
       visualsMap = {};
       (visuals || []).forEach(v => {
         // Store links using the same key format used in lesson data
@@ -154,56 +159,50 @@
         if (!link || link === "@image_placeholder") return;
         visualsMap[`${v.topic_id}|visual_${v.visual_id}`] = link;
       });
-
       const unitMap = {};
       (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
       (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
-
       buildUnitMenu(unitMap);
+      // Remove any error message if present
+      if (cardList.firstChild && cardList.firstChild.classList && cardList.firstChild.classList.contains('text-danger')) {
+        cardList.innerHTML = '';
+      }
     } catch (err) {
-      console.error("Error loading curriculum data:", err);
+      console.error('Error loading curriculum data:', err);
       clear(cardList);
-      const p = document.createElement("p");
-      p.className = "text-danger";
-      p.textContent = "Failed to load lessons. Please check your Supabase configuration.";
-      cardList.append(p);
+      // Do not show error message in the UI
+      // const p = document.createElement('p');
+      // p.className = 'text-danger';
+      // p.textContent = 'Failed to load lessons. Please check your Supabase configuration.';
+      // cardList.append(p);
     }
   }
 
-  async function fetchContentAreas() {
-    const { data, error } = await supabase.from('curriculum_units').select('content_area').neq('content_area', null).order('content_area', { ascending: true });
-    if (error) {
-      clear(unitMenu, topicMenu, cardList);
-      const p = document.createElement('p');
-      p.className = 'text-danger';
-      p.textContent = 'Failed to load content areas: ' + error.message;
-      cardList.append(p);
-      return [];
-    }
-    // Unique content areas
-    const unique = Array.from(new Set((data || []).map(u => u.content_area))).filter(Boolean);
-    return unique;
-  }
+  // Add a new section for course requests in the sidebar
+  const requestMenu = document.createElement('div');
+  requestMenu.id = 'requestMenu';
+  requestMenu.className = 'mb-4';
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  sidebar.insertBefore(requestMenu, sidebarToggle);
+  const requestHeader = document.createElement('h5');
+  requestHeader.textContent = 'Requests';
+  sidebar.insertBefore(requestHeader, requestMenu);
 
-  async function fetchUnitsAndTopicsByContentArea(contentArea) {
-    const { data: units, error: unitErr } = await supabase.from('curriculum_units').select('*').eq('content_area', contentArea).order('unit_number', { ascending: true });
-    if (unitErr) {
-      clear(unitMenu, topicMenu, cardList);
-      const p = document.createElement('p');
-      p.className = 'text-danger';
-      p.textContent = 'Failed to load units: ' + unitErr.message;
-      cardList.append(p);
-      return { units: [], topics: [] };
+  // Fetch and display course requests, then filter units/topics/visuals by request
+  async function loadRequests() {
+    const { data: requests, error: reqErr } = await supabase.from('course_requests').select('*').order('created_at', { ascending: true });
+    console.log('Fetched requests:', requests, 'Error:', reqErr);
+    requestMenu.innerHTML = '';
+    if (reqErr) {
+      requestMenu.innerHTML = '<div class="text-danger">Error loading requests</div>';
+      return;
     }
-    const { data: topics, error: topicErr } = await supabase.from('topic_teks').select('*').in('unit_id', units.map(u => u.id));
-    if (topicErr) {
-      clear(unitMenu, topicMenu, cardList);
-      const p = document.createElement('p');
-      p.className = 'text-danger';
-      p.textContent = 'Failed to load topics: ' + topicErr.message;
-      cardList.append(p);
-      return { units, topics: [] };
+    if (!requests || requests.length === 0) {
+      requestMenu.innerHTML = '<div class="text-warning">No requests found</div>';
+      return;
     }
+<<<<<<< HEAD
     // Fetch visuals tied to the topics and populate visualsMap for image lookup
     const topicIds = (topics || []).map(t => t.id);
     visualsMap = {};
@@ -241,8 +240,19 @@
         (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
         buildUnitMenu(unitMap);
       });
+=======
+    (requests || []).forEach(req => {
+      const btn = document.createElement('button');
+      btn.textContent = req.content || req.id;
+      btn.className = 'btn btn-outline-success w-100 mb-2';
+      btn.onclick = () => loadData(req.id);
+      requestMenu.append(btn);
+>>>>>>> ccf6d93 (UI/UX improvements:)
     });
   }
+
+  // On page load, show requests
+  loadRequests();
 
   function buildUnitMenu(unitMap) {
     clear(unitMenu, topicMenu, cardList);
@@ -367,7 +377,7 @@
 
           let gameHtml = '';
           gameHtml += `<div class="section-header mt-3";">(${selected.length})</div>`;
-          gameHtml += `<div class="table-responsive"><table class="table emoji-matching-table table-striped align-middle mb-2"><thead><tr>`;
+          gameHtml += `<div class="table-responsive"><table class="table table-striped align-middle mb-2"><thead><tr>`;
           for (let c = 0; c < maxEmojis; c++) gameHtml += `<th scope="col">Emoji ${c + 1}</th>`;
           gameHtml += `<th scope="col" style="min-width:220px;">Your Answer</th><th scope="col">Result</th>`;
           gameHtml += `</tr></thead><tbody>`;
@@ -378,7 +388,7 @@
             gameHtml += `<tr>`;
             for (let c = 0; c < maxEmojis; c++) {
               const e = item.emojis[c];
-              gameHtml += `<td>${e ? `<span class=\"emoji-large\">${e}</span>` : ""}</td>`;
+              gameHtml += `<td>${e ? `<span style="font-size:2.5rem;">${e}</span>` : ""}</td>`;
             }
             gameHtml += `<td>
               <select id="${selectId}" class="form-select">
@@ -436,7 +446,7 @@
           if (imgUrl) {
             s += `
               <div class="img-wrap" aria-label="${desc.replace(/"/g,'&quot;')}">
-                <img src="${imgUrl}" alt="${(v.type || 'visual') + (desc ? (': ' + desc) : '')}">
+                <img src="${imgUrl}" alt="${(v.type || 'visual') + (desc ? (': ' + desc) : '')}" style="cursor:pointer;" onclick="showImageModal('${imgUrl}')">
                 <div class="img-caption">
                   ${v.type ? `<strong>${v.type.charAt(0).toUpperCase()+v.type.slice(1)}:</strong> ` : ''}${desc}
                 </div>
@@ -502,6 +512,7 @@
     });
   }
 
+<<<<<<< HEAD
   // Initial load: show content-area buttons if available, otherwise load data directly
   const contentAreas = await fetchContentAreas();
   if (contentAreas.length) {
@@ -509,4 +520,61 @@
   } else {
     await loadData();
   }
+=======
+  // Add modal logic at the end of the file
+  if (!document.getElementById('imageModal')) {
+    const modal = document.createElement('div');
+    modal.id = 'imageModal';
+    modal.style.display = 'none';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.85)';
+    modal.style.zIndex = '9999';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.textAlign = 'center';
+    modal.style.overflow = 'auto';
+    modal.style.display = 'flex';
+
+    modal.innerHTML = `
+      <div id="modalImgContainer" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100vw;height:100vh;max-width:100vw;max-height:100vh;overflow:auto;">
+        <img id="modalImg" style="display:block;width:auto;height:auto;cursor:zoom-in;transition:transform 0.2s;box-shadow:0 8px 32px #0008;position:relative;" />
+        <button id="closeModalBtn" style="margin-top:1rem;padding:0.5rem 1.5rem;font-size:1.2rem;border-radius:8px;border:none;background:#041730;color:#f8efca;">Close</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
+    let zoomed = false;
+    document.getElementById('modalImg').onclick = function() {
+      zoomed = !zoomed;
+      if (zoomed) {
+        this.style.transform = 'scale(2)';
+        this.style.cursor = 'zoom-out';
+      } else {
+        this.style.transform = 'scale(1)';
+        this.style.cursor = 'zoom-in';
+      }
+    };
+  }
+  window.showImageModal = function(url) {
+    const modal = document.getElementById('imageModal');
+    const img = document.getElementById('modalImg');
+    img.src = url;
+    img.style.transform = 'scale(1)';
+    img.style.cursor = 'zoom-in';
+    // Reset scroll to top left when opening
+    const container = document.getElementById('modalImgContainer');
+    if (container) {
+      container.scrollTop = 0;
+      container.scrollLeft = 0;
+    }
+    modal.style.display = 'flex';
+  };
+
+  loadRequests();
+  loadData();
+>>>>>>> ccf6d93 (UI/UX improvements:)
 })();

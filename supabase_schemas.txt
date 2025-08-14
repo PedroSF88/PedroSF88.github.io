@@ -1,0 +1,84 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.course_requests (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  content text,
+  teacher_notes text,
+  requestor text,
+  course_length text,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  overarching_question text,
+  outline_provided text,
+  CONSTRAINT course_requests_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.curriculum_units (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  content_area text NOT NULL,
+  overarching_question text NOT NULL,
+  unit_title text NOT NULL,
+  unit_question text NOT NULL,
+  unit_themes text,
+  unit_summary text,
+  unit_topics text,
+  thread_id text,
+  unit_number numeric,
+  emojibot_thread_id text,
+  request_id uuid,
+  CONSTRAINT curriculum_units_pkey PRIMARY KEY (id),
+  CONSTRAINT curriculum_units_request_id_fkey FOREIGN KEY (request_id) REFERENCES public.course_requests(id)
+);
+CREATE TABLE public.teks_entries (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  section text,
+  subsection text,
+  subsubsection text,
+  text text NOT NULL,
+  order_index integer,
+  record_id text,
+  created_at timestamp with time zone DEFAULT now(),
+  content text,
+  CONSTRAINT teks_entries_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.things_to_know (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  topic text NOT NULL,
+  ttk jsonb,
+  content_area text,
+  CONSTRAINT things_to_know_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.topic_teks (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  topic_title text NOT NULL,
+  matched_teks jsonb,
+  created_at timestamp without time zone DEFAULT now(),
+  lesson_core jsonb,
+  unit_id uuid,
+  lesson_outline jsonb,
+  thread_id text,
+  vocab_emojis jsonb,
+  emojibot_tread_id text,
+  request_id uuid,
+  CONSTRAINT topic_teks_pkey PRIMARY KEY (id),
+  CONSTRAINT topic_teks_request_id_fkey FOREIGN KEY (request_id) REFERENCES public.course_requests(id),
+  CONSTRAINT topic_teks_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.curriculum_units(id)
+);
+CREATE TABLE public.visuals_data (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  topic_id uuid NOT NULL,
+  lesson text NOT NULL,
+  visual_id text NOT NULL,
+  segment_kind text,
+  segment_index integer,
+  type text,
+  description text,
+  instructions text,
+  link_to_image text,
+  created_at timestamp with time zone DEFAULT now(),
+  request_id uuid,
+  unit_id uuid,
+  CONSTRAINT visuals_data_pkey PRIMARY KEY (id),
+  CONSTRAINT visuals_data_request_id_fkey FOREIGN KEY (request_id) REFERENCES public.course_requests(id),
+  CONSTRAINT visuals_data_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.curriculum_units(id),
+  CONSTRAINT visuals_data_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES public.topic_teks(id)
+);
