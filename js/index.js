@@ -97,41 +97,10 @@
   }
   function resolveImg(topic, visualKey, obj) {
     let url = null;
-    if (topic && topic.id) {
-      // visuals are stored in the lookup with keys like `${topic.id}|visual_1`
-      // but some DB rows may only store the numeric id, so try both
-      url = visualsMap[`${topic.id}|${visualKey}`]
-        || visualsMap[`${topic.id}|${String(visualKey).replace(/^visual_/, '')}`]
-        || null;
-    }
-    if (!url && obj) {
-      // Support both `link_to_image` (new field) and `url_to_image` (legacy)
-      if (obj.link_to_image && obj.link_to_image !== "@image_placeholder") {
-        url = obj.link_to_image;
-      } else if (obj.url_to_image && obj.url_to_image !== "@image_placeholder") {
-        url = obj.url_to_image;
-      }
-    }
-    // Encode any unsafe characters in the URL's path so that images load reliably
-    if (url) {
-      try {
-        const u = new URL(url, window.location.href);
-        // Avoid double-encoding: decode each segment first, then encode it
-        u.pathname = u.pathname
-          .split('/')
-          .map(seg => encodeURIComponent(decodeURIComponent(seg)))
-          .join('/');
-        return u.toString(); // preserves query and hash
-      } catch {
-        // Fallback: try not to double-encode whole URL
-        try {
-          return encodeURI(decodeURI(url));
-        } catch {
-          return encodeURI(url);
-        }
-      }
-    }
+    if (topic && topic.id) url = visualsMap[`${topic.id}|${visualKey}`] || null;
+    if (!url && obj && obj.url_to_image && obj.url_to_image !== "@image_placeholder") url = obj.url_to_image;
     return url;
+  }
 
   // data load
   // Update loadData to add debug output
@@ -154,10 +123,7 @@
       if (visualsErr) throw visualsErr;
       visualsMap = {};
       (visuals || []).forEach(v => {
-        // Store links using the same key format used in lesson data
-        const link = v.link_to_image || v.url_to_image;
-        if (!link || link === "@image_placeholder") return;
-        visualsMap[`${v.topic_id}|visual_${v.visual_id}`] = link;
+        visualsMap[`${v.topic_id}|${v.visual_id}`] = v.link_to_image;
       });
       const unitMap = {};
       (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
@@ -202,52 +168,12 @@
       requestMenu.innerHTML = '<div class="text-warning">No requests found</div>';
       return;
     }
-<<<<<<< HEAD
-    // Fetch visuals tied to the topics and populate visualsMap for image lookup
-    const topicIds = (topics || []).map(t => t.id);
-    visualsMap = {};
-    if (topicIds.length) {
-      const { data: visuals, error: visualsErr } = await supabase.from('visuals_data').select('*').in('topic_id', topicIds);
-      if (visualsErr) {
-        console.error('Failed to load visuals:', visualsErr.message);
-      } else {
-        (visuals || []).forEach(v => {
-          const link = v.link_to_image || v.url_to_image;
-          if (!link || link === "@image_placeholder") return;
-          visualsMap[`${v.topic_id}|visual_${v.visual_id}`] = link;
-        });
-      }
-    }
-    return { units, topics };
-  }
-
-  function renderContentAreaButtons(contentAreas) {
-    // Render in main area, not sidebar
-    let html = '<div class="mb-3">';
-    contentAreas.forEach(area => {
-      html += `<button class='btn btn-outline-dark me-2 mb-2' data-area='${area}'>${area}</button>`;
-    });
-    html += '</div>';
-    contentAreaMenu.innerHTML = html;
-    contentAreaMenu.querySelectorAll('button[data-area]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const area = btn.getAttribute('data-area');
-        // Hide content area buttons after selection
-        contentAreaMenu.innerHTML = '';
-        const { units, topics } = await fetchUnitsAndTopicsByContentArea(area);
-        const unitMap = {};
-        (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
-        (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
-        buildUnitMenu(unitMap);
-      });
-=======
     (requests || []).forEach(req => {
       const btn = document.createElement('button');
       btn.textContent = req.content || req.id;
       btn.className = 'btn btn-outline-success w-100 mb-2';
       btn.onclick = () => loadData(req.id);
       requestMenu.append(btn);
->>>>>>> ccf6d93 (UI/UX improvements:)
     });
   }
 
@@ -512,15 +438,6 @@
     });
   }
 
-<<<<<<< HEAD
-  // Initial load: show content-area buttons if available, otherwise load data directly
-  const contentAreas = await fetchContentAreas();
-  if (contentAreas.length) {
-    renderContentAreaButtons(contentAreas);
-  } else {
-    await loadData();
-  }
-=======
   // Add modal logic at the end of the file
   if (!document.getElementById('imageModal')) {
     const modal = document.createElement('div');
@@ -576,5 +493,4 @@
 
   loadRequests();
   loadData();
->>>>>>> ccf6d93 (UI/UX improvements:)
 })();
