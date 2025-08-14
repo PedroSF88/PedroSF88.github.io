@@ -14,10 +14,10 @@
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
         <span></span>
       </button>
-      <h5>Units</h5>
-      <div id="unitMenu" class="mb-4"></div>
-      <h5>Topics</h5>
-      <div id="topicMenu" class="mb-4"></div>
+  <h5 style="margin-left:2.5rem;margin-top:1.5rem;">Units</h5>
+  <div id="unitMenu" class="mb-4"></div>
+  <h5 style="margin-left:2.5rem;margin-top:1.5rem;">Topics</h5>
+  <div id="topicMenu" class="mb-4"></div>
     </aside>
     <div class="main">
       <div id="cardList"></div>
@@ -42,11 +42,26 @@
       topicTitle.style.display = '';
       document.getElementById('unitMenu').style.display = 'none';
       document.getElementById('topicMenu').style.display = 'none';
+      document.getElementById('requestMenu').style.display = 'none';
       document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
     } else {
       topicTitle.style.display = 'none';
-      document.getElementById('unitMenu').style.display = '';
-      document.getElementById('topicMenu').style.display = '';
+      // Restore all navigation sections/buttons if they exist
+      const unitMenu = document.getElementById('unitMenu');
+      const topicMenu = document.getElementById('topicMenu');
+      const requestMenu = document.getElementById('requestMenu');
+      if (unitMenu) {
+        unitMenu.style.display = '';
+        unitMenu.querySelectorAll('button').forEach(btn => btn.style.display = '');
+      }
+      if (topicMenu) {
+        topicMenu.style.display = '';
+        topicMenu.querySelectorAll('button').forEach(btn => btn.style.display = '');
+      }
+      if (requestMenu) {
+        requestMenu.style.display = '';
+        requestMenu.querySelectorAll('button').forEach(btn => btn.style.display = '');
+      }
       document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = '');
     }
   });

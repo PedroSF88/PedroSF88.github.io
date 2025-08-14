@@ -150,10 +150,24 @@
   requestMenu.className = 'mb-4';
   const sidebar = document.querySelector('.sidebar');
   const sidebarToggle = document.getElementById('sidebarToggle');
-  sidebar.insertBefore(requestMenu, sidebarToggle);
+  // Insert the toggle at the very top, then header, then requestMenu
+  sidebar.insertBefore(sidebarToggle, sidebar.firstChild);
   const requestHeader = document.createElement('h5');
-  requestHeader.textContent = 'Requests';
-  sidebar.insertBefore(requestHeader, requestMenu);
+  requestHeader.textContent = 'Content Area';
+  requestHeader.style.marginLeft = '2.5rem';
+  requestHeader.style.marginTop = '2.2rem';
+  sidebar.insertBefore(requestHeader, sidebarToggle.nextSibling);
+  requestMenu.style.marginLeft = '2.5rem';
+  sidebar.insertBefore(requestMenu, requestHeader.nextSibling);
+  // Also add margin to unitMenu and topicMenu if present
+  if (unitMenu) {
+    unitMenu.style.marginLeft = '2.5rem';
+    unitMenu.style.marginTop = '1.5rem';
+  }
+  if (topicMenu) {
+    topicMenu.style.marginLeft = '2.5rem';
+    topicMenu.style.marginTop = '1.5rem';
+  }
 
   // Fetch and display course requests, then filter units/topics/visuals by request
   async function loadRequests() {
@@ -454,7 +468,8 @@
     modal.style.alignItems = 'center';
     modal.style.textAlign = 'center';
     modal.style.overflow = 'auto';
-    modal.style.display = 'flex';
+    // Only display flex when open
+    // modal.style.display = 'flex';
 
     modal.innerHTML = `
       <div id="modalImgContainer" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100vw;height:100vh;max-width:100vw;max-height:100vh;overflow:auto;">
@@ -463,7 +478,11 @@
       </div>
     `;
     document.body.appendChild(modal);
-    document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
+    document.getElementById('closeModalBtn').onclick = () => { 
+      modal.style.display = 'none';
+      // Allow interaction with rest of UI
+      document.body.style.overflow = '';
+    };
     let zoomed = false;
     document.getElementById('modalImg').onclick = function() {
       zoomed = !zoomed;
@@ -489,6 +508,41 @@
       container.scrollLeft = 0;
     }
     modal.style.display = 'flex';
+    // Prevent background scroll/interactions
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Hide content buttons after lesson selection
+  function hideContentButtons() {
+    const contentBtns = document.querySelectorAll('.content-btn');
+    contentBtns.forEach(btn => btn.style.display = 'none');
+  }
+
+  // Patch renderLesson to hide all navigation buttons after lesson selection
+  const origRenderLesson = renderLesson;
+  renderLesson = function(topic) {
+    // Hide content buttons
+    hideContentButtons();
+    // Hide unit and topic menus and sidebar headers
+    const unitMenu = document.getElementById('unitMenu');
+    const topicMenu = document.getElementById('topicMenu');
+    if (unitMenu) {
+      unitMenu.style.display = 'none';
+      // Also hide all buttons inside
+      unitMenu.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+    }
+    if (topicMenu) {
+      topicMenu.style.display = 'none';
+      topicMenu.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+    }
+    document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
+    // Hide request menu and its buttons
+    const requestMenu = document.getElementById('requestMenu');
+    if (requestMenu) {
+      requestMenu.style.display = 'none';
+      requestMenu.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+    }
+    origRenderLesson(topic);
   };
 
   loadRequests();
