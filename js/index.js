@@ -274,7 +274,7 @@
       html: (() => {
         let html = "";
         if (outline && outline.lesson_objective) {
-          html += `<p><strong>Objective:</strong> ${outline.lesson_objective}</p>`;
+          html += `<p><strong>Lesson Objective:</strong> ${outline.lesson_objective}</p>`;
         }
         if (outline && Array.isArray(outline.success_criteria) && outline.success_criteria.length) {
           html += "<p><strong>Success Criteria:</strong></p><ul>";
@@ -289,86 +289,29 @@
       })()
     });
 
-    // Vocabulary + emoji matching
-    const vocabList = Array.isArray(outline?.vocabulary) ? outline.vocabulary : [];
-    if (vocabList.length) {
-      const vocabHtml = '<ul>' + vocabList.map(v => `<li><strong>${v.term}:</strong> ${v.def}</li>`).join('') + '</ul>';
-      sections.push({ cls: "section-vocab", header: "Vocabulary", html: vocabHtml });
-
-      const vocabEmojis = safeParseJSON(topic.vocab_emojis) || topic.vocab_emojis || null;
-      if (vocabEmojis && Array.isArray(vocabEmojis) && vocabEmojis.length) {
-        const byTerm = new Map();
-        vocabEmojis.forEach(entry => {
-          if (!entry || !entry.term || !Array.isArray(entry.sets)) return;
-          byTerm.set(entry.term, entry.sets);
-        });
-
-        // one random set PER vocab term (every term once, if sets exist)
-        const selected = (vocabList || []).map(v => {
-          const sets = byTerm.get(v.term);
-          if (!sets || !sets.length) return null;
-          const chosen = sets[Math.floor(Math.random() * sets.length)];
-          return { term: v.term, def: v.def, emojis: chosen.emojis || [], explanations: chosen.explanations || [] };
-        }).filter(Boolean);
-
-        if (selected.length) {
-          const termOptions = vocabList.map(v => `<option value="${encodeURIComponent(v.term)}">${v.term}</option>`).join('');
-          const maxEmojis = selected.reduce((m, it) => Math.max(m, it.emojis.length), 0);
-
-          let gameHtml = '';
-          gameHtml += `<div class="section-header mt-3";">(${selected.length})</div>`;
-          gameHtml += `<div class="table-responsive"><table class="table table-striped align-middle mb-2"><thead><tr>`;
-          for (let c = 0; c < maxEmojis; c++) gameHtml += `<th scope="col">Emoji ${c + 1}</th>`;
-          gameHtml += `<th scope="col" style="min-width:220px;">Your Answer</th><th scope="col">Result</th>`;
-          gameHtml += `</tr></thead><tbody>`;
-
-          selected.forEach((item, idx) => {
-            const selectId = `emojiMatch_select_${idx}`;
-            const resultId = `emojiMatch_result_${idx}`;
-            gameHtml += `<tr>`;
-            for (let c = 0; c < maxEmojis; c++) {
-              const e = item.emojis[c];
-              gameHtml += `<td>${e ? `<span style="font-size:2.5rem;">${e}</span>` : ""}</td>`;
-            }
-            gameHtml += `<td>
-              <select id="${selectId}" class="form-select">
-                <option value="">— Select —</option>
-                ${termOptions}
-              </select>
-            </td>`;
-            gameHtml += `<td id="${resultId}" class="small text-muted"></td>`;
-            gameHtml += `</tr>`;
+    // Fetch vocab_table for this topic and render one vocab card per term, immediately after LO/SC/TEKS
+    (async () => {
+      let vocabSections = [];
+      try {
+        const { data: vocabRows, error: vocabErr } = await supabase.from('vocab_table').select('*').eq('topic_id', topic.id);
+        if (vocabRows && Array.isArray(vocabRows)) {
+          vocabRows.forEach(vocab => {
+            let imgHtml = vocab.link_to_image ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" style="max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;">` : '';
+            let html = `${imgHtml}<div><strong>${vocab.term}</strong></div><div>${vocab.definition}</div>`;
+            vocabSections.push({ cls: "section-vocab", header: `Vocabulary: ${vocab.term}`, html });
           });
-
-          gameHtml += `</tbody></table></div>`;
-          gameHtml += `<button id="emojiMatch_check" class="btn btn-primary">Submit & Check</button>`;
-
-          sections.push({ cls: "section-vocab", header: "Emoji Matching", html: gameHtml });
-
-          setTimeout(() => {
-            const btnCheck = document.getElementById(`emojiMatch_check`);
-            if (!btnCheck) return;
-            btnCheck.onclick = () => {
-              selected.forEach((item, idx) => {
-                const selEl = document.getElementById(`emojiMatch_select_${idx}`);
-                const resEl = document.getElementById(`emojiMatch_result_${idx}`);
-                const chosen = selEl?.value || "";
-                const isRight = decodeURIComponent(chosen) === item.term;
-                if (!resEl) return;
-                if (isRight) {
-                  const bullets = (item.explanations || []).map(x => `<li>${x}</li>`).join('');
-                  resEl.innerHTML = `<div class="text-success"><strong>Correct!</strong></div>${bullets ? `<ul class="mb-0">${bullets}</ul>` : ''}`;
-                  resEl.classList.remove("text-muted");
-                } else {
-                  resEl.textContent = "Try again";
-                  resEl.classList.add("text-muted");
-                }
-              });
-            };
-          }, 0);
         }
-      }
-    }
+      } catch (e) { vocabSections = []; }
+      // Insert vocab sections after the title/objective/SC/TEKS (which is always sections[0])
+      const allSections = [sections[0], ...vocabSections, ...sections.slice(1)];
+      clear(cardList);
+      allSections.forEach(sec => {
+        const card = document.createElement("div");
+        card.className = `card p-3 ${sec.cls}`;
+        card.innerHTML = `<div class=\"section-header\">${sec.header}</div>${sec.html}`;
+        cardList.append(card);
+      });
+    })();
 
     // remaining segments (excluding warm_up already shown)
     if (Array.isArray(outline.lesson_segments)) {
