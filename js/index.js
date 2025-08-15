@@ -297,8 +297,10 @@
         if (vocabRows && Array.isArray(vocabRows)) {
           vocabRows.forEach(vocab => {
             let imgHtml = vocab.link_to_image ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" style="max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;">` : '';
-            let html = `${imgHtml}<div><strong>${vocab.term}</strong></div><div>${vocab.definition}</div>`;
-            vocabSections.push({ cls: "section-vocab", header: `Vocabulary: ${vocab.term}`, html });
+            // Add spacing between 'Vocabulary' and the term in the heading
+            let header = `<span>Vocabulary:        </span><span style=\"margin-left:0.5em;font-weight:bold;\">${vocab.term}</span>`;
+            let html = `${imgHtml}<div>${vocab.definition}</div>`;
+            vocabSections.push({ cls: "section-vocab", header, html });
           });
         }
       } catch (e) { vocabSections = []; }

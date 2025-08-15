@@ -40,7 +40,27 @@ async function loadTopics(unitId) {
 
 async function loadVisuals(topicId) {
   visualsTableWrap.innerHTML = '';
+  document.getElementById('lessonInfoWrap').innerHTML = '';
   if (!topicId) return;
+  // Fetch topic_teks for lesson_outline
+  const { data: topicData, error: topicError } = await supabase.from('topic_teks').select('lesson_outline, topic_title').eq('id', topicId).single();
+  let lessonHtml = '';
+  if (topicData && topicData.lesson_outline) {
+    let outline = topicData.lesson_outline;
+    if (typeof outline === 'string') {
+      try { outline = JSON.parse(outline); } catch { outline = {}; }
+    }
+    lessonHtml += `<div class="mb-2"><strong>Lesson Title:</strong> ${outline.lesson_title || topicData.topic_title || ''}</div>`;
+    if (outline.lesson_objective) lessonHtml += `<div class="mb-2"><strong>Lesson Objective:</strong> ${outline.lesson_objective}</div>`;
+    if (Array.isArray(outline.success_criteria) && outline.success_criteria.length) {
+      lessonHtml += `<div class="mb-2"><strong>Success Criteria:</strong><ul>`;
+      outline.success_criteria.forEach(item => { lessonHtml += `<li>${item}</li>`; });
+      lessonHtml += `</ul></div>`;
+    }
+  }
+  document.getElementById('lessonInfoWrap').innerHTML = lessonHtml;
+
+  // Fetch visuals
   const { data, error } = await supabase.from('visuals_data').select('*').eq('topic_id', topicId);
   if (!data || !data.length) {
     visualsTableWrap.innerHTML = '<div class="alert alert-warning">No visuals found for this topic.</div>';
@@ -60,6 +80,42 @@ async function loadVisuals(topicId) {
   });
   html += '</tbody></table>';
   visualsTableWrap.innerHTML = html;
+
+  // Fetch vocab_table for this topic
+  const vocabTableWrap = document.getElementById('vocabTableWrap');
+  if (!vocabTableWrap) return;
+  vocabTableWrap.innerHTML = '';
+  const { data: vocabData, error: vocabError } = await supabase.from('vocab_table').select('*').eq('topic_id', topicId);
+  if (!vocabData || !vocabData.length) {
+    vocabTableWrap.innerHTML = '<div class="alert alert-warning">No vocab found for this topic.</div>';
+    return;
+  }
+  let vhtml = `<table class="table table-bordered"><thead><tr><th>Term</th><th>Definition</th><th>Image</th><th>Link to Image</th><th>Save</th></tr></thead><tbody>`;
+  vocabData.forEach(v => {
+    vhtml += `<tr>
+      <td>${v.term}</td>
+      <td>${v.definition}</td>
+      <td>${v.link_to_image ? `<img src="${v.link_to_image}" alt="${v.term}" style="max-width:80px;max-height:80px;">` : ''}</td>
+      <td><input type="text" class="form-control" id="vocab_link_${v.id}" value="${v.link_to_image || ''}" /></td>
+      <td><button class="btn btn-primary btn-sm" onclick="saveVocabLink('${v.id}')">Save</button></td>
+    </tr>`;
+  });
+  vhtml += '</tbody></table>';
+  vocabTableWrap.innerHTML = vhtml;
+}
+
+window.saveVocabLink = async function(id) {
+  const input = document.getElementById(`vocab_link_${id}`);
+  const link = input.value.trim();
+  const { error } = await supabase.from('vocab_table').update({ link_to_image: link }).eq('id', id);
+  if (!error) {
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+  } else {
+    input.classList.remove('is-valid');
+    input.classList.add('is-invalid');
+    alert('Failed to save!');
+  }
 }
 
 window.saveLink = async function(id) {
