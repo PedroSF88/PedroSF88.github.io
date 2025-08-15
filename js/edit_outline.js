@@ -97,6 +97,14 @@ async function loadTopics(unitId) {
   topicSelect.style.background = '#ff0'; // highlight for debug
 }
 
+topicSelect.addEventListener('change', e => {
+  console.log('topicSelect changed:', e.target.value);
+  outlineFormContainer.innerHTML = '';
+  saveBtn.style.display = 'none';
+  statusMsg.textContent = '';
+  loadOutline(e.target.value);
+});
+
 async function loadOutline(topicId) {
   outlineFormContainer.innerHTML = '';
   if (!topicId) return;
