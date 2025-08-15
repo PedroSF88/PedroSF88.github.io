@@ -126,10 +126,51 @@ function renderOutlineForm(outline) {
   html += `<div class="mb-3"><label class="form-label">Lesson Objective</label><textarea class="form-control" id="lessonObjectiveInput">${outline.lesson_objective || ''}</textarea></div>`;
   html += `<div class="mb-3"><label class="form-label">Success Criteria (comma separated)</label><input type="text" class="form-control" id="successCriteriaInput" value="${(outline.success_criteria||[]).join(', ')}"></div>`;
   // Segments (if present)
+  // Helper to capture all current input values in the form
+  function captureFormState() {
+    const state = {};
+    document.querySelectorAll('#outlineFormContainer input, #outlineFormContainer textarea').forEach(el => {
+      state[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    return state;
+  }
+  // Helper to restore input values after re-render
+  function restoreFormState(state) {
+    setTimeout(() => {
+      Object.entries(state).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (el.type === 'checkbox') el.checked = val;
+          else el.value = val;
+        }
+      });
+    }, 0);
+  }
+
   function renderField(val, path) {
     if (Array.isArray(val)) {
       // Render each array item recursively
-      return val.map((item, idx) => `<div class="border p-2 mb-2">${renderField(item, path.concat(idx))}</div>`).join('');
+      let html = val.map((item, idx) => `<div class="border p-2 mb-2">${renderField(item, path.concat(idx))}</div>`).join('');
+      // Add button to add new item to array
+      const addBtnId = `addBtn_${path.join('_')}`;
+      html += `<button type="button" class="btn btn-sm btn-outline-primary mt-2" id="${addBtnId}">+ Add</button>`;
+      setTimeout(() => {
+        const btn = document.getElementById(addBtnId);
+        if (btn) {
+          btn.onclick = function() {
+            const prevState = captureFormState();
+            // Traverse currentOutline to the array at path
+            let arr = outline;
+            for (let i = 0; i < path.length; i++) arr = arr[path[i]];
+            // Add empty item (object or string)
+            if (arr.length > 0 && typeof arr[0] === 'object') arr.push({});
+            else arr.push('');
+            renderOutlineForm(outline);
+            restoreFormState(prevState);
+          };
+        }
+      }, 0);
+      return html;
     } else if (val && typeof val === 'object') {
       // For objects, render each property recursively (no textarea for the object itself)
       return Object.entries(val).map(([k, v]) => {
@@ -157,6 +198,33 @@ function renderOutlineForm(outline) {
       html += `<div class="border rounded p-2 mb-2"><strong>${key}</strong>`;
       html += renderField(val, [i, key]);
       html += `</div>`;
+      // Add button after each segment
+      const addBtnId = `addSegmentBtn_${i}`;
+      html += `<button type="button" class="btn btn-sm btn-outline-primary mb-3" id="${addBtnId}">+ Add Segment Below</button>`;
+      setTimeout(() => {
+        const btn = document.getElementById(addBtnId);
+        if (btn) {
+          btn.onclick = function() {
+            const prevState = captureFormState();
+            // Copy structure of previous segment
+            const prevSeg = outline.lesson_segments[i];
+            const prevKey = Object.keys(prevSeg)[0];
+            let newSeg = {};
+            // If previous is a reading, warm_up, etc., copy keys as blank
+            if (typeof prevSeg[prevKey] === 'object' && prevSeg[prevKey] !== null) {
+              newSeg[prevKey] = {};
+              Object.keys(prevSeg[prevKey]).forEach(k => {
+                newSeg[prevKey][k] = '';
+              });
+            } else {
+              newSeg[prevKey] = '';
+            }
+            outline.lesson_segments.splice(i+1, 0, newSeg);
+            renderOutlineForm(outline);
+            restoreFormState(prevState);
+          };
+        }
+      }, 0);
     });
     html += '</div>';
   }
@@ -167,13 +235,125 @@ function renderOutlineForm(outline) {
       html += `<div class="border rounded p-2 mb-2"><strong>Term ${i + 1}</strong>`;
       html += `<div class="mb-2"><label class="form-label">Term</label><input type="text" class="form-control" id="vocab_${i}_term_input" value="${vocab.term || ''}"></div>`;
       html += `<div class="mb-2"><label class="form-label">Definition</label><textarea class="form-control" id="vocab_${i}_definition_input">${vocab.definition || vocab.def || ''}</textarea></div>`;
-      html += `<div class="mb-2"><label class="form-label">Image Link</label><input type="text" class="form-control" id="vocab_${i}_link_to_image_input" value="${vocab.link_to_image || ''}"></div>`;
+      html += `<div class="mb-2"><label class="form-label">Image Link</label><input type="text" class="form-control url-input" id="vocab_${i}_link_to_image_input" value="${vocab.link_to_image || ''}" pattern="https?://.*">`;
+      // Image preview
+      html += `<div class="vocab-image-preview mt-2" id="vocab_${i}_image_preview_container">`;
+      if (vocab.link_to_image) {
+        html += `<img src="${vocab.link_to_image}" alt="Image preview" class="img-thumbnail" style="max-width:80px;max-height:80px;cursor:zoom-in;" id="vocab_${i}_image_preview">`;
+      } else {
+        html += `<div class="text-muted small">No image</div>`;
+      }
+      html += `</div></div>`;
       html += `</div>`;
     });
+    // Add button to add new vocab term
+    html += `<button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addVocabBtn">+ Add Vocab Term</button>`;
+    setTimeout(() => {
+      const btn = document.getElementById('addVocabBtn');
+      if (btn) {
+        btn.onclick = function() {
+          const prevState = captureFormState();
+          outline.vocabulary.push({ term: '', definition: '', link_to_image: '' });
+          renderOutlineForm(outline);
+          restoreFormState(prevState);
+        };
+      }
+    }, 0);
     html += '</div>';
   }
   outlineFormContainer.innerHTML = html;
   saveBtn.style.display = '';
+
+  // After rendering the form, add JS to mark updated fields and highlight missing fields
+  setTimeout(() => {
+  // Image preview modal logic
+  // Add modal HTML if not present
+  if (!document.getElementById('imageZoomModal')) {
+    const modalDiv = document.createElement('div');
+    modalDiv.innerHTML = `
+      <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true" style="display:none;">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-transparent border-0 shadow-none">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" id="imageZoomModalClose"></button>
+            <img id="imageZoomModalImg" src="" class="w-100 rounded shadow" style="max-height:70vh;object-fit:contain;background:#fff;">
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modalDiv);
+  }
+  // Add click listeners to all image previews
+  document.querySelectorAll('.vocab-image-preview img').forEach(img => {
+    img.addEventListener('click', function() {
+      const modal = document.getElementById('imageZoomModal');
+      const modalImg = document.getElementById('imageZoomModalImg');
+      modalImg.src = img.src;
+      modal.style.display = 'block';
+      modal.classList.add('show');
+      document.body.classList.add('modal-open');
+    });
+  });
+  // Modal close logic
+  function closeModal() {
+    const modal = document.getElementById('imageZoomModal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.classList.remove('show');
+      document.body.classList.remove('modal-open');
+    }
+  }
+  document.getElementById('imageZoomModalClose')?.addEventListener('click', closeModal);
+  document.getElementById('imageZoomModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+  // Live update image preview on input change
+  document.querySelectorAll('input[id$="_link_to_image_input"]').forEach(input => {
+    input.addEventListener('input', function() {
+      const container = document.getElementById(input.id.replace('_link_to_image_input', '_image_preview_container'));
+      if (container) {
+        if (input.value.match(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
+          container.innerHTML = `<img src="${input.value}" alt="Image preview" class="img-thumbnail" style="max-width:80px;max-height:80px;cursor:zoom-in;" id="${input.id.replace('_input','')}_preview">`;
+          // Re-attach click handler
+          container.querySelector('img').addEventListener('click', function() {
+            const modal = document.getElementById('imageZoomModal');
+            const modalImg = document.getElementById('imageZoomModalImg');
+            modalImg.src = input.value;
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.classList.add('modal-open');
+          });
+        } else if (input.value) {
+          container.innerHTML = `<div class='text-danger small'>Invalid image URL</div>`;
+        } else {
+          container.innerHTML = `<div class='text-muted small'>No image</div>`;
+        }
+      }
+    });
+  });
+    // Highlight missing fields (empty required fields)
+    document.querySelectorAll('input[required], textarea[required]').forEach(el => {
+      if (!el.value) el.classList.add('is-invalid');
+      else el.classList.remove('is-invalid');
+    });
+    // Mark updated fields
+    document.querySelectorAll('input, textarea').forEach(el => {
+      el.addEventListener('input', function() {
+        if (el.defaultValue !== el.value) {
+          el.classList.add('updated');
+        } else {
+          el.classList.remove('updated');
+        }
+        // Live missing check
+        if (el.hasAttribute('required')) {
+          if (!el.value) el.classList.add('is-invalid');
+          else el.classList.remove('is-invalid');
+        }
+      });
+    });
+  }, 10);
 }
 
 saveBtn.addEventListener('click', async () => {

@@ -1,3 +1,8 @@
+/* Slightly smaller font for instructions in cards */
+.vocab-instructions {
+  font-size: 0.70em;
+  color: inherit;
+}
 .vocab-card {
   background: #148da7;
   display: flex;
@@ -317,6 +322,57 @@ body {
 }
 .img-wrap:hover .img-caption,
 .img-wrap:focus-within .img-caption { opacity: 1; transform: translateY(0); }
+
+/* Custom image zoom modal overlay */
+#imageZoomModal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.88);
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+#imageZoomModal[style*="display: flex"] {
+  display: flex !important;
+}
+#imageZoomModal img {
+  max-width: 92vw;
+  max-height: 82vh;
+  box-shadow: 0 8px 32px #000a;
+  background: #fff;
+  border-radius: 14px;
+  display: block;
+  margin: auto;
+}
+#imageZoomModal button#imageZoomModalClose {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10001;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 2rem;
+  line-height: 2.5rem;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0003;
+}
+
+/* Add to the end of index.css for modal image zoom effect */
+#imageZoomModalImg {
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s;
+  cursor: zoom-in;
+}
+#imageZoomModalImg.zoomed {
+  transform: scale(1.7);
+  cursor: zoom-out;
+  box-shadow: 0 12px 48px #000b;
+}
 
 /* Small helpers */
 .badge.bg-secondary { background: rgba(0,0,0,0.25) !important; color: #fff; }

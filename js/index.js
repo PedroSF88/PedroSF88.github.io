@@ -19,9 +19,6 @@
   const topicMenu  = document.getElementById("topicMenu");
   const cardList   = document.getElementById("cardList");
 
-  // visuals lookup: `${topic_id}|${visual_id}` -> link_to_image
-  let visualsMap = {};
-
   // utils
   function clear(...els) { els.forEach((e) => e && e.replaceChildren()); }
   function safeParseJSON(val) {
@@ -95,17 +92,17 @@
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j]]; }
     return a;
   }
-  function resolveImg(topic, visualKey, obj) {
-    let url = null;
-    if (topic && topic.id) url = visualsMap[`${topic.id}|${visualKey}`] || null;
-    if (!url && obj && obj.url_to_image && obj.url_to_image !== "@image_placeholder") url = obj.url_to_image;
-    return url;
-  }
+
 
   // data load
   // Update loadData to add debug output
   async function loadData(requestId) {
     try {
+      if (requestId === null || requestId === undefined || requestId === "") {
+        console.warn('Warning: No valid requestId provided to loadData. Skipping curriculum_units query.');
+        clear(cardList);
+        return;
+      }
       console.log('Loading data for requestId:', requestId);
       const { data: units, error: unitErr } = await supabase
         .from('curriculum_units').select('*').eq('request_id', requestId).order('unit_number', { ascending: true });
@@ -117,14 +114,7 @@
       console.log('Topics:', topics, 'Error:', topicErr);
       if (topicErr) throw topicErr;
       const topicIds = (topics || []).map(t => t.id);
-      const { data: visuals, error: visualsErr } = await supabase
-        .from('visuals_data').select('*').in('topic_id', topicIds);
-      console.log('Visuals:', visuals, 'Error:', visualsErr);
-      if (visualsErr) throw visualsErr;
-      visualsMap = {};
-      (visuals || []).forEach(v => {
-        visualsMap[`${v.topic_id}|${v.visual_id}`] = v.link_to_image;
-      });
+
       const unitMap = {};
       (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
       (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
@@ -283,8 +273,8 @@
       }
       vocabPairs.forEach((pair, idx) => {
         let pairHtml = pair.map(vocab => {
-          let imgHtml = vocab.link_to_image
-            ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" style="max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;">`
+            let imgHtml = vocab.link_to_image
+              ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" class="img-zoom-preview vocab-img-preview" style="max-width:100%;height:auto;display:block;margin-bottom:0.5rem;cursor:zoom-in;">`
             : `<div class=\"img-placeholder\" style=\"width:120px;height:90px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:90px;color:#aaa;\">Image</div>`;
           let header = `<span class=\"vocab-term-heading\">${vocab.term}</span>`;
           let html = `${imgHtml}<div class=\"vocab-description\">${vocab.definition || vocab.def || ''}</div>`;
@@ -300,7 +290,16 @@
       outline.lesson_segments.forEach((seg, i) => {
         const key = Object.keys(seg)[0];
         const val = seg[key];
-        // Vocabulary array (segment-level)
+        // Custom: Warm Up section
+        if (key === 'warm_up' && typeof val === 'object') {
+          let header = 'Warm Up';
+          let html = '';
+          if (val.question) html += `<p><strong>Question:</strong> ${val.question}</p>`;
+          if (val.instructions) html += `<p><em>${val.instructions}</em></p>`;
+          sections.push({ cls: 'section-discussion', header, html });
+          return;
+        }
+        // ...existing code...
         if (key === 'vocabulary' && Array.isArray(val)) {
           const vocabPairs = [];
           for (let i = 0; i < val.length; i += 2) {
@@ -309,7 +308,7 @@
           vocabPairs.forEach((pair, idx) => {
             let pairHtml = pair.map(vocab => {
               let imgHtml = vocab.link_to_image
-                ? `<img src=\"${vocab.link_to_image}\" alt=\"${vocab.term}\" style=\"max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;\">`
+                ? `<img src=\"${vocab.link_to_image}\" alt=\"${vocab.term}\" class=\"img-zoom-preview vocab-img-preview\" style=\"max-width:100%;height:auto;display:block;margin-bottom:0.5rem;cursor:zoom-in;\">`
                 : `<div class=\"img-placeholder\" style=\"width:120px;height:90px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:90px;color:#aaa;\">Image</div>`;
               let header = `<span style=\"font-weight:bold;\">${vocab.term}</span>`;
               let html = `${imgHtml}<div>${vocab.definition || vocab.def || ''}</div>`;
@@ -318,23 +317,37 @@
             let cardHtml = `<div class=\"vocab-card card p-3 section-vocab d-flex flex-column flex-sm-row justify-content-between\">${pairHtml}</div>`;
             sections.push({ cls: "section-vocab", header: idx === 0 ? '<h5 class="mb-3">Vocabulary</h5>' : '', html: cardHtml });
           });
+    // Add modal HTML for image zoom if not present
+    if (!document.getElementById('imageZoomModal')) {
+      const modalDiv = document.createElement('div');
+      modalDiv.innerHTML = `
+        <div id="imageZoomModal" style="display:none;position:fixed;z-index:2000;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;">
+          <button type="button" id="imageZoomModalClose" style="position:absolute;top:2rem;right:2rem;z-index:2010;background:#fff;border:none;border-radius:50%;width:2.5rem;height:2.5rem;font-size:2rem;line-height:2.5rem;text-align:center;cursor:pointer;">&times;</button>
+          <img id="imageZoomModalImg" src="" style="max-width:90vw;max-height:80vh;box-shadow:0 8px 32px #0008;background:#fff;border-radius:12px;display:block;margin:auto;">
+        </div>
+      `;
+      document.body.appendChild(modalDiv);
+    }
+    // Add click listeners to all vocab image previews
+    attachZoomHandlers();
           return;
         }
-        // Group reading text and instructions in one card, always render text (with placeholder if missing)
+        // ...existing code...
         if (key.startsWith("reading_")) {
           let header = val.title || key.replace("_", " ").replace(/\b\w/g, s => s.toUpperCase());
-          let html = "";
+          let html = '';
+          // Add instructions if present (before reading)
+          if (val.instructions) html += `<div class=\"mb-2 vocab-instructions\"><em>${val.instructions}</em></div>`;
           if (val.text) {
             html += `<p>${String(val.text).replace(/\n/g, "<br>")}</p>`;
           } else {
             html += `<div class=\"text-placeholder\" style=\"background:#f8f8f8;color:#bbb;padding:1em;border-radius:6px;\">No reading text provided.</div>`;
           }
-          if (val.instructions) html += `<p><em>${val.instructions}</em></p>`;
           html += renderDiscussionQsList(normalizeDiscussionQs(val));
           sections.push({ cls: "section-readings", header, html });
           return;
         }
-        // Group all visuals in this segment into one card if present
+        // ...existing code...
         if (typeof val === 'object' && val !== null) {
           // Collect visuals
           const visuals = [];
@@ -343,23 +356,23 @@
             if (v && typeof v === 'object' && (v.link_to_image || v.url_to_image || v.description)) {
               hasVisuals = true;
               let imgHtml = v.link_to_image || v.url_to_image
-                ? `<img src=\"${v.link_to_image || v.url_to_image}\" alt=\"${v.type || k}\" style=\"max-width:180px;max-height:180px;display:block;margin-bottom:0.5rem;\">`
+                ? `<img src=\"${v.link_to_image || v.url_to_image}\" alt=\"${v.type || k}\" class=\"img-zoom-preview\" style=\"max-width:100%;height:auto;display:block;margin-bottom:0.5rem;cursor:zoom-in;\">`
                 : `<div class=\"img-placeholder\" style=\"width:180px;height:120px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:120px;color:#aaa;\">Image</div>`;
-              let desc = v.description || '';
               let visualHeader = v.type ? `<strong>${v.type}</strong>` : '';
-              visuals.push(`<div style=\"margin-bottom:1rem;\">${visualHeader}${imgHtml}<div>${desc}</div></div>`);
+              visuals.push(`<div style=\"margin-bottom:1rem;\">${visualHeader}${imgHtml}</div>`);
             }
           });
           if (visuals.length > 0 || (val.visual_1A || val.visual_1B || val.visual_1C || val.visual_2B || val.visual_2C || val.visual_3B || val.visual_4B)) {
             let header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
-            let html = visuals.join('');
+            let html = '';
+            // Add instructions if present (before images)
+            if (val.instructions) {
+              html += `<div class=\"mb-2 vocab-instructions\"><em>${val.instructions}</em></div>`;
+            }
+            html += visuals.join('');
             // If no visuals, add a single placeholder
             if (!hasVisuals) {
               html += `<div class=\"img-placeholder\" style=\"width:180px;height:120px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:120px;color:#aaa;\">Image</div>`;
-            }
-            // Add instructions if present
-            if (val.instructions) {
-              html += `<div class=\"mt-2 vocab-instructions\"><em>${val.instructions}</em></div>`;
             }
             sections.push({ cls: "section-image", header, html });
             return;
@@ -372,6 +385,7 @@
             return;
           }
         }
+        // ...existing code...
         if (key === "exit_ticket") {
           let header = "Exit Ticket";
           let html = "";
@@ -380,7 +394,7 @@
           sections.push({ cls: "section-DOL", header, html });
           return;
         }
-        // Fallback: render as JSON
+        // ...existing code...
         let header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
         let html = `<pre>${JSON.stringify(val, null, 2)}</pre>`;
         sections.push({ cls: "section-objective", header, html });
@@ -500,4 +514,73 @@
 
   loadRequests();
   loadData();
+
+  // Attach zoom handlers to all images with .img-zoom-preview
+  function attachZoomHandlers() {
+    document.querySelectorAll('.img-zoom-preview').forEach(img => {
+      img.onclick = null;
+      img.addEventListener('click', function(e) {
+        console.log('Image clicked for zoom:', img.src); // DEBUG
+        e.stopPropagation();
+        let modal = document.getElementById('imageZoomModal');
+        let modalImg = document.getElementById('imageZoomModalImg');
+        // If modal or modalImg is missing, inject it now
+        if (!modal || !modalImg) {
+          const modalDiv = document.createElement('div');
+          modalDiv.innerHTML = `
+            <div id=\"imageZoomModal\" style=\"display:flex;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;\">
+              <button type=\"button\" id=\"imageZoomModalClose\" style=\"position:absolute;top:2rem;right:2rem;z-index:10001;background:#fff;border:none;border-radius:50%;width:2.5rem;height:2.5rem;font-size:2rem;line-height:2.5rem;text-align:center;cursor:pointer;box-shadow:0 2px 8px #0003;\">&times;</button>
+              <img id=\"imageZoomModalImg\" src=\"\" style=\"max-width:92vw;max-height:82vh;box-shadow:0 8px 32px #000a;background:#fff;border-radius:14px;display:block;margin:auto;\">
+            </div>
+          `;
+          document.body.appendChild(modalDiv);
+          modal = document.getElementById('imageZoomModal');
+          modalImg = document.getElementById('imageZoomModalImg');
+          document.getElementById('imageZoomModalClose').onclick = function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+          };
+          modal.onclick = function(e) { if (e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = ''; } };
+          document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { modal.style.display = 'none'; document.body.style.overflow = ''; } });
+        }
+        modalImg.src = img.src;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        // Remove zoomed class on open
+        modalImg.classList.remove('zoomed');
+        // Toggle zoom on click
+        modalImg.onclick = function(e) {
+          e.stopPropagation();
+          if (modalImg.classList.contains('zoomed')) {
+            modalImg.classList.remove('zoomed');
+          } else {
+            modalImg.classList.add('zoomed');
+          }
+        };
+      });
+    });
+    // Modal close logic
+    function closeModal() {
+      const modal = document.getElementById('imageZoomModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+    document.getElementById('imageZoomModalClose')?.addEventListener('click', closeModal);
+    document.getElementById('imageZoomModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
+
+  // MutationObserver to auto-attach zoom handlers to new images
+  (function observeZoomImages() {
+    const observer = new MutationObserver(() => {
+      attachZoomHandlers();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
 })();
