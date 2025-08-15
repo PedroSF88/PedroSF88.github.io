@@ -251,20 +251,6 @@
 
     const sections = [];
 
-    // Warm Up first
-    let warmUpPushed = false;
-    if (Array.isArray(outline.lesson_segments)) {
-      const warmUpSeg = outline.lesson_segments.find(seg => Object.keys(seg)[0] === "warm_up");
-      if (warmUpSeg) {
-        const content = warmUpSeg["warm_up"] || {};
-        let html = "";
-        if (content.question) html += `<p>${content.question}</p>`;
-        if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-        sections.push({ cls: "section-discussion", header: "Warm Up", html });
-        warmUpPushed = true;
-      }
-    }
-
     // Title / Objective / SC / TEKS
     const teksItems = normalizeTeks(topic.matched_teks);
     const teksCollapseId = `teksCol_${topic.id || Math.random().toString(36).slice(2)}`;
@@ -289,112 +275,134 @@
       })()
     });
 
-    // Fetch vocab_table for this topic and render one vocab card per term, immediately after LO/SC/TEKS
-    (async () => {
-      let vocabSections = [];
-      try {
-        const { data: vocabRows, error: vocabErr } = await supabase.from('vocab_table').select('*').eq('topic_id', topic.id);
-        if (vocabRows && Array.isArray(vocabRows)) {
-          vocabRows.forEach(vocab => {
-            let imgHtml = vocab.link_to_image ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" style="max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;">` : '';
-            // Add spacing between 'Vocabulary' and the term in the heading
-            let header = `<span>Vocabulary:        </span><span style=\"margin-left:0.5em;font-weight:bold;\">${vocab.term}</span>`;
-            let html = `${imgHtml}<div>${vocab.definition}</div>`;
-            vocabSections.push({ cls: "section-vocab", header, html });
-          });
-        }
-      } catch (e) { vocabSections = []; }
-      // Insert vocab sections after the title/objective/SC/TEKS (which is always sections[0])
-      const allSections = [sections[0], ...vocabSections, ...sections.slice(1)];
-      clear(cardList);
-      allSections.forEach(sec => {
-        const card = document.createElement("div");
-        card.className = `card p-3 ${sec.cls}`;
-        card.innerHTML = `<div class=\"section-header\">${sec.header}</div>${sec.html}`;
-        cardList.append(card);
-      });
-    })();
-
-    // remaining segments (excluding warm_up already shown)
-    if (Array.isArray(outline.lesson_segments)) {
-      outline.lesson_segments.forEach(seg => {
-        const key = Object.keys(seg)[0];
-        if (key === "warm_up" && warmUpPushed) return;
-
-        const content = seg[key];
-        let header = "", html = "", cls = "";
-
-        const renderVisualBlock = (k, v) => {
-          const desc = v.description || '';
-          const imgUrl = resolveImg(topic, k, v);
-          let s = '<div class="mb-3">';
-          if (imgUrl) {
-            s += `
-              <div class="img-wrap" aria-label="${desc.replace(/"/g,'&quot;')}">
-                <img src="${imgUrl}" alt="${(v.type || 'visual') + (desc ? (': ' + desc) : '')}" style="cursor:pointer;" onclick="showImageModal('${imgUrl}')">
-                <div class="img-caption">
-                  ${v.type ? `<strong>${v.type.charAt(0).toUpperCase()+v.type.slice(1)}:</strong> ` : ''}${desc}
-                </div>
-              </div>
-            `;
-          } else {
-            s += '<div class="mb-2 p-2 border rounded text-muted text-center">Image unavailable</div>';
-          }
-          s += '</div>';
-          return s;
-        };
-
-        switch (key) {
-          case "image_analysis":
-            header = "Image Analysis"; cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
-            if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            break;
-          case "compare_contrast":
-            header = "Compare & Contrast"; cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
-            if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            break;
-          case "odd_one_out":
-            header = "Odd One Out"; cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
-            if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            break;
-          case "cause_effect":
-            header = "Cause & Effect"; cls = "section-image";
-            Object.entries(content).forEach(([k, v]) => { if (k.startsWith("visual_")) html += renderVisualBlock(k, v); });
-            if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            break;
-          case "reading_1":
-          case "reading_2":
-          case "reading_3":
-            header = content.title || key.replace("_", " ").replace(/\b\w/g, s => s.toUpperCase());
-            cls = "section-readings";
-            if (content.text) html += `<p>${String(content.text).replace(/\n/g, "<br>")}</p>`;
-            if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            html += renderDiscussionQsList(normalizeDiscussionQs(content));
-            break;
-          case "exit_ticket":
-            header = "Exit Ticket"; cls = "section-DOL";
-            if (content.prompt) html += `<p>${content.prompt}</p>`;
-            if (content.instructions) html += `<p><em>${content.instructions}</em></p>`;
-            break;
-          default:
-            header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
-            cls = "section-objective";
-            html = `<pre>${JSON.stringify(content, null, 2)}</pre>`;
-        }
-        sections.push({ cls, header, html });
+    // Render vocabulary from root-level lesson_outline.vocabulary (if present) in cards, each containing two vocab sub-cards
+    if (Array.isArray(outline.vocabulary)) {
+      const vocabPairs = [];
+      for (let i = 0; i < outline.vocabulary.length; i += 2) {
+        vocabPairs.push(outline.vocabulary.slice(i, i + 2));
+      }
+      vocabPairs.forEach((pair, idx) => {
+        let pairHtml = pair.map(vocab => {
+          let imgHtml = vocab.link_to_image
+            ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" style="max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;">`
+            : `<div class=\"img-placeholder\" style=\"width:120px;height:90px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:90px;color:#aaa;\">Image</div>`;
+          let header = `<span class=\"vocab-term-heading\">${vocab.term}</span>`;
+          let html = `${imgHtml}<div class=\"vocab-description\">${vocab.definition || vocab.def || ''}</div>`;
+          return `<div class=\"vocab-subcard mb-2\"><div class=\"section-header\">${header}</div>${html}</div>`;
+        }).join('');
+        let cardHtml = `<div class=\"vocab-card card p-3 section-vocab d-flex flex-column flex-sm-row justify-content-between\">${pairHtml}</div>`;
+        sections.push({ cls: "section-vocab", header: idx === 0 ? '<h5 class="mb-3">Vocabulary</h5>' : '', html: cardHtml });
       });
     }
 
-    // render cards
+    // Render all lesson_segments as cards (including vocab, grouped visuals, grouped readings, etc.)
+    if (Array.isArray(outline.lesson_segments)) {
+      outline.lesson_segments.forEach((seg, i) => {
+        const key = Object.keys(seg)[0];
+        const val = seg[key];
+        // Vocabulary array (segment-level)
+        if (key === 'vocabulary' && Array.isArray(val)) {
+          const vocabPairs = [];
+          for (let i = 0; i < val.length; i += 2) {
+            vocabPairs.push(val.slice(i, i + 2));
+          }
+          vocabPairs.forEach((pair, idx) => {
+            let pairHtml = pair.map(vocab => {
+              let imgHtml = vocab.link_to_image
+                ? `<img src=\"${vocab.link_to_image}\" alt=\"${vocab.term}\" style=\"max-width:120px;max-height:120px;display:block;margin-bottom:0.5rem;\">`
+                : `<div class=\"img-placeholder\" style=\"width:120px;height:90px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:90px;color:#aaa;\">Image</div>`;
+              let header = `<span style=\"font-weight:bold;\">${vocab.term}</span>`;
+              let html = `${imgHtml}<div>${vocab.definition || vocab.def || ''}</div>`;
+              return `<div class=\"vocab-subcard mb-2\"><div class=\"section-header\">${header}</div>${html}</div>`;
+            }).join('');
+            let cardHtml = `<div class=\"vocab-card card p-3 section-vocab d-flex flex-column flex-sm-row justify-content-between\">${pairHtml}</div>`;
+            sections.push({ cls: "section-vocab", header: idx === 0 ? '<h5 class="mb-3">Vocabulary</h5>' : '', html: cardHtml });
+          });
+          return;
+        }
+        // Group reading text and instructions in one card, always render text (with placeholder if missing)
+        if (key.startsWith("reading_")) {
+          let header = val.title || key.replace("_", " ").replace(/\b\w/g, s => s.toUpperCase());
+          let html = "";
+          if (val.text) {
+            html += `<p>${String(val.text).replace(/\n/g, "<br>")}</p>`;
+          } else {
+            html += `<div class=\"text-placeholder\" style=\"background:#f8f8f8;color:#bbb;padding:1em;border-radius:6px;\">No reading text provided.</div>`;
+          }
+          if (val.instructions) html += `<p><em>${val.instructions}</em></p>`;
+          html += renderDiscussionQsList(normalizeDiscussionQs(val));
+          sections.push({ cls: "section-readings", header, html });
+          return;
+        }
+        // Group all visuals in this segment into one card if present
+        if (typeof val === 'object' && val !== null) {
+          // Collect visuals
+          const visuals = [];
+          let hasVisuals = false;
+          Object.entries(val).forEach(([k, v]) => {
+            if (v && typeof v === 'object' && (v.link_to_image || v.url_to_image || v.description)) {
+              hasVisuals = true;
+              let imgHtml = v.link_to_image || v.url_to_image
+                ? `<img src=\"${v.link_to_image || v.url_to_image}\" alt=\"${v.type || k}\" style=\"max-width:180px;max-height:180px;display:block;margin-bottom:0.5rem;\">`
+                : `<div class=\"img-placeholder\" style=\"width:180px;height:120px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:120px;color:#aaa;\">Image</div>`;
+              let desc = v.description || '';
+              let visualHeader = v.type ? `<strong>${v.type}</strong>` : '';
+              visuals.push(`<div style=\"margin-bottom:1rem;\">${visualHeader}${imgHtml}<div>${desc}</div></div>`);
+            }
+          });
+          if (visuals.length > 0 || (val.visual_1A || val.visual_1B || val.visual_1C || val.visual_2B || val.visual_2C || val.visual_3B || val.visual_4B)) {
+            let header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
+            let html = visuals.join('');
+            // If no visuals, add a single placeholder
+            if (!hasVisuals) {
+              html += `<div class=\"img-placeholder\" style=\"width:180px;height:120px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:120px;color:#aaa;\">Image</div>`;
+            }
+            // Add instructions if present
+            if (val.instructions) {
+              html += `<div class=\"mt-2 vocab-instructions\"><em>${val.instructions}</em></div>`;
+            }
+            sections.push({ cls: "section-image", header, html });
+            return;
+          }
+          // If not visuals, but instructions, render as a single card
+          if (val.instructions) {
+            let header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
+            let html = `<em>${val.instructions}</em>`;
+            sections.push({ cls: "section-image", header, html });
+            return;
+          }
+        }
+        if (key === "exit_ticket") {
+          let header = "Exit Ticket";
+          let html = "";
+          if (val.prompt) html += `<p>${val.prompt}</p>`;
+          if (val.instructions) html += `<p class=\"vocab-instructions\"><em>${val.instructions}</em></p>`;
+          sections.push({ cls: "section-DOL", header, html });
+          return;
+        }
+        // Fallback: render as JSON
+        let header = key.replace(/_/g, " ").replace(/\b\w/g, s => s.toUpperCase());
+        let html = `<pre>${JSON.stringify(val, null, 2)}</pre>`;
+        sections.push({ cls: "section-objective", header, html });
+      });
+    }
+    clear(cardList);
     sections.forEach(sec => {
       const card = document.createElement("div");
       card.className = `card p-3 ${sec.cls}`;
-      card.innerHTML = `<div class="section-header">${sec.header}</div>${sec.html}`;
+      card.innerHTML = `<div class=\"section-header\">${sec.header}</div>${sec.html}`;
       cardList.append(card);
     });
+
+    // Debug: log vocabulary segments found
+    if (Array.isArray(outline.lesson_segments)) {
+      outline.lesson_segments.forEach((seg, i) => {
+        const key = Object.keys(seg)[0];
+        if (key === 'vocabulary') {
+          console.log('Vocabulary segment found:', seg[key]);
+        }
+      });
+    }
   }
 
   // Add modal logic at the end of the file

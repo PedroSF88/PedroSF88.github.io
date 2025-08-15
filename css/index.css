@@ -1,3 +1,40 @@
+.vocab-card {
+  background: #148da7;
+  display: flex;
+  flex-wrap: wrap;
+}
+.vocab-subcard {
+  background: #0b5b84;
+  border-radius: 10px;
+  padding: 0.5rem 1rem 1rem 1rem;
+  color: #f8efca;
+}
+.vocab-card {
+  gap: 1.5rem;
+}
+.vocab-subcard {
+  flex: 1 1 48%;
+  min-width: 220px;
+  background: #0b5b84;
+  border-radius: 10px;
+  padding: 0.5rem 1rem 1rem 1rem;
+  color: #f8efca;
+  border: 2px solid #12607a;
+  box-sizing: border-box;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .vocab-card {
+    flex-direction: column !important;
+    gap: 1rem;
+  }
+  .vocab-subcard {
+    flex-basis: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin-bottom: 1rem;
+  }
+}
 /* Selected topic title in sidebar */
 .selected-topic-title {
   text-align: center;
@@ -172,11 +209,22 @@ body {
 
 /* Section header = slightly darker strip of the same hue */
 .section-header {
-  font-size: 28px; font-weight: 800; letter-spacing: .2px; line-height: 1.2;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  line-height: 1.2;
   padding: 10px 14px;
   margin: -8px -8px 14px -8px;         /* make the strip edge-to-edge inside card */
   border-radius: 14px;
   color: #f8efca;                      /* light yellow for section headers */
+}
+
+.vocab-term-heading {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  line-height: 1.2;
+  /* No color or background here, inherits from parent card/section-header */
 }
 
 /* ===== New palette (card bg + darker header strip) =====
