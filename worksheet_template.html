@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auto-Loaded Lesson Worksheet + Vocab (Randomized A/B/C)</title>
+  <link rel="stylesheet" href="css/worksheet_template.css" />
+</head>
+<body class="ver-A">
+  <div class="container">
+    <div class="controls">
+      <h2>Lesson Worksheet (Auto JSON)</h2>
+      <span class="pill">Version:
+        <button class="btn" data-version="A" title="A: Some row parts hidden to force collaboration">A</button>
+        <button class="btn" data-version="B" title="B: Some row parts hidden to force collaboration">B</button>
+        <button class="btn" data-version="C" title="C: Some row parts hidden to force collaboration">C</button>
+      </span>
+      <span class="pill">Print:
+        <button class="btn" data-print>Print</button>
+      </span>
+      <span class="split"></span>
+      <span class="pill">
+        <label for="contentSelect">Content:</label>
+        <select id="contentSelect" class="btn"></select>
+        <label for="unitSelect">Unit:</label>
+        <select id="unitSelect" class="btn"></select>
+        <label for="topicSelect">Topic:</label>
+        <select id="topicSelect" class="btn"></select>
+        <button id="btnLoadSupabase" class="btn primary">Load Lesson</button>
+      </span>
+      <button class="btn" id="btnReshuffle" title="Re-randomize row masks">Reshuffle</button>
+      <button class="btn primary" id="btnRunTests" title="Run built-in tests">Run Tests</button>
+    </div>
+
+    <div id="lessonRoot"><!-- Rendered content goes here --></div>
+    <div id="testResults" class="muted" aria-live="polite" style="display:none"></div>
+
+    <template id="tpl-vocab-row">
+      <tr>
+        <td class="cell cell-term col-term">
+          <div class="term-rot">
+            <div class="filled term"></div>
+            <div class="blank">term</div>
+          </div>
+        </td>
+        <td class="cell cell-def col-definition">
+          <div class="filled definition"></div>
+          <div class="blank placeholder">write the <strong>definition</strong></div>
+        </td>
+        <td class="cell cell-img col-image">
+          <div class="filled img-box"><img class="img-preview" alt="vocab image"/></div>
+          <div class="blank placeholder">draw / paste an <strong>image</strong></div>
+        </td>
+      </tr>
+    </template>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.SUPABASE_URL = 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
+  </script>
+  <script src="js/worksheet_template.js"></script>
+ 
+</body>
+</html>
