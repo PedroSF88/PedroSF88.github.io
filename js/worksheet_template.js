@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   imgBox.appendChild(img);
   imgSlot.appendChild(imgBox);
-  imgSlot.appendChild(el('div', { className:'blank placeholder' }, 'draw / paste an image'));
+  imgSlot.appendChild(el('div', { className:'blank placeholder' }, 'draw image'));
 
       cell.appendChild(termSlot);
       cell.appendChild(defSlot);

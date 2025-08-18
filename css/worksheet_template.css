@@ -13,8 +13,8 @@
   display: table-cell;
 }
 .vocab-grid-cell [data-col="term"] {
-  outline: 1px solid #e2e8f0;
-  outline-offset: 2px;
+  outline: 3px solid #2d2d2d;
+  outline-offset: 0px;
   background: #f8fafc;
   border-radius: 5px;
 }
@@ -89,7 +89,7 @@
   margin: 0 auto;
 }
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 3px solid #2e2e2e;
   border-radius: 6px;
   padding: 2px 4px;
   gap: 0;
@@ -290,7 +290,7 @@ td{font-size:12px;}
   background:none;
   border:0;
   padding:0;
-  color:#94a3b8;
+  color:#4c4e51;
   text-align:center;
   display:flex;
   align-items:center;
@@ -384,9 +384,9 @@ body.ver-C td.maskC .blank{display:block}
     max-width: 100vw;
     overflow: visible !important;
   }
-  /* Fit all content into 6 pages by scaling */
+  /* Print at 85% scale */
   body {
-    zoom: calc(1 / max(1, (var(--print-pages, 1) / 6)));
+    zoom: 0.85 !important;
   }
   @page {
     size: auto;

@@ -275,11 +275,12 @@
       vocabPairs.forEach((pair, idx) => {
         let pairHtml = pair.map(vocab => {
             let imgHtml = vocab.link_to_image
-              ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" class="img-zoom-preview vocab-img-preview" style="max-width:100%;height:auto;display:block;margin-bottom:0.5rem;cursor:zoom-in;">`
+              ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" class="img-zoom-preview vocab-img-preview" style="max-width:500px;max-height:300px;width:auto;height:auto;object-fit:contain;display:block;margin-top:0.5rem;cursor:zoom-in;margin-left:auto;margin-right:auto;">`
             : `<div class=\"img-placeholder\" style=\"width:120px;height:90px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:90px;color:#aaa;\">Image</div>`;
           let header = `<span class=\"vocab-term-heading\">${vocab.term}</span>`;
-          let html = `${imgHtml}<div class=\"vocab-description\">${vocab.definition || vocab.def || ''}</div>`;
-          return `<div class=\"vocab-subcard mb-2\"><div class=\"section-header\">${header}</div>${html}</div>`;
+          let defHtml = `<div class=\"vocab-description\">${vocab.definition || vocab.def || ''}</div>`;
+          // Order: term (top), definition (middle), image (bottom)
+          return `<div class=\"vocab-subcard mb-2\"><div class=\"section-header\">${header}</div>${defHtml}${imgHtml}</div>`;
         }).join('');
         let cardHtml = `<div class=\"vocab-card card p-3 section-vocab d-flex flex-column flex-sm-row justify-content-between\">${pairHtml}</div>`;
         sections.push({ cls: "section-vocab", header: idx === 0 ? '<h5 class="mb-3">Vocabulary</h5>' : '', html: cardHtml });
