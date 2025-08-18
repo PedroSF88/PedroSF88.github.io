@@ -300,6 +300,42 @@
           sections.push({ cls: 'section-discussion', header, html });
           return;
         }
+        // Odd One Out: render as 2x2 grid
+        if (key === 'odd_one_out' && typeof val === 'object') {
+          let d = val;
+          let box = document.createElement('div');
+          let grid = document.createElement('div');
+          grid.className = 'odd-one-out-grid';
+          [d.visual_1B, d.visual_2B, d.visual_3B, d.visual_4B].forEach(function(v) {
+            let cell = document.createElement('div');
+            if (v && (v.link_to_image || v.url_to_image)) {
+              let img = document.createElement('img');
+              img.src = v.link_to_image || v.url_to_image;
+              img.alt = v.type || '';
+              img.className = 'img-zoom-preview odd-one-out-img';
+              cell.appendChild(img);
+            } else {
+              let placeholder = document.createElement('div');
+              placeholder.className = 'img-placeholder';
+              placeholder.textContent = 'Image';
+              cell.appendChild(placeholder);
+            }
+            grid.appendChild(cell);
+          });
+          box.appendChild(grid);
+          if (d.instructions) {
+            let inst = document.createElement('div');
+            inst.className = 'muted';
+            inst.innerHTML = d.instructions;
+            box.appendChild(inst);
+          }
+          let lines = document.createElement('div');
+          lines.className = 'lines sm';
+          lines.innerHTML = '<div class="pad">Justify your choice...</div>';
+          box.appendChild(lines);
+          sections.push({ cls: 'section-image', header: 'Odd One Out', html: box.outerHTML });
+          return;
+        }
         // ...existing code...
         if (key === 'vocabulary' && Array.isArray(val)) {
           const vocabPairs = [];

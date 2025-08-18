@@ -125,7 +125,7 @@ function renderOutlineForm(outline) {
   let html = '';
   html += `<div class="mb-3"><label class="form-label">Lesson Title</label><input type="text" class="form-control" id="lessonTitleInput" value="${outline.lesson_title || ''}"></div>`;
   html += `<div class="mb-3"><label class="form-label">Lesson Objective</label><textarea class="form-control" id="lessonObjectiveInput">${outline.lesson_objective || ''}</textarea></div>`;
-  html += `<div class="mb-3"><label class="form-label">Success Criteria (comma separated)</label><input type="text" class="form-control" id="successCriteriaInput" value="${(outline.success_criteria||[]).join(', ')}"></div>`;
+  html += `<div class="mb-3"><label class="form-label">Success Criteria (comma separated)</label><textarea class="form-control" id="successCriteriaInput" rows="3">${(outline.success_criteria||[]).join(', ')}</textarea></div>`;
   // Segments (if present)
   // Helper to capture all current input values in the form
   function captureFormState() {
