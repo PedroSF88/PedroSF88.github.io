@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!topicSelect) return;
     topicSelect.innerHTML = '<option value=\"\">Select a topic</option>';
     if (!unitId) return;
-    const { data: topics, error } = await supa.from('topic_teks').select('id, topic_title, lesson_outline').eq('unit_id', unitId);
+  const { data: topics, error } = await supa.from('topic_teks').select('id, topic_title, re_lesson_outlines').eq('unit_id', unitId);
     if (error || !topics || !topics.length) return;
     topicSelect.innerHTML += topics.map(t => `<option value=\"${t.id}\">${t.topic_title}</option>`).join('');
   }
@@ -58,12 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
-    const { data: topic, error } = await supa.from('topic_teks').select('lesson_outline').eq('id', topicId).single();
-    if (error || !topic || !topic.lesson_outline) {
+  const { data: topic, error } = await supa.from('topic_teks').select('re_lesson_outlines').eq('id', topicId).single();
+  if (error || !topic || !topic.re_lesson_outlines) {
       alert('Failed to load lesson from Supabase.');
       return;
     }
-    let lessonData = topic.lesson_outline;
+  let lessonData = topic.re_lesson_outlines;
     if (typeof lessonData === 'string') {
       try { lessonData = JSON.parse(lessonData); } catch {}
     }
@@ -242,7 +242,12 @@ document.addEventListener('DOMContentLoaded', function() {
   var imgSlot = el('div', { className:'slot slot-img', 'data-col':'img' });
   var imgBox = el('div', { className:'filled img-box' });
   var img = el('img', { className:'img-preview', alt:(v.term || 'vocab image') });
-  if (v.link_to_image) img.src = v.link_to_image;
+  if (v.hasOwnProperty('link_to_image') && v.link_to_image) {
+    img.src = v.link_to_image;
+    img.style.display = '';
+  } else {
+    img.style.display = 'none';
+  }
   imgBox.appendChild(img);
   imgSlot.appendChild(imgBox);
   imgSlot.appendChild(el('div', { className:'blank placeholder' }, 'draw / paste an image'));
@@ -401,11 +406,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // table layout only for image analysis (unchanged)
         var table = el('table', { style: 'width:100%; margin-bottom: 12px;' });
         var tbody = el('tbody'); table.appendChild(tbody);
-        if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
+  if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
         var imgCell = el('td', { style: 'width:50%; vertical-align:top; text-align:center;' });
         if (d.visual_1A) imgCell.appendChild(imgBlock(d.visual_1A.type, d.visual_1A));
         var qCell = el('td', { style: 'width:50%; vertical-align:top;' });
-        qCell.appendChild(el('div', { className: 'lines xl' }, el('div', { className: 'pad' }, 'Write your analysis...')));
+        // Two rows: Before Vocab and After Vocab
+        var beforeDiv = el('div', { style: 'margin-bottom: 18px;' },
+          el('div', { style: 'font-weight: bold; margin-bottom: 4px;' }, 'Before Vocab'),
+          el('div', { className: 'lines md' }, el('div', { className: 'pad' }, ''))
+        );
+        var afterDiv = el('div', {},
+          el('div', { style: 'font-weight: bold; margin-bottom: 4px;' }, 'After Vocab'),
+          el('div', { className: 'lines md' }, el('div', { className: 'pad' }, ''))
+        );
+        qCell.appendChild(beforeDiv);
+        qCell.appendChild(afterDiv);
         tbody.appendChild(el('tr', {}, imgCell, qCell));
         root.appendChild(card('Image Analysis', el('div', {}, table)));
         return;
@@ -422,44 +437,61 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderAll(data) {
     clearRoot();
     window.__CURRENT_LESSON__ = data;
-    renderHeader(data);
+    renderHeader(data); // Name card
 
-    // Warm up first if present
-    if (Array.isArray(data.lesson_segments)) {
-      var warmUpSeg = data.lesson_segments.find(function(seg){ return !!seg.warm_up; });
-      if (warmUpSeg) renderWarmUp(warmUpSeg);
-    }
+    // Gather segments by type for ordered rendering
+    var segments = Array.isArray(data.lesson_segments) ? data.lesson_segments : [];
+    var warmUpSeg = segments.find(seg => seg.warm_up);
+    var imageAnalysisSeg = segments.find(seg => seg.image_analysis);
+    var oddOneOutSeg = segments.find(seg => seg.odd_one_out);
+    var causeEffectSeg = segments.find(seg => seg.cause_effect);
+    var reading1 = segments.find(seg => Object.keys(seg)[0] === 'reading_1');
+    var reading2 = segments.find(seg => Object.keys(seg)[0] === 'reading_2');
+    var reading3 = segments.find(seg => Object.keys(seg)[0] === 'reading_3');
+    var exitTicketSeg = segments.find(seg => seg.exit_ticket);
 
+    // 1. Warm up
+    if (warmUpSeg) renderWarmUp(warmUpSeg);
+    // 2. LO/SC
     renderObjectives(data);
-    if (data.vocabulary && data.vocabulary.length) renderVocabGrid(data.vocabulary);
-
-    // Render all other segments except warm up
-    if (Array.isArray(data.lesson_segments)) {
-      data.lesson_segments.forEach(function(seg){
-        if (!seg.warm_up) {
-          var key = Object.keys(seg)[0];
-          if (!key) return;
-          if (key === 'image_analysis') {
-            var d = seg.image_analysis; if (!d) return;
-            var table = el('table', { className: 'image-analysis-table', style: 'width:100%; margin-bottom: 12px;' });
-            var tbody = el('tbody'); table.appendChild(tbody);
-            if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
-            var imgCell = el('td', { style: 'width:50%; vertical-align:top; text-align:center;' });
-            if (d.visual_1A) imgCell.appendChild(imgBlock(d.visual_1A.type, d.visual_1A));
-            var qCell = el('td', { style: 'width:50%; vertical-align:top;' });
-            qCell.appendChild(el('div', { className: 'lines xl' }, el('div', { className: 'pad' }, 'Write your analysis...')));
-            tbody.appendChild(el('tr', {}, imgCell, qCell));
-            root.appendChild(card('Image Analysis', el('div', {}, table)));
-            return;
-          }
-          if (key.indexOf('reading_') === 0) { renderReading(key, seg); return; }
-          if (key === 'odd_one_out') { renderOddOneOut(seg); return; }
-          if (key === 'cause_effect') { renderCauseEffect(seg); return; }
-          if (key === 'exit_ticket') { renderExitTicket(seg.exit_ticket); return; }
-          root.appendChild(card(key.split('_').join(' ').toUpperCase(), el('pre', {}, JSON.stringify(seg[key], null, 2))));
-        }
-      });
+    // 3. Image analysis
+    if (imageAnalysisSeg) {
+      var d = imageAnalysisSeg.image_analysis;
+      if (d) {
+        var table = el('table', { className: 'image-analysis-table', style: 'width:100%; margin-bottom: 12px;' });
+        var tbody = el('tbody'); table.appendChild(tbody);
+        if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
+        var imgCell = el('td', { style: 'width:50%; vertical-align:top; text-align:center;' });
+        if (d.visual_1A) imgCell.appendChild(imgBlock(d.visual_1A.type, d.visual_1A));
+        var qCell = el('td', { style: 'width:50%; vertical-align:top;' });
+        var beforeDiv = el('div', { style: 'margin-bottom: 18px;' },
+          el('div', { style: 'font-weight: bold; margin-bottom: 4px;' }, 'Before Vocab'),
+          el('div', { className: 'lines md' }, el('div', { className: 'pad' }, ''))
+        );
+        var afterDiv = el('div', {},
+          el('div', { style: 'font-weight: bold; margin-bottom: 4px;' }, 'After Vocab'),
+          el('div', { className: 'lines md' }, el('div', { className: 'pad' }, ''))
+        );
+        qCell.appendChild(beforeDiv);
+        qCell.appendChild(afterDiv);
+        tbody.appendChild(el('tr', {}, imgCell, qCell));
+        root.appendChild(card('Image Analysis', el('div', {}, table)));
+      }
     }
+    // 4. Vocab
+    if (data.vocabulary && data.vocabulary.length) renderVocabGrid(data.vocabulary);
+    // 5. Reading 1
+    if (reading1) renderReading('reading_1', reading1);
+    // 6. Odd One Out
+    if (oddOneOutSeg) renderOddOneOut(oddOneOutSeg);
+    // 7. Reading 2
+    if (reading2) renderReading('reading_2', reading2);
+    // 8. Cause and Effect
+    if (causeEffectSeg) renderCauseEffect(causeEffectSeg);
+    // 9. Reading 3
+    if (reading3) renderReading('reading_3', reading3);
+    // 10. Exit Ticket
+    if (exitTicketSeg) renderExitTicket(exitTicketSeg.exit_ticket);
     // Ensure masks reflect the current version after all content
     applyVersionMasks(currentVersion());
   }

@@ -1,5 +1,5 @@
 // edit_outline.js
-// Handles fetching units, topics, and lesson_outline, rendering a structured editable form, and updating lesson_outline in Supabase
+// Handles fetching units, topics, and re_lesson_outlines, rendering a structured editable form, and updating re_lesson_outlines in Supabase
 
 console.log('edit_outline.js loaded');
 
@@ -108,11 +108,12 @@ topicSelect.addEventListener('change', e => {
 async function loadOutline(topicId) {
   outlineFormContainer.innerHTML = '';
   if (!topicId) return;
-  const { data, error } = await supa.from('topic_teks').select('id, lesson_outline').eq('id', topicId).single();
+  const { data, error } = await supa.from('topic_teks').select('id, re_lesson_outlines').eq('id', topicId).single();
   if (error || !data) return;
   currentTopic = data;
+  let outlineRaw = data.re_lesson_outlines;
   try {
-    currentOutline = typeof data.lesson_outline === 'string' ? JSON.parse(data.lesson_outline) : data.lesson_outline;
+    currentOutline = typeof outlineRaw === 'string' ? JSON.parse(outlineRaw) : outlineRaw;
   } catch {
     currentOutline = {};
   }
@@ -404,7 +405,7 @@ saveBtn.addEventListener('click', async () => {
   }
   const newOutline = { lesson_title, lesson_objective, success_criteria, vocabulary, lesson_segments };
   // Update in Supabase
-  const { error } = await supa.from('topic_teks').update({ lesson_outline: newOutline }).eq('id', currentTopic.id);
+  const { error } = await supa.from('topic_teks').update({ re_lesson_outlines: newOutline }).eq('id', currentTopic.id);
   if (error) {
     statusMsg.textContent = 'Error saving changes.';
     statusMsg.className = 'text-danger mt-3';

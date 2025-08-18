@@ -1,3 +1,17 @@
+/* Reading section text font size */
+.reading-section p, .reading-text, .reading-section, .reading-section * {
+  font-size: 12px !important;
+}
+/* Ensure the entire vocab card (not just the grid) prints on a single page */
+.card:has(.vocab-grid) {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+/* Ensure instructions row in image analysis table spans both columns visually */
+.image-analysis-table td[colspan="2"] {
+  width: 100% !important;
+  display: table-cell;
+}
 .vocab-grid-cell [data-col="term"] {
   outline: 1px solid #e2e8f0;
   outline-offset: 2px;
@@ -203,7 +217,19 @@ input[type="url"], input[type="text"]{padding:8px 10px; border:1px solid var(--l
   background:#fff;
   box-shadow:0 1px 2px #e2e8f0;
 }
-.card h3{margin:0 0 4px; font-size:17px;}
+.card h3{
+  margin:0 0 4px;
+  font-size:17px;
+  display:block;
+  width:100%;
+}
+
+.card .small.muted {
+  display:block;
+  width:100%;
+  text-align:left;
+  margin-bottom:4px;
+}
 .section-header{
   font-family: inherit;
   font-weight: 700;
@@ -324,39 +350,32 @@ body.ver-C td.maskC .blank{display:block}
 .lines .pad{padding:8px 10px; color:#94a3b8; font-size:12px}
 
 /* Print */
-@media print{
-  .controls{display:none !important;}
-  .container{padding:0 0 8px;}
-  /* Keep sections (cards) together if possible, but allow break if necessary */
-  .card {
-    page-break-inside: avoid;
-    break-inside: avoid;
+@media print {
+  .controls { display: none !important; }
+  .container { padding: 0 0 8px; }
+  /* Prevent all breaks between sections and within cards */
+  .card, .card:not(:first-child), .card *, .section-header, .card .card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: auto !important;
+    break-before: auto !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
-  .card:not(:first-child) {
-    page-break-before: auto;
-  }
-  /* For tables, allow breaks between rows but not inside rows */
-  table {
-    page-break-inside: auto;
-    break-inside: auto;
-  }
-  tr {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-  td, th {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-  /* Start vocab grid on a new page, but allow breaks between its rows */
+  /* Vocab grid: always start on a new page and fit on one page */
   .vocab-grid {
-    page-break-before: always;
-    break-before: always;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
   .vocab-grid-cell {
-    page-break-inside: auto;
-    break-inside: auto;
-    page-break-after: auto;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
   html, body {
     height: auto !important;

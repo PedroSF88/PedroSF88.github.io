@@ -230,7 +230,8 @@
       selectedTopicTitle.textContent = topic.topic_title || '';
     }
 
-    let outline = topic.lesson_outline;
+    // Only use re_lesson_outlines (JSON)
+    let outline = topic.re_lesson_outlines;
     if (!outline) {
       const msg = document.createElement("p");
       msg.textContent = "No lesson data available for this topic.";
@@ -265,8 +266,8 @@
       })()
     });
 
-    // Render vocabulary from root-level lesson_outline.vocabulary (if present) in cards, each containing two vocab sub-cards
-    if (Array.isArray(outline.vocabulary)) {
+  // Render vocabulary from root-level re_lesson_outlines.vocabulary (if present) in cards, each containing two vocab sub-cards
+  if (Array.isArray(outline.vocabulary)) {
       const vocabPairs = [];
       for (let i = 0; i < outline.vocabulary.length; i += 2) {
         vocabPairs.push(outline.vocabulary.slice(i, i + 2));
