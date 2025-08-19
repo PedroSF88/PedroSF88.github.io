@@ -1,427 +1,342 @@
-// edit_outline.js
-// Handles fetching units, topics, and re_lesson_outlines, rendering a structured editable form, and updating re_lesson_outlines in Supabase
-
-console.log('edit_outline.js loaded');
-
-if (!window.supabase) {
-  alert('Supabase client not found. Please ensure @supabase/supabase-js is loaded before this script.');
-  throw new Error('Supabase client not found.');
-}
-const SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
-const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-
-const contentSelect = document.getElementById('contentSelect');
-const unitSelect = document.getElementById('unitSelect');
-const topicSelect = document.getElementById('topicSelect');
-const outlineFormContainer = document.getElementById('outlineFormContainer');
-const saveBtn = document.getElementById('saveBtn');
-const statusMsg = document.getElementById('statusMsg');
-
-let currentTopic = null;
-let currentOutline = null;
-
-
-// Use correct table/field names from schema
-async function loadUnits(content) {
-  console.log('loadUnits: content selected:', content);
-  unitSelect.innerHTML = '<option value="">Select a unit</option>';
-  if (!content) return;
-  // 1. Find all course_requests with this content
-  const { data: reqs, error: reqErr } = await supa.from('course_requests').select('id').eq('content', content);
-  console.log('loadUnits: reqs:', reqs);
-  if (reqErr) {
-    console.error('Error loading course_requests:', reqErr);
-    alert('Error loading course_requests. See console for details.');
-    return;
+document.addEventListener('DOMContentLoaded', () => {
+  // --- Setup ---
+  const SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
+  if (!window.supabase) {
+    alert('Supabase client not found. Please ensure @supabase/supabase-js is loaded before this script.');
+    throw new Error('Supabase client not found.');
   }
-  if (!reqs || !reqs.length) {
-    console.warn('No course_requests found for content:', content);
-    return;
-  }
-  const reqIds = reqs.map(r => r.id);
-  console.log('loadUnits: reqIds:', reqIds);
-  // 2. Find all units for these request_ids
-  const { data: units, error: unitErr } = await supa.from('curriculum_units').select('id, unit_title, request_id').in('request_id', reqIds);
-  console.log('loadUnits: units returned:', units);
-  if (unitErr) {
-    console.error('Error loading curriculum_units:', unitErr);
-    alert('Error loading curriculum_units. See console for details.');
-    return;
-  }
-  if (!units || !units.length) {
-    console.warn('No units found for request_ids:', reqIds);
-    return;
-  }
-  unitSelect.innerHTML += units.map(u => `<option value="${u.id}">${u.unit_title}</option>`).join('');
-}
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const unitMenu   = document.getElementById("unitMenu");
+  const topicMenu  = document.getElementById("topicMenu");
+  const cardList   = document.getElementById("cardList");
+  let currentTopic = null;
+  let currentOutline = null;
+  let currentTopicId = null;
 
-async function loadContents() {
-  console.log('loadContents called');
-  // Get all unique content values from course_requests
-  const { data, error } = await supa.from('course_requests').select('content');
-  console.log('Supabase course_requests data:', data);
-  if (error) {
-    console.error('Error loading course_requests (content):', error);
-    alert('Error loading course_requests. See console for details.');
-    return;
-  }
-  if (!data || !data.length) {
-    console.warn('No course_requests found.');
-    return;
-  }
-  const contents = Array.from(new Set((data||[]).map(r => r.content).filter(Boolean)));
-  contentSelect.innerHTML = '<option value="">Select content</option>' +
-    contents.map(c => `<option value="${c}">${c}</option>`).join('');
-}
-
-unitSelect.addEventListener('change', e => {
-  console.log('unitSelect changed:', e.target.value);
-  loadTopics(e.target.value);
-  topicSelect.innerHTML = '<option value="">Select a topic</option>';
-  outlineFormContainer.innerHTML = '';
-  saveBtn.style.display = 'none';
-  statusMsg.textContent = '';
-});
-
-async function loadTopics(unitId) {
-  console.log('loadTopics: unitId:', unitId);
-  topicSelect.innerHTML = '<option value="">Select a topic</option>';
-  if (!unitId) return;
-  const { data, error } = await supa.from('topic_teks').select('id, topic_title').eq('unit_id', unitId);
-  console.log('loadTopics: topics returned:', data);
-  if (error) return;
-  topicSelect.innerHTML += data.map(t => `<option value="${t.id}">${t.topic_title}</option>`).join('');
-  console.log('topicSelect options after update:', topicSelect.innerHTML);
-  topicSelect.style.background = '#ff0'; // highlight for debug
-}
-
-topicSelect.addEventListener('change', e => {
-  console.log('topicSelect changed:', e.target.value);
-  outlineFormContainer.innerHTML = '';
-  saveBtn.style.display = 'none';
-  statusMsg.textContent = '';
-  loadOutline(e.target.value);
-});
-
-async function loadOutline(topicId) {
-  outlineFormContainer.innerHTML = '';
-  if (!topicId) return;
-  const { data, error } = await supa.from('topic_teks').select('id, re_lesson_outlines').eq('id', topicId).single();
-  if (error || !data) return;
-  currentTopic = data;
-  let outlineRaw = data.re_lesson_outlines;
-  try {
-    currentOutline = typeof outlineRaw === 'string' ? JSON.parse(outlineRaw) : outlineRaw;
-  } catch {
-    currentOutline = {};
-  }
-  renderOutlineForm(currentOutline);
-}
-
-function renderOutlineForm(outline) {
-  // Basic fields: lesson_title, lesson_objective, success_criteria
-  let html = '';
-  html += `<div class="mb-3"><label class="form-label">Lesson Title</label><input type="text" class="form-control" id="lessonTitleInput" value="${outline.lesson_title || ''}"></div>`;
-  html += `<div class="mb-3"><label class="form-label">Lesson Objective</label><textarea class="form-control" id="lessonObjectiveInput">${outline.lesson_objective || ''}</textarea></div>`;
-  html += `<div class="mb-3"><label class="form-label">Success Criteria (comma separated)</label><textarea class="form-control" id="successCriteriaInput" rows="3">${(outline.success_criteria||[]).join(', ')}</textarea></div>`;
-  // Segments (if present)
-  // Helper to capture all current input values in the form
-  function captureFormState() {
-    const state = {};
-    document.querySelectorAll('#outlineFormContainer input, #outlineFormContainer textarea').forEach(el => {
-      state[el.id] = el.type === 'checkbox' ? el.checked : el.value;
-    });
-    return state;
-  }
-  // Helper to restore input values after re-render
-  function restoreFormState(state) {
-    setTimeout(() => {
-      Object.entries(state).forEach(([id, val]) => {
-        const el = document.getElementById(id);
-        if (el) {
-          if (el.type === 'checkbox') el.checked = val;
-          else el.value = val;
-        }
-      });
-    }, 0);
+  // --- Utility ---
+  function clear(...els) { els.forEach((e) => e && (e.innerHTML = '')); }
+  function safeParseJSON(val) {
+    if (!val) return null;
+    if (typeof val === "object") return val;
+    if (typeof val === "string") { try { return JSON.parse(val); } catch { return null; } }
+    return null;
   }
 
-  function renderField(val, path) {
-    if (Array.isArray(val)) {
-      // Render each array item recursively
-      let html = val.map((item, idx) => `<div class="border p-2 mb-2">${renderField(item, path.concat(idx))}</div>`).join('');
-      // Add button to add new item to array
-      const addBtnId = `addBtn_${path.join('_')}`;
-      html += `<button type="button" class="btn btn-sm btn-outline-primary mt-2" id="${addBtnId}">+ Add</button>`;
-      setTimeout(() => {
-        const btn = document.getElementById(addBtnId);
-        if (btn) {
-          btn.onclick = function() {
-            const prevState = captureFormState();
-            // Traverse currentOutline to the array at path
-            let arr = outline;
-            for (let i = 0; i < path.length; i++) arr = arr[path[i]];
-            // Add empty item (object or string)
-            if (arr.length > 0 && typeof arr[0] === 'object') arr.push({});
-            else arr.push('');
-            renderOutlineForm(outline);
-            restoreFormState(prevState);
-          };
-        }
-      }, 0);
-      return html;
-    } else if (val && typeof val === 'object') {
-      // For objects, render each property recursively (no textarea for the object itself)
-      return Object.entries(val).map(([k, v]) => {
-        return `<div class="mb-2"><label class="form-label">${k}</label>${renderField(v, path.concat(k))}</div>`;
-      }).join('');
-    } else {
-      // For primitives, use input or textarea
-      const fieldId = `segment_${path.join('_')}_input`;
-      if (typeof val === 'boolean') {
-        return `<input type="checkbox" class="form-check-input" id="${fieldId}" ${val ? 'checked' : ''}>`;
-      } else if (typeof val === 'number') {
-        return `<input type="number" class="form-control" id="${fieldId}" value="${val}">`;
-      } else if (typeof val === 'string' && val.length > 60) {
-        return `<textarea class="form-control mt-2" id="${fieldId}">${val ?? ''}</textarea>`;
-      } else {
-        return `<input type="text" class="form-control mt-2" id="${fieldId}" value="${val ?? ''}">`;
-      }
+  // --- Sidebar logic (same as before) ---
+  async function loadRequests() {
+    const { data: requests, error: reqErr } = await supa.from('course_requests').select('*').order('created_at', { ascending: true });
+    const requestMenu = document.getElementById('requestMenu');
+    requestMenu.innerHTML = '';
+    if (reqErr) {
+      requestMenu.innerHTML = '<div class="text-danger">Error loading requests</div>';
+      return;
     }
-  }
-  if (Array.isArray(outline.lesson_segments)) {
-    html += '<div class="mb-3"><label class="form-label">Lesson Segments</label>';
-    outline.lesson_segments.forEach((seg, i) => {
-      const key = Object.keys(seg)[0];
-      const val = seg[key];
-      html += `<div class="border rounded p-2 mb-2"><strong>${key}</strong>`;
-      html += renderField(val, [i, key]);
-      html += `</div>`;
-      // Add button after each segment
-      const addBtnId = `addSegmentBtn_${i}`;
-      html += `<button type="button" class="btn btn-sm btn-outline-primary mb-3" id="${addBtnId}">+ Add Segment Below</button>`;
-      setTimeout(() => {
-        const btn = document.getElementById(addBtnId);
-        if (btn) {
-          btn.onclick = function() {
-            const prevState = captureFormState();
-            // Copy structure of previous segment
-            const prevSeg = outline.lesson_segments[i];
-            const prevKey = Object.keys(prevSeg)[0];
-            let newSeg = {};
-            // If previous is a reading, warm_up, etc., copy keys as blank
-            if (typeof prevSeg[prevKey] === 'object' && prevSeg[prevKey] !== null) {
-              newSeg[prevKey] = {};
-              Object.keys(prevSeg[prevKey]).forEach(k => {
-                newSeg[prevKey][k] = '';
-              });
-            } else {
-              newSeg[prevKey] = '';
-            }
-            outline.lesson_segments.splice(i+1, 0, newSeg);
-            renderOutlineForm(outline);
-            restoreFormState(prevState);
-          };
-        }
-      }, 0);
-    });
-    html += '</div>';
-  }
-  // Vocabulary (if present)
-  if (Array.isArray(outline.vocabulary)) {
-    html += '<div class="mb-3"><label class="form-label">Vocabulary</label>';
-    outline.vocabulary.forEach((vocab, i) => {
-      html += `<div class="border rounded p-2 mb-2"><strong>Term ${i + 1}</strong>`;
-      html += `<div class="mb-2"><label class="form-label">Term</label><input type="text" class="form-control" id="vocab_${i}_term_input" value="${vocab.term || ''}"></div>`;
-      html += `<div class="mb-2"><label class="form-label">Definition</label><textarea class="form-control" id="vocab_${i}_definition_input">${vocab.definition || vocab.def || ''}</textarea></div>`;
-      html += `<div class="mb-2"><label class="form-label">Image Link</label><input type="text" class="form-control url-input" id="vocab_${i}_link_to_image_input" value="${vocab.link_to_image || ''}" pattern="https?://.*">`;
-      // Image preview
-      html += `<div class="vocab-image-preview mt-2" id="vocab_${i}_image_preview_container">`;
-      if (vocab.link_to_image) {
-        html += `<img src="${vocab.link_to_image}" alt="Image preview" class="img-thumbnail" style="max-width:80px;max-height:80px;cursor:zoom-in;" id="vocab_${i}_image_preview">`;
-      } else {
-        html += `<div class="text-muted small">No image</div>`;
-      }
-      html += `</div></div>`;
-      html += `</div>`;
-    });
-    // Add button to add new vocab term
-    html += `<button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addVocabBtn">+ Add Vocab Term</button>`;
-    setTimeout(() => {
-      const btn = document.getElementById('addVocabBtn');
-      if (btn) {
-        btn.onclick = function() {
-          const prevState = captureFormState();
-          outline.vocabulary.push({ term: '', definition: '', link_to_image: '' });
-          renderOutlineForm(outline);
-          restoreFormState(prevState);
-        };
-      }
-    }, 0);
-    html += '</div>';
-  }
-  outlineFormContainer.innerHTML = html;
-  saveBtn.style.display = '';
-
-  // After rendering the form, add JS to mark updated fields and highlight missing fields
-  setTimeout(() => {
-  // Image preview modal logic
-  // Add modal HTML if not present
-  if (!document.getElementById('imageZoomModal')) {
-    const modalDiv = document.createElement('div');
-    modalDiv.innerHTML = `
-      <div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true" style="display:none;">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content bg-transparent border-0 shadow-none">
-            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" id="imageZoomModalClose"></button>
-            <img id="imageZoomModalImg" src="" class="w-100 rounded shadow" style="max-height:70vh;object-fit:contain;background:#fff;">
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modalDiv);
-  }
-  // Add click listeners to all image previews
-  document.querySelectorAll('.vocab-image-preview img').forEach(img => {
-    img.addEventListener('click', function() {
-      const modal = document.getElementById('imageZoomModal');
-      const modalImg = document.getElementById('imageZoomModalImg');
-      modalImg.src = img.src;
-      modal.style.display = 'block';
-      modal.classList.add('show');
-      document.body.classList.add('modal-open');
-    });
-  });
-  // Modal close logic
-  function closeModal() {
-    const modal = document.getElementById('imageZoomModal');
-    if (modal) {
-      modal.style.display = 'none';
-      modal.classList.remove('show');
-      document.body.classList.remove('modal-open');
+    if (!requests || requests.length === 0) {
+      requestMenu.innerHTML = '<div class="text-warning">No requests found</div>';
+      return;
     }
+    (requests || []).forEach(req => {
+      const btn = document.createElement('button');
+      btn.textContent = req.content || req.id;
+      btn.className = 'btn btn-outline-success w-100 mb-2';
+      btn.onclick = () => loadData(req.id);
+      requestMenu.append(btn);
+    });
   }
-  document.getElementById('imageZoomModalClose')?.addEventListener('click', closeModal);
-  document.getElementById('imageZoomModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
-  });
-  // Live update image preview on input change
-  document.querySelectorAll('input[id$="_link_to_image_input"]').forEach(input => {
-    input.addEventListener('input', function() {
-      const container = document.getElementById(input.id.replace('_link_to_image_input', '_image_preview_container'));
-      if (container) {
-        if (input.value.match(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
-          container.innerHTML = `<img src="${input.value}" alt="Image preview" class="img-thumbnail" style="max-width:80px;max-height:80px;cursor:zoom-in;" id="${input.id.replace('_input','')}_preview">`;
-          // Re-attach click handler
-          container.querySelector('img').addEventListener('click', function() {
-            const modal = document.getElementById('imageZoomModal');
-            const modalImg = document.getElementById('imageZoomModalImg');
-            modalImg.src = input.value;
-            modal.style.display = 'block';
-            modal.classList.add('show');
-            document.body.classList.add('modal-open');
-          });
-        } else if (input.value) {
-          container.innerHTML = `<div class='text-danger small'>Invalid image URL</div>`;
-        } else {
-          container.innerHTML = `<div class='text-muted small'>No image</div>`;
-        }
-      }
-    });
-  });
-    // Highlight missing fields (empty required fields)
-    document.querySelectorAll('input[required], textarea[required]').forEach(el => {
-      if (!el.value) el.classList.add('is-invalid');
-      else el.classList.remove('is-invalid');
-    });
-    // Mark updated fields
-    document.querySelectorAll('input, textarea').forEach(el => {
-      el.addEventListener('input', function() {
-        if (el.defaultValue !== el.value) {
-          el.classList.add('updated');
-        } else {
-          el.classList.remove('updated');
-        }
-        // Live missing check
-        if (el.hasAttribute('required')) {
-          if (!el.value) el.classList.add('is-invalid');
-          else el.classList.remove('is-invalid');
-        }
-      });
-    });
-  }, 10);
-}
 
-saveBtn.addEventListener('click', async () => {
-  if (!currentTopic) return;
-  // Gather form values
-  const lesson_title = document.getElementById('lessonTitleInput').value;
-  const lesson_objective = document.getElementById('lessonObjectiveInput').value;
-  const success_criteria = document.getElementById('successCriteriaInput').value.split(',').map(s => s.trim()).filter(Boolean);
-  let lesson_segments = currentOutline.lesson_segments || [];
-  let vocabulary = [];
-  if (Array.isArray(currentOutline.vocabulary)) {
-    vocabulary = currentOutline.vocabulary.map((vocab, i) => {
-      return {
-        term: document.getElementById(`vocab_${i}_term_input`)?.value || '',
-        definition: document.getElementById(`vocab_${i}_definition_input`)?.value || '',
-        link_to_image: document.getElementById(`vocab_${i}_link_to_image_input`)?.value || ''
+  async function loadData(requestId) {
+    if (!requestId) return clear(unitMenu, topicMenu, cardList);
+    const { data: units } = await supa.from('curriculum_units').select('*').eq('request_id', requestId).order('unit_number', { ascending: true });
+    const unitIds = (units || []).map(u => u.id);
+    const { data: topics } = await supa.from('topic_teks').select('*').in('unit_id', unitIds);
+    const unitMap = {};
+    (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
+    (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
+    buildUnitMenu(unitMap);
+  }
+
+  function buildUnitMenu(unitMap) {
+    clear(unitMenu, topicMenu, cardList);
+    Object.values(unitMap).forEach(({ unit, topics }) => {
+      const btn = document.createElement("button");
+      btn.textContent = unit.unit_title || unit.id;
+      btn.className = "btn btn-outline-primary w-100 mb-2";
+      btn.onclick = () => selectUnit(unit, topics);
+      unitMenu.append(btn);
+    });
+  }
+
+  function selectUnit(unit, topics) {
+    clear(topicMenu, cardList);
+    const getNum = (t) => {
+      const m = String(t.topic_title || "").match(/^\s*(\d+)/);
+      return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
+    };
+    const sorted = (topics || []).slice().sort((a, b) => getNum(a) - getNum(b));
+    sorted.forEach(topic => {
+      const btn = document.createElement("button");
+      btn.textContent = topic.topic_title || topic.id;
+      btn.className = "btn btn-outline-secondary w-100 mb-2";
+      btn.onclick = () => {
+        renderLessonEditor(topic);
+        // Collapse sidebar and show topic title, hide menu
+        const sidebar = document.querySelector('.sidebar');
+        const topicTitle = document.getElementById('selectedTopicTitle');
+        sidebar.classList.add('collapsed');
+        topicTitle.style.display = '';
+        document.getElementById('unitMenu').style.display = 'none';
+        document.getElementById('topicMenu').style.display = 'none';
+        document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
       };
+      topicMenu.append(btn);
     });
   }
-  // Update segments if present
-  function collectField(val, path) {
-    if (Array.isArray(val)) {
-      return val.map((item, idx) => collectField(item, path.concat(idx)));
-    } else if (val && typeof val === 'object') {
-      const obj = {};
-      Object.entries(val).forEach(([k, v]) => {
-        const fieldId = `segment_${path.join('_')}_${k}_input`;
-        const el = document.getElementById(fieldId);
-        if (el) {
-          obj[k] = el.value;
+
+  // --- Editable Lesson Outline Form ---
+  function renderLessonEditor(topic) {
+    clear(cardList);
+    const selectedTopicTitle = document.getElementById('selectedTopicTitle');
+    if (selectedTopicTitle) selectedTopicTitle.textContent = topic.topic_title || '';
+    let outline = topic.re_lesson_outlines || topic.lesson_outline;
+    if (!outline) outline = {};
+    outline = typeof outline === "string" ? (safeParseJSON(outline) || {}) : outline;
+    currentTopic = topic;
+    currentOutline = outline;
+    currentTopicId = topic.id;
+
+    // Build form
+    let html = '';
+    html += `<div class="card p-4 mb-4">
+      <h4 class="mb-3">Lesson Info</h4>
+      <div class="mb-3"><label class="form-label">Lesson Title <span class="text-danger">*</span></label><input type="text" class="form-control" id="lessonTitleInput" value="${outline.lesson_title || ''}" required></div>
+      <div class="mb-3"><label class="form-label">Lesson Objective <span class="text-danger">*</span></label><textarea class="form-control" id="lessonObjectiveInput" required>${outline.lesson_objective || ''}</textarea></div>
+      <div class="mb-3"><label class="form-label">Success Criteria (comma separated)</label><textarea class="form-control" id="successCriteriaInput" rows="3">${(outline.success_criteria||[]).join(', ')}</textarea></div>
+    </div>`;
+    if (Array.isArray(outline.lesson_segments)) {
+      html += `<h5 class="mb-2">Lesson Segments</h5>`;
+      outline.lesson_segments.forEach((seg, i) => {
+        const key = Object.keys(seg)[0];
+        const val = seg[key];
+        html += `<div class="card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">${key.replace(/_/g, ' ').replace(/\b\w/g, s => s.toUpperCase())}</span>
+            <button type="button" class="btn btn-danger btn-sm ms-2" id="removeSegmentBtn_${i}" title="Remove segment">&times;</button>
+          </div>
+          <div>${renderField(val, [i, key])}</div>
+          <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addSegmentBtn_${i}">+ Add Segment Below</button>
+        </div>`;
+      });
+    }
+    if (Array.isArray(outline.vocabulary)) {
+      html += `<h5 class="mt-4 mb-2">Vocabulary</h5>`;
+      outline.vocabulary.forEach((vocab, i) => {
+        const imgId = `vocab_${i}_image_preview`;
+        const inputId = `vocab_${i}_link_to_image_input`;
+        html += `<div class="card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold">Term ${i + 1}</span>
+            <button type="button" class="btn btn-danger btn-sm ms-2" id="removeVocabBtn_${i}" title="Remove vocab">&times;</button>
+          </div>
+          <div class="mb-2"><label class="form-label">Term</label><input type="text" class="form-control" id="vocab_${i}_term_input" value="${vocab.term || ''}" required></div>
+          <div class="mb-2"><label class="form-label">Definition</label><textarea class="form-control" id="vocab_${i}_definition_input">${vocab.definition || vocab.def || ''}</textarea></div>
+          <div class="mb-2"><label class="form-label">Image Link</label><input type="text" class="form-control url-input" id="${inputId}" value="${vocab.link_to_image || ''}" pattern="https?://.*"></div>
+          <div class="vocab-image-preview mt-2" id="vocab_${i}_image_preview_container">`;
+        if (vocab.link_to_image) {
+          html += `<img src="${vocab.link_to_image}" alt="Image preview" class="img-thumbnail" style="max-width:80px;max-height:80px;cursor:zoom-in;" id="${imgId}">`;
         } else {
-          obj[k] = collectField(v, path.concat(k));
+          html += `<div class="text-muted small">No image</div>`;
+        }
+        html += `</div></div>`;
+      });
+      html += `<button type="button" class="btn btn-outline-primary mt-2" id="addVocabBtn">+ Add Vocab Term</button>`;
+    }
+    // Live update vocab image preview on input change
+    if (Array.isArray(currentOutline.vocabulary)) {
+      currentOutline.vocabulary.forEach((vocab, i) => {
+        const input = document.getElementById(`vocab_${i}_link_to_image_input`);
+        const container = document.getElementById(`vocab_${i}_image_preview_container`);
+        if (input && container) {
+          input.addEventListener('input', function() {
+            let url = input.value.trim();
+            container.innerHTML = url ? `<img src="${url}" alt="Image preview" class="img-thumbnail" style="max-width:80px;max-height:80px;cursor:zoom-in;">` : `<div class="text-muted small">No image</div>`;
+          });
         }
       });
-      return obj;
+    }
+    html += `<div class="d-flex justify-content-end mt-4"><button class="btn btn-success" id="saveBtn">Save Changes</button><span id="statusMsg" class="ms-3"></span></div>`;
+    cardList.innerHTML = html;
+
+
+
+    // Store last removed for undo
+    let lastRemoved = null;
+    function showTempMessage(msg, type = 'info', ms = 4000, undoCallback) {
+      let msgElem = document.getElementById('removeMsg');
+      if (!msgElem) {
+        msgElem = document.createElement('div');
+        msgElem.id = 'removeMsg';
+        msgElem.style.position = 'fixed';
+        msgElem.style.top = '1.5rem';
+        msgElem.style.right = '2rem';
+        msgElem.style.zIndex = 9999;
+        msgElem.style.padding = '0.75rem 1.5rem';
+        msgElem.style.borderRadius = '8px';
+        msgElem.style.fontWeight = 'bold';
+        document.body.appendChild(msgElem);
+      }
+      msgElem.innerHTML = msg;
+      if (undoCallback) {
+        const undoBtn = document.createElement('button');
+        undoBtn.textContent = 'Undo ×';
+        undoBtn.className = 'btn btn-light btn-sm ms-3';
+        undoBtn.onclick = function(e) {
+          e.stopPropagation();
+          msgElem.style.display = 'none';
+          undoCallback();
+        };
+        msgElem.appendChild(undoBtn);
+      }
+      msgElem.className = type === 'danger' ? 'bg-danger text-white' : 'bg-success text-white';
+      msgElem.style.display = 'block';
+      if (!undoCallback) {
+        setTimeout(() => { msgElem.style.display = 'none'; }, ms);
+      }
+    }
+
+    // Add remove segment listeners with confirmation and undo
+    if (Array.isArray(currentOutline.lesson_segments)) {
+      currentOutline.lesson_segments.forEach((seg, i) => {
+        const btn = document.getElementById(`removeSegmentBtn_${i}`);
+        if (btn) {
+          btn.onclick = function() {
+            if (confirm('Are you sure you want to remove this segment?')) {
+              // Save for undo
+              lastRemoved = { type: 'segment', index: i, value: { ...seg } };
+              currentOutline.lesson_segments.splice(i, 1);
+              renderLessonEditor(currentTopic);
+              showTempMessage('Segment removed. Click Save to update.', 'danger', 8000, function() {
+                if (lastRemoved && lastRemoved.type === 'segment') {
+                  currentOutline.lesson_segments.splice(lastRemoved.index, 0, lastRemoved.value);
+                  renderLessonEditor(currentTopic);
+                  lastRemoved = null;
+                }
+              });
+            }
+          };
+        }
+      });
+    }
+    // Add remove vocab listeners with confirmation and undo
+    if (Array.isArray(currentOutline.vocabulary)) {
+      currentOutline.vocabulary.forEach((vocab, i) => {
+        const btn = document.getElementById(`removeVocabBtn_${i}`);
+        if (btn) {
+          btn.onclick = function() {
+            if (confirm('Are you sure you want to remove this vocab term?')) {
+              // Save for undo
+              lastRemoved = { type: 'vocab', index: i, value: { ...vocab } };
+              currentOutline.vocabulary.splice(i, 1);
+              renderLessonEditor(currentTopic);
+              showTempMessage('Vocab removed. Click Save to update.', 'danger', 8000, function() {
+                if (lastRemoved && lastRemoved.type === 'vocab') {
+                  currentOutline.vocabulary.splice(lastRemoved.index, 0, lastRemoved.value);
+                  renderLessonEditor(currentTopic);
+                  lastRemoved = null;
+                }
+              });
+            }
+          };
+        }
+      });
+    }
+
+    // Save logic
+    document.getElementById('saveBtn').onclick = async function() {
+      if (!currentTopicId) return;
+      // Gather values from form
+      const outline = {};
+      outline.lesson_title = document.getElementById('lessonTitleInput').value;
+      outline.lesson_objective = document.getElementById('lessonObjectiveInput').value;
+      outline.success_criteria = document.getElementById('successCriteriaInput').value.split(',').map(s => s.trim()).filter(Boolean);
+      // Segments
+      outline.lesson_segments = [];
+      if (currentOutline.lesson_segments && Array.isArray(currentOutline.lesson_segments)) {
+        currentOutline.lesson_segments.forEach((seg, i) => {
+          const key = Object.keys(seg)[0];
+          const val = seg[key];
+          let newVal;
+          if (typeof val === 'string' || typeof val === 'number') {
+            newVal = document.getElementById(`segment_${i}_${key}_input`).value;
+          } else if (Array.isArray(val)) {
+            newVal = document.getElementById(`segment_${i}_${key}_input`).value.split('\n');
+          } else if (typeof val === 'object' && val !== null) {
+            newVal = {};
+            Object.keys(val).forEach(k => {
+              newVal[k] = document.getElementById(`segment_${i}_${key}_${k}_input`).value;
+            });
+          }
+          const newSeg = {};
+          newSeg[key] = newVal;
+          outline.lesson_segments.push(newSeg);
+        });
+      }
+      // Vocabulary
+      outline.vocabulary = [];
+      if (currentOutline.vocabulary && Array.isArray(currentOutline.vocabulary)) {
+        currentOutline.vocabulary.forEach((vocab, i) => {
+          outline.vocabulary.push({
+            term: document.getElementById(`vocab_${i}_term_input`).value,
+            definition: document.getElementById(`vocab_${i}_definition_input`).value,
+            link_to_image: document.getElementById(`vocab_${i}_link_to_image_input`).value
+          });
+        });
+      }
+      // Save to Supabase
+      const saveBtn = document.getElementById('saveBtn');
+      const statusMsg = document.getElementById('statusMsg');
+      saveBtn.disabled = true;
+      statusMsg.textContent = 'Saving...';
+      const { error } = await supa.from('topic_teks').update({ re_lesson_outlines: outline }).eq('id', currentTopicId);
+      saveBtn.disabled = false;
+      if (error) {
+        statusMsg.textContent = 'Error saving: ' + error.message;
+        statusMsg.className = 'text-danger ms-3';
+      } else {
+        statusMsg.textContent = 'Saved!';
+        statusMsg.className = 'text-success ms-3';
+      }
+    };
+  }
+
+  // --- Render fields for segments (simple, can be improved for complex types) ---
+  function renderField(val, path) {
+    const idBase = `segment_${path.join('_')}`;
+    // Helper: is this a likely image URL?
+    function isImageUrl(str) {
+      return typeof str === 'string' && /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?.*)?$/i.test(str.trim());
+    }
+    if (typeof val === 'string' || typeof val === 'number') {
+      let input = `<input type="text" class="form-control mb-2" id="${idBase}_input" value="${val || ''}">`;
+      if (isImageUrl(val)) {
+        input += `<div class="mt-2"><img src="${val}" alt="Image preview" class="img-thumbnail" style="max-width:120px;max-height:120px;object-fit:contain;"></div>`;
+      }
+      return input;
+    } else if (Array.isArray(val)) {
+      // Render each array item as a subfield
+      return val.map((item, idx) =>
+        `<div class="mb-2 ms-3"><label class="form-label">[${idx}]</label>${renderField(item, path.concat(idx))}</div>`
+      ).join('') + `<textarea class="form-control mb-2" id="${idBase}_input" style="display:none;">${val.join('\n')}</textarea>`;
+    } else if (typeof val === 'object' && val !== null) {
+      return Object.keys(val).map(k =>
+        `<div class="mb-2 ms-2"><label class="form-label">${k}</label>${renderField(val[k], path.concat(k))}</div>`
+      ).join('');
     } else {
-      const fieldId = `segment_${path.join('_')}_input`;
-      const el = document.getElementById(fieldId);
-      return el ? el.value : val;
+      return '';
     }
   }
-  if (Array.isArray(lesson_segments)) {
-    lesson_segments = lesson_segments.map((seg, i) => {
-      const key = Object.keys(seg)[0];
-      const val = seg[key];
-      return { [key]: collectField(val, [i, key]) };
-    });
-  }
-  const newOutline = { lesson_title, lesson_objective, success_criteria, vocabulary, lesson_segments };
-  // Update in Supabase
-  const { error } = await supa.from('topic_teks').update({ re_lesson_outlines: newOutline }).eq('id', currentTopic.id);
-  if (error) {
-    statusMsg.textContent = 'Error saving changes.';
-    statusMsg.className = 'text-danger mt-3';
-  } else {
-    statusMsg.textContent = 'Changes saved!';
-    statusMsg.className = 'text-success mt-3';
-  }
+
+  // On page load, show requests
+  loadRequests();
 });
-contentSelect.addEventListener('change', e => {
-  console.log('contentSelect changed:', e.target.value);
-  loadUnits(e.target.value);
-  unitSelect.innerHTML = '<option value="">Select a unit</option>';
-  topicSelect.innerHTML = '<option value="">Select a topic</option>';
-  outlineFormContainer.innerHTML = '';
-  saveBtn.style.display = 'none';
-  statusMsg.textContent = '';
-});
-// Initial load
-loadContents();
+

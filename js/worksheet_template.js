@@ -58,12 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
-  const { data: topic, error } = await supa.from('topic_teks').select('re_lesson_outlines').eq('id', topicId).single();
-  if (error || !topic || !topic.re_lesson_outlines) {
+    const { data: topic, error } = await supa.from('topic_teks').select('re_lesson_outlines, lesson_outline').eq('id', topicId).single();
+    let lessonData = (topic && (topic.re_lesson_outlines || topic.lesson_outline)) || null;
+    if (error || !lessonData) {
       alert('Failed to load lesson from Supabase.');
       return;
     }
-  let lessonData = topic.re_lesson_outlines;
     if (typeof lessonData === 'string') {
       try { lessonData = JSON.parse(lessonData); } catch {}
     }

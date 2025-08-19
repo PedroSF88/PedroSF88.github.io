@@ -230,8 +230,18 @@
       selectedTopicTitle.textContent = topic.topic_title || '';
     }
 
-    // Only use re_lesson_outlines (JSON)
-    let outline = topic.re_lesson_outlines;
+    // Determine which outline source to use
+    let source = 'auto';
+    const toggle = document.getElementById('outlineSourceToggle');
+    if (toggle) source = toggle.value;
+    let outline = null;
+    if (source === 're_lesson_outlines') {
+      outline = topic.re_lesson_outlines;
+    } else if (source === 'lesson_outline') {
+      outline = topic.lesson_outline;
+    } else {
+      outline = topic.re_lesson_outlines || topic.lesson_outline;
+    }
     if (!outline) {
       const msg = document.createElement("p");
       msg.textContent = "No lesson data available for this topic.";
@@ -268,24 +278,19 @@
 
   // Render vocabulary from root-level re_lesson_outlines.vocabulary (if present) in cards, each containing two vocab sub-cards
   if (Array.isArray(outline.vocabulary)) {
-      const vocabPairs = [];
-      for (let i = 0; i < outline.vocabulary.length; i += 2) {
-        vocabPairs.push(outline.vocabulary.slice(i, i + 2));
-      }
-      vocabPairs.forEach((pair, idx) => {
-        let pairHtml = pair.map(vocab => {
-            let imgHtml = vocab.link_to_image
-              ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" class="img-zoom-preview vocab-img-preview" style="max-width:500px;max-height:300px;width:auto;height:auto;object-fit:contain;display:block;margin-top:0.5rem;cursor:zoom-in;margin-left:auto;margin-right:auto;">`
-            : `<div class=\"img-placeholder\" style=\"width:120px;height:90px;background:#eee;display:inline-block;margin-bottom:0.5rem;vertical-align:middle;text-align:center;line-height:90px;color:#aaa;\">Image</div>`;
+    // All vocab subcards inside a single vocab card
+        let subcardsHtml = outline.vocabulary.map((vocab, vIdx) => {
+          let imgHtml = vocab.link_to_image
+            ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" class="img-zoom-preview vocab-img-preview" style="max-width:100%;max-height:200px;width:auto;height:auto;object-fit:contain;display:block;margin:0.5rem auto;cursor:zoom-in;">`
+            : `<div class=\"img-placeholder\" style=\"width:160px;height:120px;background:#eee;display:flex;align-items:center;justify-content:center;margin:0 auto;color:#aaa;\">Image</div>`;
           let header = `<span class=\"vocab-term-heading\">${vocab.term}</span>`;
           let defHtml = `<div class=\"vocab-description\">${vocab.definition || vocab.def || ''}</div>`;
-          // Order: term (top), definition (middle), image (bottom)
-          return `<div class=\"vocab-subcard mb-2\"><div class=\"section-header\">${header}</div>${defHtml}${imgHtml}</div>`;
+          // Two-part layout: left=image, right=term+def
+          return `<div class=\"vocab-subcard\" data-vocab-idx=\"${vIdx}\"><div class=\"section-header\">${header} <button class=\"btn btn-sm btn-light vocab-min-btn\" style=\"float:right;margin-left:1rem;\" title=\"Minimize\">&#8211;</button></div><div class=\"vocab-content vocab-flex\"><div class=\"vocab-img-col\">${imgHtml}</div><div class=\"vocab-text-col\">${defHtml}</div></div></div>`;
         }).join('');
-        let cardHtml = `<div class=\"vocab-card card p-3 section-vocab d-flex flex-column flex-sm-row justify-content-between\">${pairHtml}</div>`;
-        sections.push({ cls: "section-vocab", header: idx === 0 ? '<h5 class="mb-3">Vocabulary</h5>' : '', html: cardHtml });
-      });
-    }
+  let cardHtml = `<div class=\"vocab-card card p-3 section-vocab flex-column\">${subcardsHtml}</div>`;
+  sections.push({ cls: "section-vocab", header: 'Vocabulary', html: cardHtml });
+  }
 
     // Render all lesson_segments as cards (including vocab, grouped visuals, grouped readings, etc.)
     if (Array.isArray(outline.lesson_segments)) {
@@ -439,12 +444,84 @@
       });
     }
     clear(cardList);
+    let cardIdx = 0;
     sections.forEach(sec => {
       const card = document.createElement("div");
       card.className = `card p-3 ${sec.cls}`;
-      card.innerHTML = `<div class=\"section-header\">${sec.header}</div>${sec.html}`;
+      card.setAttribute('data-card-idx', cardIdx);
+      // Add minimize button to header
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'section-header';
+      headerDiv.innerHTML = `${sec.header} <button class="btn btn-sm btn-light card-min-btn" style="float:right;margin-left:1rem;" title="Minimize card">&#8211;</button>`;
+      card.appendChild(headerDiv);
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'card-content';
+      contentDiv.innerHTML = sec.html;
+      card.appendChild(contentDiv);
+      // Minimize logic
+      headerDiv.querySelector('.card-min-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        card.classList.toggle('card-minimized');
+        if (card.classList.contains('card-minimized')) {
+          contentDiv.style.display = 'none';
+          this.innerHTML = '&#x25A1;'; // expand icon
+          this.title = 'Expand card';
+        } else {
+          contentDiv.style.display = '';
+          this.innerHTML = '&#8211;'; // minimize icon
+          this.title = 'Minimize card';
+        }
+      });
+  // Remove modal popup for main cards (do nothing)
+      // Add minimize logic and click handler for vocab subcards
+      contentDiv.querySelectorAll('.vocab-subcard').forEach((subcard, subIdx) => {
+        // Minimize button
+        const minBtn = subcard.querySelector('.vocab-min-btn');
+        const vocabContent = subcard.querySelector('.vocab-content');
+        minBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          subcard.classList.toggle('vocab-minimized');
+          if (subcard.classList.contains('vocab-minimized')) {
+            vocabContent.style.display = 'none';
+            this.innerHTML = '&#x25A1;';
+            this.title = 'Expand';
+          } else {
+            vocabContent.style.display = '';
+            this.innerHTML = '&#8211;';
+            this.title = 'Minimize';
+          }
+        });
+        // Modal click
+        subcard.style.cursor = 'pointer';
+        subcard.addEventListener('click', function(e) {
+          if (e.target.closest('.vocab-min-btn')) return;
+          showCardModal(`<div class=\"card p-3 ${sec.cls}\">${subcard.outerHTML}</div>`, 'Vocabulary', `card p-3 ${sec.cls}`);
+        });
+      });
       cardList.append(card);
+      cardIdx++;
     });
+
+    // Helper to show modal
+    function showCardModal(html, title, cardClass) {
+      const modal = document.getElementById('cardModal');
+      const modalBody = document.getElementById('cardModalBody');
+      const modalLabel = document.getElementById('cardModalLabel');
+      // If html already contains a .card, use as is; else wrap in cardClass
+      let content = html;
+      if (!/^<div[^>]*class=["'][^"']*card/.test(html)) {
+        content = `<div class=\"${cardClass || 'card'}\">${html}</div>`;
+      }
+      if (modalBody) modalBody.innerHTML = content;
+      if (modalLabel && title) modalLabel.textContent = title.replace(/<[^>]+>/g, '');
+      if (window.bootstrap && window.bootstrap.Modal) {
+        const bsModal = window.bootstrap.Modal.getOrCreateInstance(modal);
+        bsModal.show();
+      } else {
+        // fallback
+        modal.style.display = 'block';
+      }
+    }
 
     // Debug: log vocabulary segments found
     if (Array.isArray(outline.lesson_segments)) {
@@ -546,6 +623,12 @@
     if (requestMenu) {
       requestMenu.style.display = 'none';
       requestMenu.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+    }
+    // Add event listener to toggle if not already
+    const toggle = document.getElementById('outlineSourceToggle');
+    if (toggle && !toggle.dataset.listener) {
+      toggle.addEventListener('change', () => origRenderLesson(topic));
+      toggle.dataset.listener = 'true';
     }
     origRenderLesson(topic);
   };

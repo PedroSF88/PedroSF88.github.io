@@ -1,3 +1,77 @@
+/* Vocab subcard flex layout */
+.vocab-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1.2em;
+  min-height: 0;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+.vocab-img-col {
+  flex: 0 0 300px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  min-width: 180px;
+  max-width: 300px;
+  min-height: 0;
+  min-width: 0;
+  height: auto;
+}
+.vocab-img-col img,
+.vocab-img-col .img-placeholder {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: 400px;
+  aspect-ratio: 4/3;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+.vocab-text-col {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  word-break: break-word;
+  overflow: hidden;
+}
+/* Minimized card style */
+.card.card-minimized {
+  min-height: unset !important;
+  max-height: 3.2em;
+  overflow: hidden;
+  padding: 0.5em 1.2em !important;
+  margin: 1.2em 0 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  cursor: pointer;
+}
+.card.card-minimized .section-header {
+  margin: 0 !important;
+  padding: 0.5em 0.5em 0.5em 0.5em !important;
+  font-size: 1.1em !important;
+  border-radius: 12px !important;
+}
+.card.card-minimized .card-content {
+  display: none !important;
+}
+.card .card-min-btn {
+  font-size: 1.2em;
+  padding: 0.1em 0.5em;
+  border-radius: 8px;
+  border: none;
+  background: #fffbe6;
+  color: #333;
+  box-shadow: 0 1px 2px #0001;
+  transition: background 0.2s;
+}
+.card .card-min-btn:hover {
+  background: #ffe6a0;
+}
 /* Uniform Odd One Out grid and images */
 .section-image .odd-one-out-grid {
   display: grid;
@@ -46,9 +120,26 @@
   color: inherit;
 }
 .vocab-card {
-  background: #148da7;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  padding: 0 !important;
+  gap: 0.3em;
+  margin: 0 !important;
+}
+
+/* Make the vocab card header as small as possible */
+.vocab-card h5, .vocab-card > .section-header {
+  margin-bottom: 0.7em;
+  font-size: 1.5em;
+  padding: 0.2em 0.5em;
+  font-weight: 700;
+  background: none;
+  border: none;
+  color: inherit;
 }
 .vocab-subcard {
   background: #0b5b84;
@@ -60,15 +151,54 @@
   gap: 1.5rem;
 }
 .vocab-subcard {
-  flex: 1 1 48%;
-  min-width: 220px;
   background: #0b5b84;
-  border-radius: 10px;
-  padding: 0.5rem 1rem 1rem 1rem;
+  border-radius: 13px;
+  padding: 0.35rem 0.7rem 0.7rem 0.7rem;
   color: #f8efca;
-  border: 2px solid #12607a;
+  border: 2.6px solid #12607a;
   box-sizing: border-box;
   margin: 0;
+  margin-bottom: 0.35em;
+  transition: box-shadow 0.2s;
+  font-size: 1.3em;
+}
+.vocab-subcard:last-child {
+  margin-bottom: 0;
+}
+.vocab-subcard .section-header {
+  margin-bottom: 0.3em;
+  font-size: 1.3em;
+}
+/* Larger vocab definition text */
+.vocab-description {
+  font-size: 1.18em;
+}
+.vocab-subcard.vocab-minimized {
+  min-height: unset !important;
+  max-height: 2.5em;
+  overflow: hidden;
+  padding: 0.3em 1em 0.3em 1em !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+.vocab-subcard.vocab-minimized .section-header {
+  margin: 0 !important;
+  padding: 0.2em 0.5em 0.2em 0.5em !important;
+  font-size: 1em !important;
+  border-radius: 8px !important;
+}
+.vocab-subcard .vocab-min-btn {
+  font-size: 1.1em;
+  padding: 0.1em 0.5em;
+  border-radius: 8px;
+  border: none;
+  background: #fffbe6;
+  color: #333;
+  box-shadow: 0 1px 2px #0001;
+  transition: background 0.2s;
+}
+.vocab-subcard .vocab-min-btn:hover {
+  background: #ffe6a0;
 }
 @media (max-width: 600px) {
   .vocab-card {
@@ -241,11 +371,11 @@ body {
   color: #041730;                      /* deep blue for text */
   border-radius: 20px;
   box-shadow: 0 24px 50px rgba(0,0,0,0.28);
-  padding: 3vw 4vw;
-  margin: 5vw 0;
+  padding: 1.2em 1.5em;
+  margin: 1.2em 0;
   max-width: 96vw;
   width: 100%;
-  min-height: 70vh;
+  min-height: 40vh;
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -267,11 +397,16 @@ body {
 }
 
 .vocab-term-heading {
-  font-size: 28px;
+  font-size: 1.1em;
   font-weight: 800;
   letter-spacing: .2px;
   line-height: 1.2;
-  /* No color or background here, inherits from parent card/section-header */
+  display: inline-block;
+  padding: 0.15em 0.7em;
+  border-radius: 0.6em;
+  background: #6a4bb7;
+  color: #f8efca;
+  /* bluish-purple: increased red, strong blue, some green */
 }
 
 /* ===== New palette (card bg + darker header strip) =====
