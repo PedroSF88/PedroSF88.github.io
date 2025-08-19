@@ -136,16 +136,14 @@ document.addEventListener('DOMContentLoaded', function() {
         el('div', {className:'lines sm'}, el('div', {className:'pad'}, loText || ''))
       )
     );
-    // Success Criteria (single row, no versions)
+    // Success Criteria as placeholder lines (not text)
     var scWrap = el('div', {style:'margin-top:10px;'},
       el('div', {className:'subtle', style:'margin:0 0 6px;'}, 'Success Criteria')
     );
     var arr = (scList && scList.length) ? scList : [''];
-    var ul = el('ul');
-    arr.forEach(function(sc){
-      ul.appendChild(el('li', {}, sc));
+    arr.forEach(function(){
+      scWrap.appendChild(el('div', {className:'lines sm'}, el('div', {className:'pad'}, '')));
     });
-    scWrap.appendChild(ul);
     box.appendChild(scWrap);
     root.appendChild(card('Objectives & Success Criteria', box));
   }
@@ -154,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var box = el('div', {},
       el('p', {}, el('strong', {}, 'Question: '), d.question || ''),
       d.instructions ? el('p', {className:'muted', style:'margin:-6px 0 8px;'}, d.instructions) : null,
-      el('div', {className:'lines sm'}, el('div', {className:'pad'}, 'Answer here...'))
+      el('div', {className:'lines md'}, el('div', {className:'pad'}, 'Answer here...'))
     );
     root.appendChild(card('Warm Up', box));
   }
@@ -256,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     box.appendChild(row);
     if (d.instructions) {
       box.appendChild(el('div', { className: 'muted' }, d.instructions));
-      box.appendChild(el('div', { className: 'lines sm' }, el('div', { className: 'pad' }, 'Explain cause → effect...')));
+      box.appendChild(el('div', { className: 'lines md' }, el('div', { className: 'pad' }, 'Explain cause → effect...')));
     }
     root.appendChild(card('Cause & Effect', box));
   }
@@ -268,12 +266,12 @@ document.addEventListener('DOMContentLoaded', function() {
       if (d.prompt){
         box.appendChild(el('div', {style:'font-weight:bold; margin-bottom:6px;'}, d.prompt));
         if (d.instructions) box.appendChild(el('div', {className:'muted', style:'margin-bottom:8px;'}, d.instructions));
-        box.appendChild(el('div', {className:'lines sm'}, el('div', {className:'pad'}, 'Answer here...')));
+        box.appendChild(el('div', {className:'lines md'}, el('div', {className:'pad'}, 'Answer here...')));
       }
       if (Array.isArray(d.questions) && d.questions.length){
         d.questions.forEach(function(q, idx){
           box.appendChild(el('p', {}, 'Q'+(idx+1)+': '+q));
-          box.appendChild(el('div', {className:'lines sm'}, el('div', {className:'pad'}, '')));
+          box.appendChild(el('div', {className:'lines md'}, el('div', {className:'pad'}, '')));
         });
       }
       if (!d.prompt && !Array.isArray(d.questions)){

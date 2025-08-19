@@ -1,0 +1,39 @@
+/* Printing settings for worksheet layout */
+@media print {
+  /* Everything before vocab card: force on one page */
+  .before-vocab {
+    page-break-after: always;
+    break-after: page;
+  }
+  /* Vocab card: force on one page */
+  .vocab-card {
+    page-break-before: always;
+    break-before: page;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* Wordsearch: never break inside */
+  .wordsearch-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* All other cards: allow break between reading and discussion, allow break between parts, no breaks inside parts */
+  .card-part {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .card-part + .card-part {
+    page-break-before: auto;
+    break-before: auto;
+  }
+  .reading-text {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  .discussion-questions-wrap {
+    page-break-before: auto;
+    break-before: auto;
+  }
+}
