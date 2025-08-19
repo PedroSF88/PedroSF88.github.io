@@ -254,57 +254,68 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save logic
     document.getElementById('saveBtn').onclick = async function() {
       if (!currentTopicId) return;
-      // Gather values from form
-      const outline = {};
-      outline.lesson_title = document.getElementById('lessonTitleInput').value;
-      outline.lesson_objective = document.getElementById('lessonObjectiveInput').value;
-      outline.success_criteria = document.getElementById('successCriteriaInput').value.split(',').map(s => s.trim()).filter(Boolean);
-      // Segments
-      outline.lesson_segments = [];
-      if (currentOutline.lesson_segments && Array.isArray(currentOutline.lesson_segments)) {
-        currentOutline.lesson_segments.forEach((seg, i) => {
-          const key = Object.keys(seg)[0];
-          const val = seg[key];
-          let newVal;
+      // Deep copy the current outline
+      const updatedOutline = JSON.parse(JSON.stringify(currentOutline));
+
+      // Helper to update fields from form inputs recursively
+      function updateFromInputs(obj, path = []) {
+        if (typeof obj !== 'object' || obj === null) return;
+        Object.keys(obj).forEach((k, idx) => {
+          const val = obj[k];
+          const idBase = `segment_${path.concat(k).join('_')}`;
           if (typeof val === 'string' || typeof val === 'number') {
-            newVal = document.getElementById(`segment_${i}_${key}_input`).value;
-          } else if (Array.isArray(val)) {
-            newVal = document.getElementById(`segment_${i}_${key}_input`).value.split('\n');
-          } else if (typeof val === 'object' && val !== null) {
-            newVal = {};
-            Object.keys(val).forEach(k => {
-              const inputElem = document.getElementById(`segment_${i}_${key}_${k}_input`);
-              if (inputElem) {
-                newVal[k] = inputElem.value;
+            const inputElem = document.getElementById(`${idBase}_input`);
+            if (inputElem) {
+              if (inputElem.tagName === 'TEXTAREA') {
+                obj[k] = inputElem.value;
               } else {
-                // If input is missing, keep the original value or set to null
-                console.warn(`Input element segment_${i}_${key}_${k}_input not found.`);
-                newVal[k] = val[k] !== undefined ? val[k] : null;
+                obj[k] = inputElem.value;
               }
-            });
+            }
+          } else if (Array.isArray(val)) {
+            // Only update if textarea exists (for array-as-text)
+            const arrInput = document.getElementById(`${idBase}_input`);
+            if (arrInput && arrInput.tagName === 'TEXTAREA') {
+              obj[k] = arrInput.value.split('\n');
+            } else {
+              val.forEach((item, i) => updateFromInputs(item, path.concat(k, i)));
+            }
+          } else if (typeof val === 'object' && val !== null) {
+            updateFromInputs(val, path.concat(k));
           }
-          const newSeg = {};
-          newSeg[key] = newVal;
-          outline.lesson_segments.push(newSeg);
         });
       }
-      // Vocabulary
-      outline.vocabulary = [];
-      if (currentOutline.vocabulary && Array.isArray(currentOutline.vocabulary)) {
-        currentOutline.vocabulary.forEach((vocab, i) => {
-          outline.vocabulary.push({
-            term: document.getElementById(`vocab_${i}_term_input`).value,
-            definition: document.getElementById(`vocab_${i}_definition_input`).value,
-            link_to_image: document.getElementById(`vocab_${i}_link_to_image_input`).value
-          });
+
+      // Update lesson_segments
+      if (Array.isArray(updatedOutline.lesson_segments)) {
+        updatedOutline.lesson_segments.forEach((seg, i) => {
+          const key = Object.keys(seg)[0];
+          updateFromInputs(seg[key], [i, key]);
         });
       }
+      // Update top-level fields
+      const lessonTitleInput = document.getElementById('lessonTitleInput');
+      if (lessonTitleInput) updatedOutline.lesson_title = lessonTitleInput.value;
+      const lessonObjectiveInput = document.getElementById('lessonObjectiveInput');
+      if (lessonObjectiveInput) updatedOutline.lesson_objective = lessonObjectiveInput.value;
+      const successCriteriaInput = document.getElementById('successCriteriaInput');
+      if (successCriteriaInput) updatedOutline.success_criteria = successCriteriaInput.value.split(',').map(s => s.trim()).filter(Boolean);
+
+      // Update vocabulary
+      if (Array.isArray(updatedOutline.vocabulary)) {
+        updatedOutline.vocabulary = updatedOutline.vocabulary.map((vocab, i) => ({
+          term: document.getElementById(`vocab_${i}_term_input`)?.value || vocab.term || '',
+          definition: document.getElementById(`vocab_${i}_definition_input`)?.value || vocab.definition || vocab.def || '',
+          link_to_image: document.getElementById(`vocab_${i}_link_to_image_input`)?.value || vocab.link_to_image || ''
+        }));
+      }
+
       // Save to Supabase
       const saveBtn = document.getElementById('saveBtn');
       const statusMsg = document.getElementById('statusMsg');
       saveBtn.disabled = true;
       statusMsg.textContent = 'Saving...';
-      const { error } = await supa.from('topic_teks').update({ re_lesson_outlines: outline }).eq('id', currentTopicId);
+      const { error } = await supa.from('topic_teks').update({ re_lesson_outlines: updatedOutline }).eq('id', currentTopicId);
       saveBtn.disabled = false;
       if (error) {
         statusMsg.textContent = 'Error saving: ' + error.message;
