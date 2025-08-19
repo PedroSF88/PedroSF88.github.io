@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Definition slot
   var defSlot = el('div', { className:'slot slot-def', 'data-col':'def' });
-  defSlot.appendChild(el('div', { className:'filled definition' }, v.definition || ''));
+  defSlot.appendChild(el('div', { className:'filled definition' }, v.definition || v.def || ''));
   defSlot.appendChild(el('div', { className:'blank placeholder' }, 'write the definition'));
 
       // Image slot
