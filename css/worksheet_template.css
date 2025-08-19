@@ -384,9 +384,9 @@ body.ver-C td.maskC .blank{display:block}
     max-width: 100vw;
     overflow: visible !important;
   }
-  /* Print at 85% scale */
+  /* Print at 100% scale */
   body {
-    zoom: 0.85 !important;
+    zoom: 1 !important;
   }
   @page {
     size: auto;
