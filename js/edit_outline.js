@@ -323,12 +323,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function isImageUrl(str) {
       return typeof str === 'string' && /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?.*)?$/i.test(str.trim());
     }
+    // Use textarea for reading and other pertinent fields
+    const textareaKeys = ['reading', 'instructions', 'text', 'prompt', 'question', 'discussion', 'description', 'content'];
+    const lastKey = path[path.length - 1] ? String(path[path.length - 1]).toLowerCase() : '';
     if (typeof val === 'string' || typeof val === 'number') {
-      let input = `<input type="text" class="form-control mb-2" id="${idBase}_input" value="${val || ''}">`;
-      if (isImageUrl(val)) {
-        input += `<div class="mt-2"><img src="${val}" alt="Image preview" class="img-thumbnail" style="max-width:120px;max-height:120px;object-fit:contain;"></div>`;
+      if (textareaKeys.some(k => lastKey.includes(k))) {
+        return `<textarea class="form-control mb-2" id="${idBase}_input" rows="4">${val || ''}</textarea>`;
+      } else {
+        let input = `<input type="text" class="form-control mb-2" id="${idBase}_input" value="${val || ''}">`;
+        if (isImageUrl(val)) {
+          input += `<div class="mt-2"><img src="${val}" alt="Image preview" class="img-thumbnail" style="max-width:120px;max-height:120px;object-fit:contain;"></div>`;
+        }
+        return input;
       }
-      return input;
     } else if (Array.isArray(val)) {
       // Render each array item as a subfield
       return val.map((item, idx) =>
