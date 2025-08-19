@@ -230,18 +230,8 @@
       selectedTopicTitle.textContent = topic.topic_title || '';
     }
 
-    // Determine which outline source to use
-    let source = 'auto';
-    const toggle = document.getElementById('outlineSourceToggle');
-    if (toggle) source = toggle.value;
-    let outline = null;
-    if (source === 're_lesson_outlines') {
-      outline = topic.re_lesson_outlines;
-    } else if (source === 'lesson_outline') {
-      outline = topic.lesson_outline;
-    } else {
-      outline = topic.re_lesson_outlines || topic.lesson_outline;
-    }
+  // Use only re_lesson_outlines
+  let outline = topic.re_lesson_outlines;
     if (!outline) {
       const msg = document.createElement("p");
       msg.textContent = "No lesson data available for this topic.";
@@ -623,12 +613,6 @@
     if (requestMenu) {
       requestMenu.style.display = 'none';
       requestMenu.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
-    }
-    // Add event listener to toggle if not already
-    const toggle = document.getElementById('outlineSourceToggle');
-    if (toggle && !toggle.dataset.listener) {
-      toggle.addEventListener('change', () => origRenderLesson(topic));
-      toggle.dataset.listener = 'true';
     }
     origRenderLesson(topic);
   };
