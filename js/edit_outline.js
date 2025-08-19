@@ -273,7 +273,14 @@ document.addEventListener('DOMContentLoaded', () => {
           } else if (typeof val === 'object' && val !== null) {
             newVal = {};
             Object.keys(val).forEach(k => {
-              newVal[k] = document.getElementById(`segment_${i}_${key}_${k}_input`).value;
+              const inputElem = document.getElementById(`segment_${i}_${key}_${k}_input`);
+              if (inputElem) {
+                newVal[k] = inputElem.value;
+              } else {
+                // If input is missing, keep the original value or set to null
+                console.warn(`Input element segment_${i}_${key}_${k}_input not found.`);
+                newVal[k] = val[k] !== undefined ? val[k] : null;
+              }
             });
           }
           const newSeg = {};
