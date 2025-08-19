@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Updated Worksheet</title>
+	<link rel="stylesheet" href="css/worksheet_template.css">
+	<!-- Add any other CSS you need here -->
+</head>
+<body>
+	<div class="container">
+		<div class="controls">
+			<h2>Worksheet Loader</h2>
+			<select id="contentSelect"></select>
+			<select id="unitSelect"></select>
+			<select id="topicSelect"></select>
+			<button class="btn primary" id="btnLoadSupabase">Load Lesson</button>
+		</div>
+		<div id="lessonRoot"></div>
+	</div>
+	<!-- Supabase JS (must be loaded before your script) -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+	<script>
+		window.SUPABASE_URL = 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+		window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
+	</script>
+	<script src="js/updated_worksheet.js"></script>
+</body>
+</html>
