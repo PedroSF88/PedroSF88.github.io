@@ -49,7 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!requestId) return clear(unitMenu, topicMenu, cardList);
     const { data: units } = await supa.from('curriculum_units').select('*').eq('request_id', requestId).order('unit_number', { ascending: true });
     const unitIds = (units || []).map(u => u.id);
-    const { data: topics } = await supa.from('topic_teks').select('*').in('unit_id', unitIds);
+    const { data: topics } = await supa
+      .from('lesson_outlines_public')
+      .select('*')
+      .in('unit_id', unitIds)
+      .order('topic_title', { ascending: true });
     const unitMap = {};
     (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
     (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
@@ -315,7 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusMsg = document.getElementById('statusMsg');
       saveBtn.disabled = true;
       statusMsg.textContent = 'Saving...';
-      const { error } = await supa.from('topic_teks').update({ re_lesson_outlines: updatedOutline }).eq('id', currentTopicId);
+      const { error } = await supa
+        .from('lesson_outlines_public')
+        .update({ lesson_outline: updatedOutline })
+        .eq('id', currentTopicId);
       saveBtn.disabled = false;
       if (error) {
         statusMsg.textContent = 'Error saving: ' + error.message;

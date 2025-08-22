@@ -43,11 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Populate Topics for selected unit
   async function loadTopics(unitId) {
     if (!topicSelect) return;
-    topicSelect.innerHTML = '<option value=\"\">Select a topic</option>';
+    topicSelect.innerHTML = '<option value="">Select a topic</option>';
     if (!unitId) return;
-  const { data: topics, error } = await supa.from('topic_teks').select('id, topic_title, re_lesson_outlines').eq('unit_id', unitId);
+    const { data: topics, error } = await supa
+      .from('lesson_outlines_public')
+      .select('id, topic_title')
+      .eq('unit_id', unitId)
+      .order('topic_title', { ascending: true });
     if (error || !topics || !topics.length) return;
-    topicSelect.innerHTML += topics.map(t => `<option value=\"${t.id}\">${t.topic_title}</option>`).join('');
+    topicSelect.innerHTML += topics.map(t => `<option value="${t.id}">${t.topic_title}</option>`).join('');
   }
 
   // On selectors change
@@ -58,8 +62,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
-    const { data: topic, error } = await supa.from('topic_teks').select('re_lesson_outlines, lesson_outline').eq('id', topicId).single();
-    let lessonData = (topic && (topic.re_lesson_outlines || topic.lesson_outline)) || null;
+    const { data: topic, error } = await supa
+      .from('lesson_outlines_public')
+      .select('lesson_outline')
+      .eq('id', topicId)
+      .single();
+    let lessonData = topic && topic.lesson_outline;
     if (error || !lessonData) {
       alert('Failed to load lesson from Supabase.');
       return;
@@ -406,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // table layout only for image analysis (unchanged)
         var table = el('table', { style: 'width:100%; margin-bottom: 12px;' });
         var tbody = el('tbody'); table.appendChild(tbody);
-  if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
+        if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
         var imgCell = el('td', { style: 'width:50%; vertical-align:top; text-align:center;' });
         if (d.visual_1A) imgCell.appendChild(imgBlock(d.visual_1A.type, d.visual_1A));
         var qCell = el('td', { style: 'width:50%; vertical-align:top;' });
@@ -427,7 +435,36 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       if (key.indexOf('reading_') === 0) { renderReading(key, seg); return; }
       if (key === 'odd_one_out') { renderOddOneOut(seg); return; }
-      if (key === 'cause_effect') { renderCauseEffect(seg); return; }
+      // Render both compare_contrast and cause_effect if present
+      if (key === 'compare_contrast' || key === 'cause_effect') {
+        if (seg.compare_contrast) {
+          var d = seg.compare_contrast;
+          var box = el('div');
+          var row = el('div', { style: 'display: flex; gap: 16px; margin-bottom: 12px; justify-content: center;' });
+          if (d.visual_1C) row.appendChild(imgBlock(d.visual_1C.type, d.visual_1C));
+          if (d.visual_2C) row.appendChild(imgBlock(d.visual_2C.type, d.visual_2C));
+          box.appendChild(row);
+          if (d.instructions) {
+            box.appendChild(el('div', { className: 'muted' }, d.instructions));
+            box.appendChild(el('div', { className: 'lines md' }, el('div', { className: 'pad' }, 'Compare and contrast...')));
+          }
+          root.appendChild(card('Compare & Contrast', box));
+        }
+        if (seg.cause_effect) {
+          var d = seg.cause_effect;
+          var box = el('div');
+          var row = el('div', { style: 'display: flex; gap: 16px; margin-bottom: 12px; justify-content: center;' });
+          if (d.visual_1C) row.appendChild(imgBlock(d.visual_1C.type, d.visual_1C));
+          if (d.visual_2C) row.appendChild(imgBlock(d.visual_2C.type, d.visual_2C));
+          box.appendChild(row);
+          if (d.instructions) {
+            box.appendChild(el('div', { className: 'muted' }, d.instructions));
+            box.appendChild(el('div', { className: 'lines md' }, el('div', { className: 'pad' }, 'Explain cause → effect...')));
+          }
+          root.appendChild(card('Cause & Effect', box));
+        }
+        return;
+      }
       if (key === 'exit_ticket') { renderExitTicket(seg.exit_ticket); return; }
       root.appendChild(card(key.split('_').join(' ').toUpperCase(), el('pre', {}, JSON.stringify(seg[key], null, 2))));
     });
@@ -486,8 +523,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (oddOneOutSeg) renderOddOneOut(oddOneOutSeg);
     // 7. Reading 2
     if (reading2) renderReading('reading_2', reading2);
-    // 8. Cause and Effect
-    if (causeEffectSeg) renderCauseEffect(causeEffectSeg);
+  // 8. Compare & Contrast and/or Cause and Effect
+  var compareAndCauseSegs = segments.filter(seg => seg.compare_contrast || seg.cause_effect);
+  compareAndCauseSegs.forEach(renderSegments);
     // 9. Reading 3
     if (reading3) renderReading('reading_3', reading3);
     // 10. Exit Ticket

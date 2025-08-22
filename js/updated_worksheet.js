@@ -44,7 +44,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!topicSelect) return;
     topicSelect.innerHTML = '<option value="">Select a topic</option>';
     if (!unitId) return;
-    const { data: topics, error } = await supa.from('topic_teks').select('id, topic_title, re_lesson_outlines').eq('unit_id', unitId);
+    const { data: topics, error } = await supa
+      .from('lesson_outlines_public')
+      .select('id, topic_title')
+      .eq('unit_id', unitId)
+      .order('topic_title', { ascending: true });
     if (error || !topics || !topics.length) return;
     topicSelect.innerHTML += topics.map(t => `<option value="${t.id}">${t.topic_title}</option>`).join('');
   }
@@ -57,8 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
-    const { data: topic, error } = await supa.from('topic_teks').select('re_lesson_outlines, lesson_outline').eq('id', topicId).single();
-    let lessonData = (topic && (topic.re_lesson_outlines || topic.lesson_outline)) || null;
+    const { data: topic, error } = await supa
+      .from('lesson_outlines_public')
+      .select('lesson_outline')
+      .eq('id', topicId)
+      .single();
+    let lessonData = topic && topic.lesson_outline;
     if (error || !lessonData) {
       alert('Failed to load lesson from Supabase.');
       return;
@@ -245,18 +253,34 @@ document.addEventListener('DOMContentLoaded', function() {
     root.appendChild(card('Odd One Out', box));
   }
 
-  function renderCauseEffect(obj) {
-    var d = obj.cause_effect; if (!d) return;
-    var box = el('div');
-    var row = el('div', { style: 'display: flex; gap: 16px; margin-bottom: 12px; justify-content: center;' });
-    if (d.visual_1C) row.appendChild(imgBlock(d.visual_1C.type, d.visual_1C));
-    if (d.visual_2C) row.appendChild(imgBlock(d.visual_2C.type, d.visual_2C));
-    box.appendChild(row);
-    if (d.instructions) {
-      box.appendChild(el('div', { className: 'muted' }, d.instructions));
-      box.appendChild(el('div', { className: 'lines md' }, el('div', { className: 'pad' }, 'Explain cause → effect...')));
+  function renderCompareAndCause(obj) {
+    // Render both compare_contrast and cause_effect if present
+    if (obj.compare_contrast) {
+      var d = obj.compare_contrast;
+      var box = el('div');
+      var row = el('div', { style: 'display: flex; gap: 16px; margin-bottom: 12px; justify-content: center;' });
+      if (d.visual_1C) row.appendChild(imgBlock(d.visual_1C.type, d.visual_1C));
+      if (d.visual_2C) row.appendChild(imgBlock(d.visual_2C.type, d.visual_2C));
+      box.appendChild(row);
+      if (d.instructions) {
+        box.appendChild(el('div', { className: 'muted' }, d.instructions));
+        box.appendChild(el('div', { className: 'lines md' }, el('div', { className: 'pad' }, 'Compare and contrast...')));
+      }
+      root.appendChild(card('Compare & Contrast', box));
     }
-    root.appendChild(card('Cause & Effect', box));
+    if (obj.cause_effect) {
+      var d = obj.cause_effect;
+      var box = el('div');
+      var row = el('div', { style: 'display: flex; gap: 16px; margin-bottom: 12px; justify-content: center;' });
+      if (d.visual_1C) row.appendChild(imgBlock(d.visual_1C.type, d.visual_1C));
+      if (d.visual_2C) row.appendChild(imgBlock(d.visual_2C.type, d.visual_2C));
+      box.appendChild(row);
+      if (d.instructions) {
+        box.appendChild(el('div', { className: 'muted' }, d.instructions));
+        box.appendChild(el('div', { className: 'lines md' }, el('div', { className: 'pad' }, 'Explain cause → effect...')));
+      }
+      root.appendChild(card('Cause & Effect', box));
+    }
   }
 
   // ---- Exit Ticket (fixed) ----
@@ -450,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var warmUpSeg = segments.find(seg => seg.warm_up);
     var imageAnalysisSeg = segments.find(seg => seg.image_analysis);
     var oddOneOutSeg = segments.find(seg => seg.odd_one_out);
-    var causeEffectSeg = segments.find(seg => seg.cause_effect);
+  var compareAndCauseSegs = segments.filter(seg => seg.compare_contrast || seg.cause_effect);
     var reading1 = segments.find(seg => Object.keys(seg)[0] === 'reading_1');
     var reading2 = segments.find(seg => Object.keys(seg)[0] === 'reading_2');
     var reading3 = segments.find(seg => Object.keys(seg)[0] === 'reading_3');
@@ -491,8 +515,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (oddOneOutSeg) renderOddOneOut(oddOneOutSeg);
     // 7. Reading 2
     if (reading2) renderReading('reading_2', reading2);
-    // 8. Cause and Effect
-    if (causeEffectSeg) renderCauseEffect(causeEffectSeg);
+  // 8. Compare & Contrast and/or Cause and Effect
+  compareAndCauseSegs.forEach(renderCompareAndCause);
     // 9. Reading 3
     if (reading3) renderReading('reading_3', reading3);
     // 10. Exit Ticket

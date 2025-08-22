@@ -98,39 +98,56 @@
   // Update loadData to add debug output
   async function loadData(requestId) {
     try {
-      if (requestId === null || requestId === undefined || requestId === "") {
+      if (!requestId) {
         console.warn('Warning: No valid requestId provided to loadData. Skipping curriculum_units query.');
         clear(cardList);
         return;
       }
+
       console.log('Loading data for requestId:', requestId);
+
+      // 1) Units for this request
       const { data: units, error: unitErr } = await supabase
-        .from('curriculum_units').select('*').eq('request_id', requestId).order('unit_number', { ascending: true });
+        .from('curriculum_units')
+        .select('id, unit_title, request_id, unit_number')
+        .eq('request_id', requestId)
+        .order('unit_number', { ascending: true });
+
       console.log('Units:', units, 'Error:', unitErr);
       if (unitErr) throw unitErr;
-      const unitIds = (units || []).map(u => u.id);
+
+      // No units? Render empty UI and bail early.
+      if (!units || units.length === 0) {
+        buildUnitMenu({});
+        return;
+      }
+
+      const unitIds = units.map(u => u.id);
+
+      // 2) Topics (from the VIEW, published-only + unified lesson_outline)
+      // Guard .in() against empty arrays just in case
       const { data: topics, error: topicErr } = await supabase
-        .from('topic_teks').select('*').in('unit_id', unitIds);
+        .from('lesson_outlines_public')
+        .select('id, unit_id, topic_title, lesson_outline')
+        .in('unit_id', unitIds.length ? unitIds : ['__none__']);
+
       console.log('Topics:', topics, 'Error:', topicErr);
       if (topicErr) throw topicErr;
-      const topicIds = (topics || []).map(t => t.id);
 
+      // Build menu mapping
       const unitMap = {};
       (units || []).forEach(u => unitMap[u.id] = { unit: u, topics: [] });
       (topics || []).forEach(t => unitMap[t.unit_id] && unitMap[t.unit_id].topics.push(t));
+
       buildUnitMenu(unitMap);
-      // Remove any error message if present
-      if (cardList.firstChild && cardList.firstChild.classList && cardList.firstChild.classList.contains('text-danger')) {
+
+      // Clear any prior inline error
+      if (cardList.firstChild && cardList.firstChild.classList?.contains('text-danger')) {
         cardList.innerHTML = '';
       }
     } catch (err) {
       console.error('Error loading curriculum data:', err);
       clear(cardList);
-      // Do not show error message in the UI
-      // const p = document.createElement('p');
-      // p.className = 'text-danger';
-      // p.textContent = 'Failed to load lessons. Please check your Supabase configuration.';
-      // cardList.append(p);
     }
   }
 
@@ -230,8 +247,8 @@
       selectedTopicTitle.textContent = topic.topic_title || '';
     }
 
-  // Use only re_lesson_outlines
-  let outline = topic.re_lesson_outlines;
+  // From view: always use unified lesson_outline
+  let outline = topic.lesson_outline;
     if (!outline) {
       const msg = document.createElement("p");
       msg.textContent = "No lesson data available for this topic.";
@@ -255,7 +272,12 @@
         }
         if (outline && Array.isArray(outline.success_criteria) && outline.success_criteria.length) {
           html += "<p><strong>Success Criteria:</strong></p><ul>";
-          outline.success_criteria.forEach(item => { html += `<li>${item}</li>`; });
+          outline.success_criteria.forEach(item => {
+            // Split on period, trim, and filter out empty
+            item.split('.').map(s => s.trim()).filter(Boolean).forEach(sc => {
+              html += `<li>${sc}.</li>`;
+            });
+          });
           html += "</ul>";
         }
         if (teksItems.length) {
@@ -618,7 +640,6 @@
   };
 
   loadRequests();
-  loadData();
 
   // Attach zoom handlers to all images with .img-zoom-preview
   function attachZoomHandlers() {
