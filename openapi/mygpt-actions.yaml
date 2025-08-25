@@ -1,9 +1,10 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Curriculum Actions API
   version: "1.0.0"
 servers:
   - url: https://hhlzhoqwlqsiefyiuqmg.functions.supabase.co
+
 paths:
   /update_outline:
     post:
@@ -16,19 +17,15 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - type: object
-                  required: [topic_id, draft]
-                  properties:
-                    topic_id: { type: string, format: uuid }
-                    draft: { type: object }
-                - type: object
-                  required: [topic_id, publish]
-                  properties:
-                    topic_id: { type: string, format: uuid }
-                    publish: { type: boolean, enum: [true] }
+              $ref: '#/components/schemas/UpdateOutlineRequest'
       responses:
-        "200": { description: ok }
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOutlineResponse'
+
   /refine_outline:
     post:
       operationId: refineOutline
@@ -40,15 +37,61 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required: [topic_id]
-              properties:
-                topic_id: { type: string, format: uuid }
+              $ref: '#/components/schemas/RefineOutlineRequest'
       responses:
-        "200": { description: ok }
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefineOutlineResponse'
+
 components:
   securitySchemes:
     ActionsKeyAuth:
       type: apiKey
       in: header
       name: Authorization
+
+  schemas:
+    UpdateOutlineRequest:
+      type: object
+      required: [topic_id]
+      properties:
+        topic_id:
+          type: string
+          format: uuid
+        draft:
+          type: object
+          additionalProperties: true
+          description: JSON object to save to re_lesson_outlines
+        publish:
+          type: boolean
+          description: Set true to copy current draft to lesson_outline
+      description: "Provide either draft OR publish:true"
+
+    UpdateOutlineResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        mode:
+          type: string
+          enum: [draft, published]
+
+    RefineOutlineRequest:
+      type: object
+      required: [topic_id]
+      properties:
+        topic_id:
+          type: string
+          format: uuid
+
+    RefineOutlineResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        draft:
+          type: object
+          additionalProperties: true
