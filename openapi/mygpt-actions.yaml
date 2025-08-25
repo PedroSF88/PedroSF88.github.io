@@ -46,6 +46,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/RefineOutlineResponse'
 
+  /list_contents:
+    post:
+      operationId: listContents
+      summary: List all contents
+      security:
+        - ActionsKeyAuth: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListContentsResponse'
+
+  /list_units:
+    post:
+      operationId: listUnits
+      summary: List units for a content
+      security:
+        - ActionsKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListUnitsRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUnitsResponse'
+
+  /list_topics:
+    post:
+      operationId: listTopics
+      summary: List topics with optional filters
+      security:
+        - ActionsKeyAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListTopicsRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTopicsResponse'
+
+  /get_topic:
+    post:
+      operationId: getTopic
+      summary: Get a topic by id
+      security:
+        - ActionsKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetTopicRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTopicResponse'
+
 components:
   securitySchemes:
     ActionsKeyAuth:
@@ -93,5 +167,93 @@ components:
         ok:
           type: boolean
         draft:
+          type: object
+          additionalProperties: true
+    ListContentsResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        count:
+          type: integer
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    ListUnitsRequest:
+      type: object
+      required: [content_id]
+      properties:
+        content_id:
+          type: string
+          format: uuid
+    ListUnitsResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        count:
+          type: integer
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    ListTopicsRequest:
+      type: object
+      properties:
+        limit:
+          type: integer
+        offset:
+          type: integer
+        include_drafts:
+          type: boolean
+        search:
+          type: string
+        unit_id:
+          type: string
+          format: uuid
+    ListTopicsResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        count:
+          type: integer
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              topic:
+                type: string
+              published:
+                type: boolean
+              unit_id:
+                type: string
+                format: uuid
+                nullable: true
+              updated_at:
+                type: string
+                format: date-time
+                nullable: true
+            additionalProperties: false
+    GetTopicRequest:
+      type: object
+      required: [topic_id]
+      properties:
+        topic_id:
+          type: string
+          format: uuid
+    GetTopicResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        item:
           type: object
           additionalProperties: true
