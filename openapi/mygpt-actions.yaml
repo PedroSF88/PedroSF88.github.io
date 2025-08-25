@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: Curriculum Actions API
+  version: "1.0.0"
+servers:
+  - url: https://hhlzhoqwlqsiefyiuqmg.functions.supabase.co
+paths:
+  /update_outline:
+    post:
+      operationId: updateOutline
+      summary: Create draft or publish a lesson outline
+      security:
+        - ActionsKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [topic_id, draft]
+                  properties:
+                    topic_id: { type: string, format: uuid }
+                    draft: { type: object }
+                - type: object
+                  required: [topic_id, publish]
+                  properties:
+                    topic_id: { type: string, format: uuid }
+                    publish: { type: boolean, enum: [true] }
+      responses:
+        "200": { description: ok }
+  /refine_outline:
+    post:
+      operationId: refineOutline
+      summary: Use OpenAI to refine lesson flow/readings and save as draft
+      security:
+        - ActionsKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [topic_id]
+              properties:
+                topic_id: { type: string, format: uuid }
+      responses:
+        "200": { description: ok }
+components:
+  securitySchemes:
+    ActionsKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
