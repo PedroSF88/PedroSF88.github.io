@@ -374,3 +374,6 @@ entrypoint = "./functions/list_topics/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/get_topic/index.ts"
+
+[functions.update_outline_auth]
+verify_jwt = true

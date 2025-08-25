@@ -1,3 +1,16 @@
+/* Auth bar styles moved from inline HTML */
+.auth-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+.email-input {
+  max-width: 260px;
+}
+.signout-btn {
+  display: none;
+}
 /* Uniform Odd One Out grid and images */
 .section-image .odd-one-out-grid {
   display: grid;
