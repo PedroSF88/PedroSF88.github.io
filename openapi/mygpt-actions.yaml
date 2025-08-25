@@ -49,12 +49,18 @@ paths:
   /list_contents:
     post:
       operationId: listContents
-      summary: List all contents
+      summary: List distinct content areas
       security:
         - ActionsKeyAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListContentsRequest'
       responses:
         "200":
-          description: Success
+          description: Ok
           content:
             application/json:
               schema:
@@ -63,7 +69,7 @@ paths:
   /list_units:
     post:
       operationId: listUnits
-      summary: List units for a content
+      summary: List units within a content area
       security:
         - ActionsKeyAuth: []
       requestBody:
@@ -74,7 +80,7 @@ paths:
               $ref: '#/components/schemas/ListUnitsRequest'
       responses:
         "200":
-          description: Success
+          description: Ok
           content:
             application/json:
               schema:
@@ -83,7 +89,7 @@ paths:
   /list_topics:
     post:
       operationId: listTopics
-      summary: List topics with optional filters
+      summary: List topics (published by default)
       security:
         - ActionsKeyAuth: []
       requestBody:
@@ -94,7 +100,7 @@ paths:
               $ref: '#/components/schemas/ListTopicsRequest'
       responses:
         "200":
-          description: Success
+          description: Ok
           content:
             application/json:
               schema:
@@ -103,7 +109,7 @@ paths:
   /get_topic:
     post:
       operationId: getTopic
-      summary: Get a topic by id
+      summary: Get a single topic by id
       security:
         - ActionsKeyAuth: []
       requestBody:
@@ -114,7 +120,7 @@ paths:
               $ref: '#/components/schemas/GetTopicRequest'
       responses:
         "200":
-          description: Success
+          description: Ok
           content:
             application/json:
               schema:
@@ -138,7 +144,7 @@ components:
         draft:
           type: object
           additionalProperties: true
-          description: JSON object to save to re_lesson_outlines
+          description: JSON to save to re_lesson_outlines
         publish:
           type: boolean
           description: Set true to copy current draft to lesson_outline
@@ -169,6 +175,22 @@ components:
         draft:
           type: object
           additionalProperties: true
+
+    ListContentsRequest:
+      type: object
+      properties:
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 200
+          default: 50
+        offset:
+          type: integer
+          minimum: 0
+          default: 0
+        search:
+          type: string
+
     ListContentsResponse:
       type: object
       properties:
@@ -179,15 +201,26 @@ components:
         items:
           type: array
           items:
-            type: object
-            additionalProperties: true
+            type: string  # each item is a content_area string
+
     ListUnitsRequest:
       type: object
-      required: [content_id]
+      required: [content_area]
       properties:
-        content_id:
+        content_area:
           type: string
-          format: uuid
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 200
+          default: 50
+        offset:
+          type: integer
+          minimum: 0
+          default: 0
+        search:
+          type: string
+
     ListUnitsResponse:
       type: object
       properties:
@@ -199,21 +232,34 @@ components:
           type: array
           items:
             type: object
-            additionalProperties: true
+            properties:
+              id: { type: string, format: uuid }
+              title: { type: string }
+              unit_number: { type: number, nullable: true }
+              question: { type: string, nullable: true }
+              content_area: { type: string }
+
     ListTopicsRequest:
       type: object
       properties:
-        limit:
-          type: integer
-        offset:
-          type: integer
-        include_drafts:
-          type: boolean
-        search:
-          type: string
         unit_id:
           type: string
           format: uuid
+        include_drafts:
+          type: boolean
+          default: false
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 200
+          default: 50
+        offset:
+          type: integer
+          minimum: 0
+          default: 0
+        search:
+          type: string
+
     ListTopicsResponse:
       type: object
       properties:
@@ -226,22 +272,12 @@ components:
           items:
             type: object
             properties:
-              id:
-                type: string
-                format: uuid
-              topic:
-                type: string
-              published:
-                type: boolean
-              unit_id:
-                type: string
-                format: uuid
-                nullable: true
-              updated_at:
-                type: string
-                format: date-time
-                nullable: true
-            additionalProperties: false
+              id: { type: string, format: uuid }
+              topic: { type: string, nullable: true }
+              published: { type: boolean }
+              unit_id: { type: string, format: uuid, nullable: true }
+              updated_at: { type: string, format: date-time, nullable: true }
+
     GetTopicRequest:
       type: object
       required: [topic_id]
@@ -249,11 +285,13 @@ components:
         topic_id:
           type: string
           format: uuid
+
     GetTopicResponse:
       type: object
       properties:
         ok:
           type: boolean
-        item:
+        topic:
           type: object
+          nullable: true
           additionalProperties: true

@@ -1,7 +1,7 @@
 // deno run --allow-env --allow-net
-// List topics (published by default) with simple paging + search.
+// Lists topics (published by default) with optional unit filter, paging, and search.
 //
-// Auth: static bearer key in header (ACTIONS_ADMIN_KEY).
+// Auth: static bearer key (ACTIONS_ADMIN_KEY) in the Authorization header.
 // Env: SUPABASE_URL, SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY), ACTIONS_ADMIN_KEY.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -17,12 +17,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY);
 Deno.serve(async (req) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response("", {
-      headers: corsHeaders(),
-    });
+    return new Response("", { headers: corsHeaders() });
   }
 
-  // Auth: Bearer <ACTIONS_ADMIN_KEY>
+  // Auth: Authorization: Bearer <ACTIONS_ADMIN_KEY>
   const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
   if (token !== ACTIONS_ADMIN_KEY) {
     return json({ error: "Unauthorized" }, 401);
@@ -31,28 +29,26 @@ Deno.serve(async (req) => {
   // Parse body (all optional)
   let body: any = {};
   try { body = await req.json(); } catch {}
+  const unit_id = (body?.unit_id ?? "").toString().trim() || null;
+  const includeDrafts = Boolean(body?.include_drafts ?? false);
   const limit = clamp(Number(body?.limit ?? 50), 1, 200);
   const offset = Math.max(0, Number(body?.offset ?? 0));
-  const includeDrafts = Boolean(body?.include_drafts ?? false);
   const search = (body?.search ?? "").toString().trim();
 
-
-  // Adjust SELECT columns to your schema (topic_teks used in your repo)
-  // If you later make a published view, you can switch to: supabase.from("topics_published")
+  // Build query against topic_teks
   let q = supabase
     .from("topic_teks")
-    .select("id, topic_title, topic, lesson_outline, updated_at, unit_id")
-    .order("updated_at", { ascending: false });
+    .select("id, topic_title, lesson_outline, unit_id, created_at, lesson_outline_updated_at");
 
-  // Filter by unit_id if provided
-  const unit_id = body?.unit_id;
   if (unit_id) q = q.eq("unit_id", unit_id);
-
   if (!includeDrafts) q = q.not("lesson_outline", "is", null);
-  if (search) {
-    // Change "topic_title" if your column is named differently
-    q = q.ilike("topic_title", `%${search}%`);
-  }
+  if (search) q = q.ilike("topic_title", `%${search}%`);
+
+  // Order by "most recently updated", falling back to created_at
+  // (Supabase allows NULLS FIRST/LAST control)
+  q = q
+    .order("lesson_outline_updated_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false, nullsFirst: false });
 
   // Pagination
   q = q.range(offset, offset + limit - 1);
@@ -62,10 +58,10 @@ Deno.serve(async (req) => {
 
   const items = (data ?? []).map((r: any) => ({
     id: r.id,
-    topic: r.topic_title ?? r.topic ?? null,
+    topic: r.topic_title ?? null,
     published: r.lesson_outline != null,
     unit_id: r.unit_id ?? null,
-    updated_at: r.updated_at ?? null,
+    updated_at: r.lesson_outline_updated_at ?? r.created_at ?? null,
   }));
 
   return json({ ok: true, count: items.length, items });
@@ -83,7 +79,7 @@ function corsHeaders() {
     "access-control-allow-origin": "*",
     "access-control-allow-headers": "authorization, content-type",
     "access-control-allow-methods": "POST, OPTIONS",
-  };
+  } as const;
 }
 
 function clamp(n: number, min: number, max: number) {
