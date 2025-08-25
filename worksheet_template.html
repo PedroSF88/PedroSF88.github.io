@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Auto-Loaded Lesson Worksheet + Vocab (Randomized A/B/C)</title>
   <link rel="stylesheet" href="css/worksheet_template.css" />
+  <script>
+    window.SUPABASE_URL = 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+    window.SUPABASE_ANON_KEY = 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
+  </script>
 </head>
 <body class="ver-A">
   <div class="container">
@@ -33,7 +37,7 @@
     </div>
 
     <div id="lessonRoot"><!-- Rendered content goes here --></div>
-    <div id="testResults" class="muted" aria-live="polite" style="display:none"></div>
+  <div id="testResults" class="muted d-none" aria-live="polite"></div>
 
     <template id="tpl-vocab-row">
       <tr>

@@ -10,19 +10,19 @@
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="alert alert-warning text-center fw-bold" style="margin:1.5rem 1rem 0.5rem 1rem;">EDIT LESSONS</div>
+  <div class="alert alert-warning text-center fw-bold margin-alert">EDIT LESSONS</div>
   <div id="selectedTopicTitle" class="selected-topic-title mb-3"></div>
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
         <span></span>
       </button>
   <div id="requestMenu" class="mb-4"></div>
-  <h5 style="margin-left:2.5rem;margin-top:1.5rem;">Units</h5>
+  <h5 class="section-title">Units</h5>
   <div id="unitMenu" class="mb-4"></div>
-  <h5 style="margin-left:2.5rem;margin-top:1.5rem;">Topics</h5>
+  <h5 class="section-title">Topics</h5>
   <div id="topicMenu" class="mb-4"></div>
     </aside>
     <div class="main">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+  <div class="flex-end mb-1rem">
         <button class="btn btn-primary" onclick="window.open('/worksheet_template.html','_blank')">Print Worksheet</button>
       </div>
       <div id="cardList"></div>
@@ -32,7 +32,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     window.SUPABASE_URL = 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
-    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
+    window.SUPABASE_ANON_KEY = 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
   </script>
   <script src="js/edit_outline.js"></script>
   <script>

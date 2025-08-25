@@ -1,3 +1,7 @@
+/* Hide element (used for testResults) */
+.d-none {
+  display: none;
+}
 /* Reading section text font size */
 .reading-section p, .reading-text, .reading-section, .reading-section * {
   font-size: 12px !important;
@@ -23,6 +27,7 @@
 }
 .sc-hidden {
   color: transparent !important;
+  -webkit-user-select: none;
   user-select: none;
 }
 .success-criteria-cell .sc-text {

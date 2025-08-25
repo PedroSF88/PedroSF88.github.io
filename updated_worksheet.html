@@ -12,9 +12,12 @@
 	<div class="container">
 		<div class="controls">
 			<h2>Worksheet Loader</h2>
-			<select id="contentSelect"></select>
-			<select id="unitSelect"></select>
-			<select id="topicSelect"></select>
+			<label for="contentSelect">Content:</label>
+			<select id="contentSelect" title="Content"></select>
+			<label for="unitSelect">Unit:</label>
+			<select id="unitSelect" title="Unit"></select>
+			<label for="topicSelect">Topic:</label>
+			<select id="topicSelect" title="Topic"></select>
 			<button class="btn primary" id="btnLoadSupabase">Load Lesson</button>
 		</div>
 		<div id="lessonRoot"></div>
@@ -23,7 +26,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 	<script>
 		window.SUPABASE_URL = 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
-		window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
+		window.SUPABASE_ANON_KEY = 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
 	</script>
 	<script src="js/updated_worksheet.js"></script>
 </body>

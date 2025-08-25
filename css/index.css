@@ -1,3 +1,23 @@
+/* Section title spacing for h5 */
+.section-title {
+  margin-left: 2.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Flex-end utility for divs */
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mb-1rem {
+  margin-bottom: 1rem;
+}
+
+/* Margin for alert in edit_outline.html */
+.margin-alert {
+  margin: 1.5rem 1rem 0.5rem 1rem;
+}
 /* Vocab subcard flex layout */
 .vocab-flex {
   display: flex;
@@ -325,7 +345,7 @@ body {
   background: linear-gradient(180deg, #0f2530 0%, #041730 100%);
   color: #ffffff; padding: 16px;
   overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
+  /* scrollbar-width: none;  Firefox only, not supported in Chrome < 121, Safari, iOS */
   -ms-overflow-style: none; /* IE and Edge */
   display: flex;
   flex-direction: column;
