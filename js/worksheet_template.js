@@ -1,3 +1,4 @@
+var currentSchemaVersion = 1; // 1 or 2
 document.addEventListener('DOMContentLoaded', function() {
   // ================== Supabase setup (unchanged) ==================
   const SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
@@ -59,15 +60,50 @@ document.addEventListener('DOMContentLoaded', function() {
   if (unitSelect) unitSelect.addEventListener('change', e => { loadTopics(e.target.value); });
 
   // On Load Lesson, fetch and render lesson
+  // Add schema version toggle UI
+  function renderVersionToggle() {
+    let container = document.getElementById('schemaVersionToggle');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'schemaVersionToggle';
+      container.className = 'mb-3';
+      root.parentNode.insertBefore(container, root);
+    }
+    container.innerHTML = `
+      <label class="form-label me-2">Schema Version:</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="schemaVersion" id="schemaV1" value="1" ${currentSchemaVersion===1?'checked':''}>
+        <label class="form-check-label" for="schemaV1">v1</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="schemaVersion" id="schemaV2" value="2" ${currentSchemaVersion===2?'checked':''}>
+        <label class="form-check-label" for="schemaV2">v2</label>
+      </div>
+    `;
+    Array.from(container.querySelectorAll('input[name="schemaVersion"]')).forEach(radio => {
+      radio.addEventListener('change', function() {
+        currentSchemaVersion = Number(this.value);
+        // Re-render if lesson loaded
+        if (window._lastLessonData) renderAll(window._lastLessonData);
+      });
+    });
+  }
+
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
+    let selectFields = currentSchemaVersion === 2 ? 'lesson_outline_v2_draft, lesson_outline_v2' : 're_lesson_outlines, lesson_outline';
     const { data: topic, error } = await supa
       .from('lesson_outlines_public')
-      .select('lesson_outline')
+      .select(selectFields)
       .eq('id', topicId)
       .single();
-    let lessonData = topic && topic.lesson_outline;
+    let lessonData;
+    if (currentSchemaVersion === 2) {
+      lessonData = topic && (topic.lesson_outline_v2_draft || topic.lesson_outline_v2);
+    } else {
+      lessonData = topic && (topic.re_lesson_outlines || topic.lesson_outline);
+    }
     if (error || !lessonData) {
       alert('Failed to load lesson from Supabase.');
       return;
@@ -76,6 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
       try { lessonData = JSON.parse(lessonData); } catch {}
     }
     if (!lessonData) { alert('Lesson data is empty.'); return; }
+    window._lastLessonData = lessonData;
+    renderVersionToggle();
     renderAll(lessonData);
   });
 

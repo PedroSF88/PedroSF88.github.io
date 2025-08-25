@@ -94,7 +94,37 @@
   }
 
 
-  // data load
+  // --- Schema version toggle ---
+  var currentSchemaVersion = 1; // 1 or 2
+
+  // Add version toggle UI to the main page (above cardList)
+  function renderVersionToggle() {
+    let container = document.getElementById('schemaVersionToggle');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'schemaVersionToggle';
+      container.className = 'mb-3';
+      cardList.parentNode.insertBefore(container, cardList);
+    }
+    container.innerHTML = `
+      <label class="form-label me-2">Schema Version:</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="schemaVersion" id="schemaV1" value="1" ${currentSchemaVersion===1?'checked':''}>
+        <label class="form-check-label" for="schemaV1">v1</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="schemaVersion" id="schemaV2" value="2" ${currentSchemaVersion===2?'checked':''}>
+        <label class="form-check-label" for="schemaV2">v2</label>
+      </div>
+    `;
+    Array.from(container.querySelectorAll('input[name="schemaVersion"]')).forEach(radio => {
+      radio.addEventListener('change', function() {
+        currentSchemaVersion = Number(this.value);
+        // Re-render current topic if available
+        if (window._lastTopic) renderLesson(window._lastTopic);
+      });
+    });
+  }
   // Update loadData to add debug output
   async function loadData(requestId) {
     try {
@@ -241,14 +271,20 @@
 
   function renderLesson(topic) {
     clear(cardList);
+    renderVersionToggle();
     // Set selected topic title in sidebar
     const selectedTopicTitle = document.getElementById('selectedTopicTitle');
     if (selectedTopicTitle) {
       selectedTopicTitle.textContent = topic.topic_title || '';
     }
 
-  // From view: always use unified lesson_outline
-  let outline = topic.lesson_outline;
+    // Use correct outline based on schema version
+    let outline;
+    if (currentSchemaVersion === 2) {
+      outline = topic.lesson_outline_v2_draft || topic.lesson_outline_v2 || {};
+    } else {
+      outline = topic.re_lesson_outlines || topic.lesson_outline || {};
+    }
     if (!outline) {
       const msg = document.createElement("p");
       msg.textContent = "No lesson data available for this topic.";
@@ -256,6 +292,9 @@
       return;
     }
     outline = typeof outline === "string" ? (safeParseJSON(outline) || {}) : outline;
+
+    // Store last topic for re-rendering on version change
+    window._lastTopic = topic;
 
     const sections = [];
 

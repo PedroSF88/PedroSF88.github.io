@@ -138,17 +138,18 @@ components:
       type: object
       required: [topic_id]
       properties:
-        topic_id:
-          type: string
-          format: uuid
+        topic_id: { type: string, format: uuid }
         draft:
           type: object
           additionalProperties: true
-          description: JSON to save to re_lesson_outlines
         publish:
           type: boolean
-          description: Set true to copy current draft to lesson_outline
-      description: "Provide either draft OR publish:true"
+          description: Set true to copy current draft to published
+        schema_version:
+          type: integer
+          enum: [1, 2]
+          default: 1
+      description: "Provide either draft OR publish:true; choose schema_version (default 1)"
 
     UpdateOutlineResponse:
       type: object
@@ -163,9 +164,11 @@ components:
       type: object
       required: [topic_id]
       properties:
-        topic_id:
-          type: string
-          format: uuid
+        topic_id: { type: string, format: uuid }
+        schema_version:
+          type: integer
+          enum: [1, 2]
+          default: 1
 
     RefineOutlineResponse:
       type: object

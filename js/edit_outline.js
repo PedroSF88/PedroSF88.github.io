@@ -13,6 +13,7 @@
 //   <script>window.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_...';</script>
 //   <script>window.ACTIONS_ADMIN_KEY = '...'; // dev only</script>
 
+var currentSchemaVersion = 1; // 1 or 2
 document.addEventListener('DOMContentLoaded', function () {
   // --- Setup ---
   var SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
@@ -26,16 +27,31 @@ document.addEventListener('DOMContentLoaded', function () {
     alert('Supabase client not found. Please load @supabase/supabase-js before this script.');
     throw new Error('Supabase client not found.');
   }
-  var supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-  var FUNCTIONS_URL = SUPABASE_URL.replace('.supabase.co', '.functions.supabase.co');
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // --- UI elements ---
-  var unitMenu = document.getElementById("unitMenu");
-  var topicMenu = document.getElementById("topicMenu");
-  var cardList = document.getElementById("cardList");
-  var currentTopic = null;
-  var currentOutline = null;
-  var currentTopicId = null;
+  // --- Auth: Email OTP sign-in with redirect ---
+  // choose the exact page you want to land on after login
+  const PROD_REDIRECT = 'https://pedrosf88.github.io/edit_outline.html'; // or index.html
+  const DEV_REDIRECT  = 'http://localhost:3000';
+  const emailRedirectTo =
+    window.location.hostname === 'pedrosf88.github.io'
+      ? PROD_REDIRECT
+      : DEV_REDIRECT;
+
+  // Example: call this function to trigger sign-in
+  async function signInWithEmail(email) {
+    const { error } = await supa.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo }
+    });
+    if (error) alert('Sign-in error: ' + error.message);
+  }
+  const unitMenu   = document.getElementById("unitMenu");
+  const topicMenu  = document.getElementById("topicMenu");
+  const cardList   = document.getElementById("cardList");
+  let currentTopic = null;
+  let currentOutline = null;
+  let currentTopicId = null;
 
   // --- Utils ---
   function clear() {
@@ -159,7 +175,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var headerEl = document.getElementById('selectedTopicTitle');
     if (headerEl) headerEl.textContent = topic.topic_title || '';
 
-    var outline = topic.re_lesson_outlines || topic.lesson_outline || {};
+    // --- SCHEMA VERSION TOGGLE ---
+    var outline;
+    if (currentSchemaVersion === 2) {
+      outline = topic.lesson_outline_v2_draft || topic.lesson_outline_v2 || {};
+    } else {
+      outline = topic.re_lesson_outlines || topic.lesson_outline || {};
+    }
     outline = (typeof outline === "string") ? (safeParseJSON(outline) || {}) : outline;
 
     // Ensure required scaffolding (no ||=)
@@ -177,6 +199,18 @@ document.addEventListener('DOMContentLoaded', function () {
     var html = '';
     html += '<div class="card p-4 mb-4">' +
       '<h4 class="mb-3">Lesson Info</h4>' +
+      // --- VERSION TOGGLE UI ---
+      '<div class="mb-3">' +
+        '<label class="form-label">Schema Version</label><br>' +
+        '<div class="form-check form-check-inline">' +
+          '<input class="form-check-input" type="radio" name="schemaVersion" id="schemaV1" value="1" ' + (currentSchemaVersion===1?'checked':'') + '>' +
+          '<label class="form-check-label" for="schemaV1">v1</label>' +
+        '</div>' +
+        '<div class="form-check form-check-inline">' +
+          '<input class="form-check-input" type="radio" name="schemaVersion" id="schemaV2" value="2" ' + (currentSchemaVersion===2?'checked':'') + '>' +
+          '<label class="form-check-label" for="schemaV2">v2</label>' +
+        '</div>' +
+      '</div>' +
       '<div class="mb-3">' +
         '<label class="form-label">Lesson Title <span class="text-danger">*</span></label>' +
         '<input type="text" class="form-control" id="lessonTitleInput" value="' + escapeHtml(outline.lesson_title) + '" required>' +
@@ -263,6 +297,15 @@ document.addEventListener('DOMContentLoaded', function () {
         '<span id="statusMsg" class="ms-2"></span>' +
       '</div>';
     cardList.innerHTML = html;
+
+    // --- VERSION TOGGLE WIRING ---
+    var radios = document.getElementsByName('schemaVersion');
+    for (var i=0;i<radios.length;i++){
+      radios[i].addEventListener('change', function(){
+        currentSchemaVersion = Number(this.value);
+        renderLessonEditor(currentTopic);
+      });
+    }
 
     // Wire up dynamic listeners
     wireDynamicInputs();
@@ -463,12 +506,12 @@ document.addEventListener('DOMContentLoaded', function () {
     saveBtn.onclick = async function() {
       if (!currentTopicId) return;
       var draft = buildUpdatedOutline();
-      await callUpdateOutline({ topic_id: currentTopicId, draft: draft }, statusMsg, saveBtn);
+      await callUpdateOutline({ topic_id: currentTopicId, draft: draft, schema_version: currentSchemaVersion }, statusMsg, saveBtn);
     };
 
     publishBtn.onclick = async function() {
       if (!currentTopicId) return;
-      await callUpdateOutline({ topic_id: currentTopicId, publish: true }, statusMsg, publishBtn);
+      await callUpdateOutline({ topic_id: currentTopicId, publish: true, schema_version: currentSchemaVersion }, statusMsg, publishBtn);
     };
   }
 
