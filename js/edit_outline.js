@@ -663,6 +663,9 @@ async function refreshAuthUI() {
 // Handle state changes (e.g., after clicking the magic link)
 supa.auth.onAuthStateChange(function (_event, session) {
   updateAuthUI(session);
+  if (_event === 'SIGNED_IN' && session) {
+    loadRequests();
+  }
 });
 
 // Send magic link
