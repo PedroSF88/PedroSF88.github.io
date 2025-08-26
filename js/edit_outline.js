@@ -697,7 +697,10 @@ refreshAuthUI();
 
 
   // Init
-  tryOpenFromQuery().then(function(hit){
-    if (!hit) loadRequests();
+  tryOpenFromQuery().then(async function(){
+    var s = await supa.auth.getSession();
+    if (s && s.data && s.data.session) {
+      loadRequests();
+    }
   });
 });
