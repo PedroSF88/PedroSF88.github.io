@@ -1,27 +1,23 @@
 // edit_outline.js
 // Front-end editor for lesson outlines.
 // - Reads with Supabase publishable key (safe for browser)
-// - Saves via dev-only admin-key function (update_outline)
+// - Saves via authenticated Supabase function (update_outline)
 //
 // Requirements in HTML:
 // - Load @supabase/supabase-js before this script (window.supabase)
 // - Elements with IDs: requestMenu, unitMenu, topicMenu, cardList, selectedTopicTitle
+// - Login form elements: authEmail, authPassword, signInBtn, signOutBtn
 //
 // Optional DEV globals (do NOT ship real keys in prod):
 //   <script>window.SUPABASE_URL = 'https://...supabase.co';</script>
 //   <script>window.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_...';</script>
-//   <script>window.ACTIONS_ADMIN_KEY = '...'; // dev only</script>
 
 var currentSchemaVersion = 1; // 1 or 2
 document.addEventListener('DOMContentLoaded', function () {
   // --- Setup ---
   var SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
-  var FUNCTIONS_URL = SUPABASE_URL.replace('.supabase.co', '.functions.supabase.co');
   var SUPABASE_PUBLISHABLE_KEY =
     window.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
-
-  // Optional for local DEV ONLY (never ship real keys in prod)
-  var ACTIONS_ADMIN_KEY = window.ACTIONS_ADMIN_KEY || null;
 
   if (!window.supabase) {
     alert('Supabase client not found. Please load @supabase/supabase-js before this script.');
@@ -34,6 +30,35 @@ document.addEventListener('DOMContentLoaded', function () {
       auth: { persistSession: true, autoRefreshToken: true }
     }
   );
+
+  // --- Auth ---
+  var signInBtn = document.getElementById('signInBtn');
+  var signOutBtn = document.getElementById('signOutBtn');
+  var emailInput = document.getElementById('authEmail');
+  var passwordInput = document.getElementById('authPassword');
+
+  if (signInBtn) {
+    signInBtn.onclick = async function () {
+      var email = (emailInput || {}).value || '';
+      var password = (passwordInput || {}).value || '';
+      var { error } = await supa.auth.signInWithPassword({ email, password });
+      if (error) alert('Sign in failed: ' + error.message);
+    };
+  }
+
+  if (signOutBtn) {
+    signOutBtn.onclick = async function () {
+      await supa.auth.signOut();
+    };
+  }
+
+  supa.auth.onAuthStateChange(function (_event, session) {
+    var signedIn = !!session;
+    if (signInBtn) signInBtn.style.display = signedIn ? 'none' : '';
+    if (signOutBtn) signOutBtn.style.display = signedIn ? '' : 'none';
+    if (emailInput) emailInput.style.display = signedIn ? 'none' : '';
+    if (passwordInput) passwordInput.style.display = signedIn ? 'none' : '';
+  });
 
   const unitMenu   = document.getElementById("unitMenu");
   const topicMenu  = document.getElementById("topicMenu");
@@ -545,23 +570,13 @@ document.addEventListener('DOMContentLoaded', function () {
     statusEl.className = 'text-muted ms-2';
     btnEl.disabled = true;
     try {
-      var res = await fetch(FUNCTIONS_URL + '/update_outline', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + (ACTIONS_ADMIN_KEY || '')
-        },
-        body: JSON.stringify(body)
-      });
-
-      if (!res.ok) {
-        var text = await res.text();
-        statusEl.textContent = 'Error ' + res.status + ': ' + text;
+      var { data, error } = await supa.functions.invoke('update_outline', { body });
+      if (error) {
+        statusEl.textContent = 'Error ' + (error.status || '') + ': ' + error.message;
         statusEl.className = 'text-danger ms-2';
         return;
       }
-      var json = await res.json().catch(function(){ return {}; });
-      var mode = json.mode || (body.publish ? 'published' : 'draft');
+      var mode = (data || {}).mode || (body.publish ? 'published' : 'draft');
       statusEl.textContent = (mode === 'published') ? 'Published!' : 'Saved draft!';
       statusEl.className = 'text-success ms-2';
     } catch (e) {

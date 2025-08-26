@@ -16,7 +16,7 @@ Features
 
 🔍 Frontend browser client uses publishable key only (safe to expose)
 
-🔐 Edge Functions use secret key + ACTIONS_ADMIN_KEY for writes
+🔐 Edge Functions use secret key and verify Supabase Auth JWT for writes
 
 ✅ Database tables protected by row-level security and read-only views
 
@@ -29,8 +29,7 @@ Project Structure
 ├── supabase/
 │   └── functions/
 │       └── update_outline/
-│           ├── index.ts     # Draft/publish lessons
-│           └── config.toml  # verify_jwt = false
+│           └── index.ts     # Draft/publish lessons
 ├── .env.example             # Environment template (do not commit .env)
 └── README.md                # This file
 
@@ -40,13 +39,10 @@ Publishable Key (sb_publishable_…) → safe for browser (replaces anon)
 
 Secret Key (sb_secret_…) → backend only (replaces service_role)
 
-ACTIONS_ADMIN_KEY → custom long string for Edge Function auth
-
 .env.example
 SUPABASE_URL=https://<YOUR_REF>.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxxxx
 SUPABASE_SECRET_KEY=sb_secret_xxxxx
-ACTIONS_ADMIN_KEY=long_random_string
 
 Setup
 1. Frontend
@@ -76,7 +72,7 @@ npx supabase functions deploy update_outline
 
 Testing Functions
 Draft
-$headers = @{ Authorization = "Bearer <ACTIONS_ADMIN_KEY>" }
+$headers = @{ Authorization = "Bearer <USER_ACCESS_TOKEN>" }
 $body = @{ topic_id = "<UUID>"; draft = @{ lesson_title = "Draft via API" } } | ConvertTo-Json -Depth 6
 Invoke-RestMethod -Method Post -Uri "https://<REF>.functions.supabase.co/update_outline" -Headers $headers -ContentType "application/json" -Body $body
 
@@ -92,7 +88,7 @@ Security Checklist
 
 ✅ No UPDATE policies for anon/public
 
-✅ Writes → Edge Functions only (require ACTIONS_ADMIN_KEY)
+✅ Writes → Edge Functions only (require authenticated user)
 
 ✅ Secret key never leaves backend
 
