@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
-    let selectFields = currentSchemaVersion === 2 ? 'lesson_outline_v2_draft, lesson_outline_v2' : 're_lesson_outlines, lesson_outline';
+    let selectFields = currentSchemaVersion === 2 ? 'lesson_outline_v2' : 'lesson_outline';
     const { data: topic, error } = await supa
       .from('lesson_outlines_public')
       .select(selectFields)
@@ -99,9 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
       .single();
     let lessonData;
     if (currentSchemaVersion === 2) {
-      lessonData = topic && (topic.lesson_outline_v2_draft || topic.lesson_outline_v2);
+      lessonData = topic && topic.lesson_outline_v2;
     } else {
-      lessonData = topic && (topic.re_lesson_outlines || topic.lesson_outline);
+      lessonData = topic && topic.lesson_outline;
     }
     if (error || !lessonData) {
       alert('Failed to load lesson from Supabase.');
@@ -219,13 +219,12 @@ document.addEventListener('DOMContentLoaded', function() {
       var imgSlot = el('div', { className:'slot slot-img', 'data-col':'img' });
       var imgBox = el('div', { className:'filled img-box' });
       var img = el('img', { className:'img-preview', alt:(v.term || 'vocab image') });
-      if (v.hasOwnProperty('link_to_image') && v.link_to_image) {
+      if (v.hasOwnProperty('link_to_image') && v.link_to_image && v.link_to_image !== '@image_placeholder') {
         img.src = v.link_to_image;
         img.style.display = '';
-      } else {
-        img.style.display = 'none';
+        imgBox.appendChild(img);
       }
-      imgBox.appendChild(img);
+      // If no valid image, do not append the <img> at all
       imgSlot.appendChild(imgBox);
       imgSlot.appendChild(el('div', { className:'blank placeholder' }, 'draw image'));
       cell.appendChild(termSlot);
