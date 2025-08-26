@@ -1,10 +1,10 @@
-// Minimal save/publish with a single admin token (no JWT).
+// Save/publish lesson outlines verifying the caller's Supabase Auth user.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!; // or SUPABASE_SECRET_KEY
-const ADMIN_TOKEN  = Deno.env.get("ACTIONS_ADMIN_KEY")!;         // <- set this in function env
 
+// Service role client for database operations
 const db = createClient(SUPABASE_URL, SERVICE_KEY);
 
 function cors() {
@@ -21,10 +21,13 @@ function j(obj: unknown, status = 200) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("", { headers: cors() });
 
-  // Single shared admin token (simple!)
-  const auth = req.headers.get("authorization") || "";
-  const token = auth.replace(/^Bearer\s+/i, "").trim();
-  if (!token || token !== ADMIN_TOKEN) return j({ ok: false, error: "Forbidden" }, 403);
+  const authHeader = req.headers.get("authorization") || "";
+  const supa = createClient(SUPABASE_URL, SERVICE_KEY, {
+    global: { headers: { Authorization: authHeader } }
+  });
+  const { data: { user } } = await supa.auth.getUser();
+  if (!user) return j({ ok: false, error: "Unauthorized" }, 401);
+  const updatedBy = user.email || user.id || "user";
 
   let body: any;
   try { body = await req.json(); } catch { return j({ ok: false, error: "Invalid JSON" }, 400); }
@@ -43,8 +46,8 @@ Deno.serve(async (req) => {
 
   if (!publish) {
     const upd = isV2
-      ? { lesson_outline_v2_draft: draft, lesson_outline_updated_by: "admin", lesson_outline_updated_at: now }
-      : { re_lesson_outlines: draft, lesson_outline_draft: draft, lesson_outline_updated_by: "admin", lesson_outline_updated_at: now };
+      ? { lesson_outline_v2_draft: draft, lesson_outline_updated_by: updatedBy, lesson_outline_updated_at: now }
+      : { re_lesson_outlines: draft, lesson_outline_draft: draft, lesson_outline_updated_by: updatedBy, lesson_outline_updated_at: now };
 
     const { error } = await db.from("topic_teks").update(upd).eq("id", topic_id);
     if (error) return j({ ok: false, error: error.message }, 500);
@@ -69,14 +72,14 @@ Deno.serve(async (req) => {
   const newVersion = (isV2 ? (row.lesson_outline_v2_version ?? 0) : (row.lesson_outline_version ?? 0)) + 1;
 
   const updPub = isV2
-    ? { lesson_outline_v2: draftToPublish, lesson_outline_v2_version: newVersion, lesson_outline_updated_by: "admin", lesson_outline_updated_at: now }
-    : { lesson_outline:     draftToPublish, lesson_outline_version:     newVersion, lesson_outline_updated_by: "admin", lesson_outline_updated_at: now };
+    ? { lesson_outline_v2: draftToPublish, lesson_outline_v2_version: newVersion, lesson_outline_updated_by: updatedBy, lesson_outline_updated_at: now }
+    : { lesson_outline:     draftToPublish, lesson_outline_version:     newVersion, lesson_outline_updated_by: updatedBy, lesson_outline_updated_at: now };
 
   const u = await db.from("topic_teks").update(updPub).eq("id", topic_id);
   if (u.error) return j({ ok: false, error: u.error.message }, 500);
 
   await db.from("lesson_outline_versions").insert({
-    topic_id, version: newVersion, outline: draftToPublish, created_by: "admin", schema_version
+    topic_id, version: newVersion, outline: draftToPublish, created_by: updatedBy, schema_version
   });
 
   return j({ ok: true, mode: "published", schema_version });
