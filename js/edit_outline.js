@@ -1,8 +1,7 @@
 // edit_outline.js
 // Front-end editor for lesson outlines.
 // - Reads with Supabase publishable key (safe for browser)
-// - Saves/publishes via auth-based function (update_outline_auth) when user is signed in
-// - Falls back to dev-only admin-key function (update_outline) or "Copy Draft JSON" → save via MyGPT
+// - Saves via dev-only admin-key function (update_outline)
 //
 // Requirements in HTML:
 // - Load @supabase/supabase-js before this script (window.supabase)
@@ -36,18 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   );
 
-  // --- Auth: Email OTP sign-in with redirect ---
-  // choose the exact page you want to land on after login
-  const emailRedirectTo = `${location.origin}/edit_outline.html`;
-
-  // Example: call this function to trigger sign-in
-  async function signInWithEmail(email) {
-    const { error } = await supa.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo }
-    });
-    if (error) alert('Sign-in error: ' + error.message);
-  }
   const unitMenu   = document.getElementById("unitMenu");
   const topicMenu  = document.getElementById("topicMenu");
   const cardList   = document.getElementById("cardList");
@@ -77,11 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  async function hasSession() {
-    var s = await supa.auth.getSession();
-    return !!(s && s.data && s.data.session);
   }
 
   // --- Sidebar: Requests → Units → Topics ---
@@ -116,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var unitIds = units.map(function(x){ return x.id; });
 
     var t = await supa
-      .from('edit_outline_view') // read view
+      .from('topic_teks')
       .select('*')
       .in('unit_id', unitIds)
       .order('topic_title', { ascending: true });
@@ -563,35 +545,15 @@ document.addEventListener('DOMContentLoaded', function () {
     statusEl.className = 'text-muted ms-2';
     btnEl.disabled = true;
     try {
-      // If user is signed in, prefer the auth-based function (no admin key needed)
-      if (await hasSession()) {
-        var r = await supa.functions.invoke('update_outline_auth', { body: body });
-        if (r && r.error) {
-          statusEl.textContent = 'Error: ' + (r.error.message || 'invoke failed');
-          statusEl.className = 'text-danger ms-2';
-          return;
-        }
-        var modeA = (r && r.data && r.data.mode) || (body.publish ? 'published' : 'draft');
-        statusEl.textContent = (modeA === 'published') ? 'Published!' : 'Saved draft!';
-        statusEl.className = 'text-success ms-2';
-        return;
-      }
-
-      // Not signed in → fall back to admin-key function (dev only) or nudge to MyGPT
       var res = await fetch(FUNCTIONS_URL + '/update_outline', {
         method: 'POST',
-        headers: Object.assign(
-          { 'Content-Type': 'application/json' },
-          ACTIONS_ADMIN_KEY ? { Authorization: ('Bearer ' + ACTIONS_ADMIN_KEY) } : {}
-        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + (ACTIONS_ADMIN_KEY || '')
+        },
         body: JSON.stringify(body)
       });
 
-      if (res.status === 401 && !ACTIONS_ADMIN_KEY) {
-        statusEl.textContent = 'Blocked (401): Sign in first OR use MyGPT (or dev admin key). You can also click “Copy Draft JSON”.';
-        statusEl.className = 'text-danger ms-2';
-        return;
-      }
       if (!res.ok) {
         var text = await res.text();
         statusEl.textContent = 'Error ' + res.status + ': ' + text;
@@ -646,69 +608,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Optional auth helpers (wire to your own Sign In UI if desired)
-// --- Auth wiring (email magic link) ---
-async function updateAuthUI(session) {
-  var authed = !!(session && session.user);
-  var status = document.getElementById('authStatus');
-  var emailInput = document.getElementById('emailInput');
-  var signInBtn = document.getElementById('signInBtn');
-  var signOutBtn = document.getElementById('signOutBtn');
-
-  if (status) status.textContent = authed ? ('Signed in as ' + (session.user.email || '')) : 'Not signed in';
-  if (emailInput) emailInput.style.display = authed ? 'none' : '';
-  if (signInBtn)  signInBtn.style.display  = authed ? 'none' : '';
-  if (signOutBtn) signOutBtn.style.display = authed ? '' : 'none';
-}
-
-async function refreshAuthUI() {
-  var s = await supa.auth.getSession();
-  await updateAuthUI(s && s.data ? s.data.session : null);
-}
-
-// Handle state changes (e.g., after clicking the magic link)
-supa.auth.onAuthStateChange(function (_event, session) {
-  updateAuthUI(session);
-  if (_event === 'SIGNED_IN' && session) {
-    loadRequests();
-  }
-});
-
-// Send magic link
-var _signInBtn = document.getElementById('signInBtn');
-if (_signInBtn) {
-  _signInBtn.onclick = async function () {
-    var email = (document.getElementById('emailInput') || {}).value || '';
-    email = email.trim();
-    if (!email) { alert('Enter your email'); return; }
-    // This URL must be allowed in Auth settings
-    var redirectTo = location.href;
-    var r = await supa.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo } });
-    if (r.error) { alert('Sign-in error: ' + r.error.message); return; }
-    alert('Check your email for the sign-in link.\n(You may need to wait up to a minute between requests.)');
-  };
-}
-
-// Sign out
-var _signOutBtn = document.getElementById('signOutBtn');
-if (_signOutBtn) {
-  _signOutBtn.onclick = async function () {
-    try { await supa.auth.signOut(); } catch {}
-    await refreshAuthUI();
-  };
-}
-
-  // On load, set initial UI state
-  refreshAuthUI();
-
-  // Gate initial data loads on a valid session
+  // On load, fetch initial data
   (async () => {
-    const { data: { session } } = await supa.auth.getSession();
-    if (!session) {
-      // show sign-in UI; your onAuthStateChange('SIGNED_IN') will call loadRequests()
-      return;
-    }
-    // If deep-link, open topic, else load requests
     const hit = await tryOpenFromQuery();
     if (!hit) loadRequests();
   })();

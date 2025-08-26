@@ -343,37 +343,3 @@ entrypoint = "./functions/update_outline/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/update_outline/*.html" ]
-
-[functions.refine_outline]
-enabled = true
-verify_jwt = false
-import_map = "./functions/refine_outline/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
-entrypoint = "./functions/refine_outline/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/refine_outline/*.html" ]
-
-[functions.list_contents]
-enabled = true
-verify_jwt = false
-entrypoint = "./functions/list_contents/index.ts"
-
-[functions.list_units]
-enabled = true
-verify_jwt = false
-entrypoint = "./functions/list_units/index.ts"
-
-[functions.list_topics]
-enabled = true
-verify_jwt = false
-entrypoint = "./functions/list_topics/index.ts"
-
-[functions.get_topic]
-enabled = true
-verify_jwt = false
-entrypoint = "./functions/get_topic/index.ts"
-
-[functions.update_outline_auth]
-verify_jwt = true
