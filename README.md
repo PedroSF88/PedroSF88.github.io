@@ -38,7 +38,8 @@ Project Structure
 │           ├── index.ts     # AI refinement via OpenAI
 │           └── config.toml
 ├── openapi/
-│   └── mygpt-actions.yaml   # OpenAPI spec for MyGPT Actions
+│   ├── mygpt-actions.json             # OpenAPI spec for MyGPT Actions
+│   └── mygpt-actions.yaml.deprecated  # Legacy spec (do not upload)
 ├── .env.example             # Environment template (do not commit .env)
 └── README.md                # This file
 
@@ -90,7 +91,8 @@ npx supabase functions deploy refine_outline
 
 3. MyGPT Actions
 
-Upload openapi/mygpt-actions.yaml in MyGPT → Actions → Add
+Upload openapi/mygpt-actions.json in MyGPT → Actions → Add
+Note: openapi/mygpt-actions.yaml.deprecated is a legacy spec and should not be uploaded.
 
 Set auth header: Authorization: Bearer <ACTIONS_ADMIN_KEY>
 
