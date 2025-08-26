@@ -158,7 +158,7 @@
       // Guard .in() against empty arrays just in case
       const { data: topics, error: topicErr } = await supabase
         .from('lesson_outlines_public')
-        .select('id, unit_id, topic_title, lesson_outline')
+        .select('id, unit_id, topic_title, lesson_outline, lesson_outline_v2')
         .in('unit_id', unitIds.length ? unitIds : ['__none__']);
 
       console.log('Topics:', topics, 'Error:', topicErr);
@@ -281,9 +281,9 @@
     // Use correct outline based on schema version
     let outline;
     if (currentSchemaVersion === 2) {
-      outline = topic.lesson_outline_v2_draft || topic.lesson_outline_v2 || {};
+      outline = topic.lesson_outline_v2 || {};
     } else {
-      outline = topic.re_lesson_outlines || topic.lesson_outline || {};
+      outline = topic.lesson_outline || {};
     }
     if (!outline) {
       const msg = document.createElement("p");

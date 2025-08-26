@@ -91,10 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnLoadSupabase) btnLoadSupabase.addEventListener('click', async function() {
     const topicId = topicSelect && topicSelect.value;
     if (!topicId) { alert('Select a topic first.'); return; }
-    let selectFields = currentSchemaVersion === 2 ? 'lesson_outline_v2' : 'lesson_outline';
     const { data: topic, error } = await supa
       .from('lesson_outlines_public')
-      .select(selectFields)
+      .select('lesson_outline, lesson_outline_v2')
       .eq('id', topicId)
       .single();
     let lessonData;
