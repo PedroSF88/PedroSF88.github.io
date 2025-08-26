@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     alert('Supabase client not found. Please load @supabase/supabase-js before this script.');
     throw new Error('Supabase client not found.');
   }
-  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
   // --- Auth: Email OTP sign-in with redirect ---
   // choose the exact page you want to land on after login
