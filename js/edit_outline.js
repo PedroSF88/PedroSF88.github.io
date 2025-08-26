@@ -252,6 +252,10 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
         '</div>' +
         '<div>' + renderField(val, [i, key]) + '</div>' +
+        '<div class="d-flex flex-wrap gap-2 justify-content-end mt-2">' +
+          '<button class="btn btn-success btn-sm" id="saveSegmentBtn_' + i + '">Save This Segment</button>' +
+          '<span id="statusMsgSegment_' + i + '" class="ms-2"></span>' +
+        '</div>' +
       '</div>';
     });
 
@@ -291,7 +295,12 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           html += '<div class="text-muted small">No image</div>';
         }
-        html += '</div></div>';
+        html += '</div>' +
+          '<div class="d-flex flex-wrap gap-2 justify-content-end mt-2">' +
+            '<button class="btn btn-success btn-sm" id="saveVocabBtn_' + i + '">Save This Term</button>' +
+            '<span id="statusMsgVocab_' + i + '" class="ms-2"></span>' +
+          '</div>' +
+        '</div>';
       });
     } else {
       html += '<div class="text-muted">No vocabulary yet.</div>';
@@ -320,6 +329,34 @@ document.addEventListener('DOMContentLoaded', function () {
     wireDynamicInputs();
     wireAddersAndRemovers();
     wireActions();
+    // Add per-segment save buttons
+    (currentOutline.lesson_segments || []).forEach(function(seg, i) {
+      var btn = document.getElementById('saveSegmentBtn_' + i);
+      var status = document.getElementById('statusMsgSegment_' + i);
+      if (btn && status) {
+        btn.onclick = async function() {
+          if (!currentTopicId) return;
+          // Save only this segment
+          var updated = buildUpdatedOutline();
+          updated.lesson_segments = [updated.lesson_segments[i]];
+          await callUpdateOutline({ topic_id: currentTopicId, draft: updated, schema_version: currentSchemaVersion }, status, btn);
+        };
+      }
+    });
+    // Add per-vocab save buttons
+    (currentOutline.vocabulary || []).forEach(function(vocab, i) {
+      var btn = document.getElementById('saveVocabBtn_' + i);
+      var status = document.getElementById('statusMsgVocab_' + i);
+      if (btn && status) {
+        btn.onclick = async function() {
+          if (!currentTopicId) return;
+          // Save only this vocab
+          var updated = buildUpdatedOutline();
+          updated.vocabulary = [updated.vocabulary[i]];
+          await callUpdateOutline({ topic_id: currentTopicId, draft: updated, schema_version: currentSchemaVersion }, status, btn);
+        };
+      }
+    });
   }
 
   function wireDynamicInputs() {
