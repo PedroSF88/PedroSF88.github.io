@@ -44,6 +44,8 @@ Project Structure
 
 API Keys (new 2025 model)
 
+When adding Actions in MyGPT, upload openapi/mygpt-actions.json.
+
 Publishable Key (sb_publishable_…) → safe for browser (replaces anon)
 
 Secret Key (sb_secret_…) → backend only (replaces service_role)
