@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var unitIds = units.map(function(x){ return x.id; });
 
     var t = await supa
-      .from('lesson_outlines_public') // read view
+      .from('edit_outline_view') // read view
       .select('*')
       .in('unit_id', unitIds)
       .order('topic_title', { ascending: true });
