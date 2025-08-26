@@ -28,7 +28,13 @@ document.addEventListener('DOMContentLoaded', function () {
     alert('Supabase client not found. Please load @supabase/supabase-js before this script.');
     throw new Error('Supabase client not found.');
   }
-  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const supa = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+      auth: { persistSession: true, autoRefreshToken: true }
+    }
+  );
 
   // --- Auth: Email OTP sign-in with redirect ---
   // choose the exact page you want to land on after login
@@ -692,15 +698,18 @@ if (_signOutBtn) {
   };
 }
 
-// On load, set initial UI state
-refreshAuthUI();
+  // On load, set initial UI state
+  refreshAuthUI();
 
-
-  // Init
-  tryOpenFromQuery().then(async function(){
-    var s = await supa.auth.getSession();
-    if (s && s.data && s.data.session) {
-      loadRequests();
+  // Gate initial data loads on a valid session
+  (async () => {
+    const { data: { session } } = await supa.auth.getSession();
+    if (!session) {
+      // show sign-in UI; your onAuthStateChange('SIGNED_IN') will call loadRequests()
+      return;
     }
-  });
+    // If deep-link, open topic, else load requests
+    const hit = await tryOpenFromQuery();
+    if (!hit) loadRequests();
+  })();
 });
