@@ -32,12 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- Auth: Email OTP sign-in with redirect ---
   // choose the exact page you want to land on after login
-  const PROD_REDIRECT = 'https://pedrosf88.github.io/edit_outline.html'; // or index.html
-  const DEV_REDIRECT  = 'http://localhost:3000';
-  const emailRedirectTo =
-    window.location.hostname === 'pedrosf88.github.io'
-      ? PROD_REDIRECT
-      : DEV_REDIRECT;
+  const emailRedirectTo = `${location.origin}/edit_outline.html`;
 
   // Example: call this function to trigger sign-in
   async function signInWithEmail(email) {
