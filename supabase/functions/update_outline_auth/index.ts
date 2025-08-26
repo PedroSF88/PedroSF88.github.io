@@ -98,8 +98,10 @@ Deno.serve(async (req) => {
 
 function isAllowed(email: string) {
   if (!email) return false;
+  // If no restrictions are configured, allow any authenticated user
+  if (!ALLOWED_EMAIL_DOMAIN && ALLOWED_EDITOR_EMAILS.length === 0) return true;
   if (ALLOWED_EDITOR_EMAILS.includes(email)) return true;
-  if (ALLOWED_EMAIL_DOMAIN && email.endsWith("@"+ALLOWED_EMAIL_DOMAIN)) return true;
+  if (ALLOWED_EMAIL_DOMAIN && email.endsWith("@" + ALLOWED_EMAIL_DOMAIN)) return true;
   return false; // default deny
 }
 

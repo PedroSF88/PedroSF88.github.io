@@ -17,6 +17,7 @@ var currentSchemaVersion = 1; // 1 or 2
 document.addEventListener('DOMContentLoaded', function () {
   // --- Setup ---
   var SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+  var FUNCTIONS_URL = SUPABASE_URL.replace('.supabase.co', '.functions.supabase.co');
   var SUPABASE_PUBLISHABLE_KEY =
     window.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
 
