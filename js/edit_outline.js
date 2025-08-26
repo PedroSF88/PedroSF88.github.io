@@ -206,6 +206,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Build form
     var html = '';
+    // Top-center publish button
+    html += '<div style="width:100%;display:flex;justify-content:center;align-items:center;margin-bottom:1.5rem;">' +
+      '<button class="btn btn-primary btn-lg" id="publishBtn" style="min-width:180px;">Publish</button>' +
+      '<span id="statusMsg" class="ms-3"></span>' +
+    '</div>';
     html += '<div class="card p-4 mb-4">' +
       '<h4 class="mb-3">Lesson Info</h4>' +
       // --- VERSION TOGGLE UI ---
@@ -306,13 +311,11 @@ document.addEventListener('DOMContentLoaded', function () {
       html += '<div class="text-muted">No vocabulary yet.</div>';
     }
 
-    // Footer actions
+    // Footer actions (no publish button here)
     html += '' +
       '<div class="d-flex flex-wrap gap-2 justify-content-end mt-4">' +
         '<button class="btn btn-outline-secondary" id="copyJsonBtn">Copy Draft JSON</button>' +
         '<button class="btn btn-success" id="saveBtn">Save Draft</button>' +
-        '<button class="btn btn-primary" id="publishBtn">Publish</button>' +
-        '<span id="statusMsg" class="ms-2"></span>' +
       '</div>';
     cardList.innerHTML = html;
 
