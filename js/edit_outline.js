@@ -339,9 +339,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (btn && status) {
         btn.onclick = async function() {
           if (!currentTopicId) return;
-          // Save only this segment
+          // Save the entire outline, not just this segment
           var updated = buildUpdatedOutline();
-          updated.lesson_segments = [updated.lesson_segments[i]];
           await callUpdateOutline({ topic_id: currentTopicId, draft: updated, schema_version: currentSchemaVersion }, status, btn);
         };
       }
@@ -353,9 +352,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (btn && status) {
         btn.onclick = async function() {
           if (!currentTopicId) return;
-          // Save only this vocab
+          // Save the entire outline, not just this vocab
           var updated = buildUpdatedOutline();
-          updated.vocabulary = [updated.vocabulary[i]];
           await callUpdateOutline({ topic_id: currentTopicId, draft: updated, schema_version: currentSchemaVersion }, status, btn);
         };
       }
