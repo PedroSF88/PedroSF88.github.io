@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>V2 Worksheet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/index.css"/>
+</head>
+<body>
+  <div class="app">
+    <div class="main">
+      <div class="mb-3">
+        <label for="contentSelect" class="form-label">Content</label>
+        <select id="contentSelect" class="form-select mb-2"></select>
+        <label for="unitSelect" class="form-label">Unit</label>
+        <select id="unitSelect" class="form-select mb-2"></select>
+        <label for="topicSelect" class="form-label">Topic</label>
+        <select id="topicSelect" class="form-select mb-2"></select>
+        <button class="btn btn-primary" id="btnLoadSupabase">Load Worksheet</button>
+      </div>
+      <div id="worksheetContainer"></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.SUPABASE_URL = 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+    window.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
+  </script>
+  <script src="js/v2_worksheet.js"></script>
+</body>
+</html>

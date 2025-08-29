@@ -10,16 +10,23 @@ const db = createClient(SUPABASE_URL, SERVICE_KEY);
 function cors() {
   return {
     "access-control-allow-origin": "*",
-    "access-control-allow-headers": "authorization, content-type",
-    "access-control-allow-methods": "POST, OPTIONS",
+    "access-control-allow-headers": "authorization, x-client-info, apikey, content-type",
+    "access-control-allow-methods": "POST, GET, OPTIONS",
   };
 }
 function j(obj: unknown, status = 200) {
   return new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", ...cors() } });
 }
 
+// Handle CORS preflight and main logic
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("", { headers: cors() });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      headers: {
+        ...cors(),
+      },
+    });
+  }
 
   const authHeader = req.headers.get("authorization") || "";
   const supa = createClient(SUPABASE_URL, SERVICE_KEY, {

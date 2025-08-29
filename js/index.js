@@ -1,3 +1,193 @@
+  // --- Print Student Worksheet ---
+  document.addEventListener('DOMContentLoaded', function() {
+    const printStudentBtn = document.getElementById('printStudentWorksheetBtn');
+    if (printStudentBtn) {
+      printStudentBtn.addEventListener('click', function() {
+        let outline = window._lastLessonOutline;
+        if (!outline) { alert('No lesson loaded.'); return; }
+        // Remove any previous print container
+        let old = document.getElementById('printStudentWorksheetContainer');
+        if (old) old.remove();
+        let printDiv = document.createElement('div');
+        printDiv.id = 'printStudentWorksheetContainer';
+        // --- Main worksheet page: lesson title, warmup, reading questions, exit ticket ---
+        let mainPage = '';
+        // Add lesson title at the top (fallbacks: title, lesson_title, topic_title)
+        let lessonTitle = outline.title || outline.lesson_title || outline.topic_title || '';
+        if (lessonTitle) {
+          mainPage += `<div style="font-size:1.2rem;font-weight:bold;margin-bottom:0.7rem;">${escapeHtml(lessonTitle)}</div>`;
+        }
+        // Warmup
+        if (outline.lesson_segments) {
+          let warmup = outline.lesson_segments.find(seg => seg.warm_up);
+          if (warmup && warmup.warm_up) {
+            mainPage += `<h2 style="font-size:1.3rem;margin-bottom:0.7rem;">Warm Up</h2>`;
+            mainPage += `<div style="font-size:1rem;margin-bottom:0.7rem;">${escapeHtml(warmup.warm_up.question||'')}</div>`;
+            mainPage += `<div style="width:100%;max-width:600px;height:14.7px;margin:0.7rem 0 1.2rem 0;"></div>`;
+          }
+        }
+        // Reading questions (with answer lines)
+        if (outline.lesson_segments) {
+          outline.lesson_segments.forEach(seg => {
+            let key = Object.keys(seg)[0];
+            let val = seg[key];
+            // Only process reading segments
+            if (key.startsWith('reading') && val) {
+              // Add reading title
+              let readingTitle = val.title || val.heading || '';
+              if (readingTitle) {
+                mainPage += `<div style="font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;">${escapeHtml(readingTitle)}</div>`;
+              }
+              // Collect questions
+              let qs = [];
+              if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
+              if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
+              if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
+              if (Array.isArray(val.discussion_questions)) {
+                val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
+              }
+              if (qs.length) {
+                qs.forEach(q => {
+                  mainPage += `<div style=\"font-size:1rem;margin-bottom:0.3rem;\"><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</div>`;
+                  mainPage += `<div style=\"width:100%;max-width:600px;height:32px;margin:0.3rem 0 0.7rem 0;\"></div>`;
+                });
+              }
+            }
+          });
+        }
+        // Exit ticket
+        if (outline.lesson_segments) {
+          let exit = outline.lesson_segments.find(seg => seg.exit_ticket);
+          if (exit && exit.exit_ticket) {
+            mainPage += `<h2 style="font-size:1.3rem;margin-bottom:0.7rem;">Exit Ticket</h2>`;
+            mainPage += `<div style="font-size:1rem;margin-bottom:0.7rem;">${escapeHtml(exit.exit_ticket.prompt||'')}</div>`;
+            mainPage += `<div style="width:100%;max-width:600px;height:30px;margin:0.7rem 0 0 0;"></div>`;
+          }
+        }
+  printDiv.innerHTML += `<div class="print-student-page" style="width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;">${mainPage}</div>`;
+        // --- Vocab grid page (terms and defs blank) ---
+        if (Array.isArray(outline.vocabulary) && outline.vocabulary.length) {
+          let grid = '<div class="print-student-page" style="width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;">';
+          grid += '<h2 style="font-size:2rem;margin-bottom:1.2rem;">Vocabulary</h2>';
+          grid += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;width:100%;max-width:900px;margin:0 auto;">';
+          outline.vocabulary.forEach(vocab => {
+            let imgHtml = vocab.link_to_image && vocab.link_to_image !== '@image_placeholder'
+              ? `<img src="${vocab.link_to_image}" alt="${escapeHtml(vocab.term)}" style="max-width:100%;max-height:120px;display:block;margin:0.5rem auto;object-fit:contain;">`
+              : '';
+            grid += `<div style="border:1.2px solid #222;border-radius:7px;padding:0.2rem;height:2.5in;min-height:2.5in;max-height:2.5in;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:0;">
+              <div style=\"font-weight:bold;font-size:0.95rem;border-bottom:1px solid #aaa;width:100%;height:10%;min-height:1.2em;max-height:10%;display:flex;align-items:flex-start;justify-content:flex-start;\">&nbsp;</div>
+              <div style=\"font-size:0.9rem;width:100%;height:20%;min-height:1.2em;max-height:20%;display:flex;align-items:center;justify-content:flex-start;\">&nbsp;</div>
+              <div style=\"flex:1 1 auto;\"></div>
+              <div style=\"width:100%;height:50%;max-height:50%;display:flex;align-items:flex-end;justify-content:center;\">${imgHtml}</div>
+            </div>`;
+          });
+          grid += '</div></div>';
+          printDiv.innerHTML += grid;
+        }
+        document.body.appendChild(printDiv);
+        window.print();
+        setTimeout(() => { printDiv.remove(); }, 1000);
+      });
+    }
+  });
+  // --- Print Lesson Cards (non-vocab) ---
+  document.addEventListener('DOMContentLoaded', function() {
+    const printLessonBtn = document.getElementById('printLessonCardsBtn');
+    if (printLessonBtn) {
+      printLessonBtn.addEventListener('click', function() {
+        let outline = window._lastLessonOutline;
+        if (!outline || !Array.isArray(outline.lesson_segments) || !outline.lesson_segments.length) {
+          alert('No lesson segments to print.');
+          return;
+        }
+        // Remove any previous print container
+        let old = document.getElementById('printLessonCardsContainer');
+        if (old) old.remove();
+        let printDiv = document.createElement('div');
+        printDiv.id = 'printLessonCardsContainer';
+        // Print each segment except vocab
+        outline.lesson_segments.forEach(function(seg) {
+          const key = Object.keys(seg)[0];
+          if (key === 'vocabulary') return; // skip vocab
+          let val = seg[key];
+          let html = `<div class="print-lesson-page" style="width:100vw;min-height:90vh;padding:2.5cm 1.5cm 2.5cm 1.5cm;background:white;color:black;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <h1 style="font-size:2.2rem;margin-bottom:1.2rem;">${key.replace(/_/g, ' ')}</h1>
+            <div style="font-size:1.2rem;max-width:700px;width:100%;margin:0 auto;">${renderSegmentForPrint(val)}</div>
+          </div>`;
+          printDiv.innerHTML += html;
+        });
+        document.body.appendChild(printDiv);
+        window.print();
+        setTimeout(() => { printDiv.remove(); }, 1000);
+      });
+    }
+  });
+
+  function renderSegmentForPrint(val) {
+    // If this is a segment with multiple visuals (e.g., odd_one_out, image_analysis, cause_effect, compare_contrast), render as grid
+    if (val && typeof val === 'object' && (
+      val.visual_1A || val.visual_1B || val.visual_2B || val.visual_3B || val.visual_4B || val.visual_1C || val.visual_2C
+    )) {
+      // Collect all visuals in order
+      let visuals = [];
+      ['visual_1A','visual_1B','visual_2B','visual_3B','visual_4B','visual_1C','visual_2C'].forEach(k => {
+        if (val[k]) visuals.push(val[k]);
+      });
+      if (visuals.length) {
+        let grid = '<div style="display:grid;grid-template-columns:repeat(' + Math.min(visuals.length,2) + ',1fr);gap:18px;margin-bottom:1.2em;">';
+        visuals.forEach(v => {
+          grid += '<div style="text-align:center;">';
+          if (v.url_to_image) {
+            grid += `<img src="${v.url_to_image}" alt="${escapeHtml(v.type||'image')}" style="max-width:100%;max-height:260px;display:block;margin:0 auto 0.5em auto;object-fit:contain;">`;
+          }
+          if (v.type) grid += `<div style="font-weight:bold;">${escapeHtml(v.type)}</div>`;
+          if (v.description) grid += `<div style="font-size:0.95em;">${escapeHtml(v.description)}</div>`;
+          grid += '</div>';
+        });
+        grid += '</div>';
+        // Render any other fields below the grid
+        let rest = Object.keys(val).filter(k => !k.startsWith('visual_')).map(k => `<div style="margin-bottom:0.5em;"><strong>${escapeHtml(k)}:</strong> ${renderSegmentForPrint(val[k])}</div>`).join('');
+        return grid + rest;
+      }
+    }
+    // Special handling for reading segments: only show title, text, questions (in that order)
+    if (val && typeof val === 'object' && (
+      val.title || val.text || val.discussion_question_L1 || val.discussion_question_L2 || val.discussion_question_L3 || val.discussion_questions
+    )) {
+      let html = '';
+      if (val.title) html += `<div style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;">${escapeHtml(val.title)}</div>`;
+      if (val.text) html += `<div style="margin-bottom:1.2rem;">${escapeHtml(val.text)}</div>`;
+      // Collect questions
+      let qs = [];
+      if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
+      if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
+      if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
+      if (Array.isArray(val.discussion_questions)) {
+        val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
+      }
+      if (qs.length) {
+        html += '<div style="margin-top:1.2rem;"><strong>Questions:</strong><ul>';
+        qs.forEach(q => { html += `<li><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</li>`; });
+        html += '</ul></div>';
+      }
+      return html;
+    }
+    if (typeof val === 'string' || typeof val === 'number') {
+      return `<div>${escapeHtml(val)}</div>`;
+    } else if (Array.isArray(val)) {
+      return val.map(renderSegmentForPrint).join('');
+    } else if (typeof val === 'object' && val !== null) {
+      return Object.keys(val).map(k => `<div style="margin-bottom:0.5em;"><strong>${escapeHtml(k)}:</strong> ${renderSegmentForPrint(val[k])}</div>`).join('');
+    } else {
+      return '';
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
 ;(async function() {
   "use strict";
   /**
@@ -96,6 +286,44 @@
 
   // --- Schema version toggle ---
   var currentSchemaVersion = 1; // 1 or 2
+
+  // --- Print Vocab Cards ---
+  document.addEventListener('DOMContentLoaded', function() {
+    const printBtn = document.getElementById('printVocabBtn');
+    if (printBtn) {
+      printBtn.addEventListener('click', function() {
+        // Find the current outline (from the last rendered lesson)
+        let outline = window._lastLessonOutline;
+        if (!outline || !Array.isArray(outline.vocabulary) || !outline.vocabulary.length) {
+          alert('No vocabulary to print.');
+          return;
+        }
+        // Build print container
+        let printDiv = document.createElement('div');
+        printDiv.id = 'printVocabContainer';
+        outline.vocabulary.forEach(function(vocab) {
+          let imgHtml = vocab.link_to_image
+            ? `<img src="${vocab.link_to_image}" alt="${vocab.term}" style="max-width:100%;max-height:350px;display:block;margin:1.5rem auto;object-fit:contain;">`
+            : '';
+          let html = `
+            <div class="print-vocab-page" style="width:100vw;min-height:90vh;padding:2.5cm 1.5cm 2.5cm 1.5cm;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <h1 style="font-size:2.5rem;margin-bottom:1.5rem;">${vocab.term || ''}</h1>
+              <div style="font-size:1.5rem;margin-bottom:2rem;">${vocab.definition || vocab.def || ''}</div>
+              ${imgHtml}
+            </div>
+          `;
+          printDiv.innerHTML += html;
+        });
+        // Remove any previous print container
+        let old = document.getElementById('printVocabContainer');
+        if (old) old.remove();
+        document.body.appendChild(printDiv);
+        window.print();
+        // Clean up after print
+        setTimeout(() => { printDiv.remove(); }, 1000);
+      });
+    }
+  });
 
   // Add version toggle UI to the main page (above cardList)
   function renderVersionToggle() {
@@ -270,20 +498,18 @@
   }
 
   function renderLesson(topic) {
+    // Store outline globally for print
+    let outline = (typeof topic.lesson_outline === 'string') ? safeParseJSON(topic.lesson_outline) : topic.lesson_outline;
+    if (currentSchemaVersion === 2 && topic.lesson_outline_v2) {
+      outline = (typeof topic.lesson_outline_v2 === 'string') ? safeParseJSON(topic.lesson_outline_v2) : topic.lesson_outline_v2;
+    }
+    window._lastLessonOutline = outline;
     clear(cardList);
     renderVersionToggle();
     // Set selected topic title in sidebar
     const selectedTopicTitle = document.getElementById('selectedTopicTitle');
     if (selectedTopicTitle) {
       selectedTopicTitle.textContent = topic.topic_title || '';
-    }
-
-    // Use correct outline based on schema version
-    let outline;
-    if (currentSchemaVersion === 2) {
-      outline = topic.lesson_outline_v2 || {};
-    } else {
-      outline = topic.lesson_outline || {};
     }
     if (!outline) {
       const msg = document.createElement("p");
@@ -292,7 +518,6 @@
       return;
     }
     outline = typeof outline === "string" ? (safeParseJSON(outline) || {}) : outline;
-
     // Store last topic for re-rendering on version change
     window._lastTopic = topic;
 

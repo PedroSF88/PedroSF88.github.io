@@ -83,7 +83,10 @@
     </aside>
     <div class="main">
   <div class="flex-end mb-1rem">
-        <button class="btn btn-primary" onclick="window.open('/worksheet_template.html','_blank')">Print Worksheet</button>
+        <button class="btn btn-primary" onclick="window.open('/worksheet_template.html','_blank')">Print Stand-alone Lesson Worksheet</button>
+  <button class="btn btn-secondary" id="printVocabBtn">Print Vocab Cards</button>
+  <button class="btn btn-secondary" id="printLessonCardsBtn">Print Lesson Cards</button>
+  <button class="btn btn-success" id="printStudentWorksheetBtn">Print Student Worksheet</button>
       </div>
   <div id="schemaVersionToggle" class="mb-3"></div>
   <div id="cardList"></div>
@@ -96,6 +99,18 @@
     window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhobHpob3F3bHFzaWVmeWl1cW1nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NDgwOTQsImV4cCI6MjA2OTEyNDA5NH0.DnAWm_Ety74vvuRSbiSBZPuD2bCBesiDmNr8wP_mHFQ';
   </script>
   <script src="js/index.js"></script>
+  <style>
+    @media print {
+      .print-vocab-page, .print-lesson-page, .print-student-page { page-break-after: always; break-after: page; }
+      body * { visibility: hidden; }
+      #printVocabContainer, #printVocabContainer *,
+      #printLessonCardsContainer, #printLessonCardsContainer *,
+      #printStudentWorksheetContainer, #printStudentWorksheetContainer * { visibility: visible !important; }
+      #printVocabContainer, #printLessonCardsContainer, #printStudentWorksheetContainer {
+        position: absolute; left: 0; top: 0; width: 100vw; background: white; z-index: 99999;
+      }
+    }
+  </style>
   <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
