@@ -254,6 +254,10 @@
   width: 90%;
   margin: 0 auto 1.5rem auto;
   z-index: 10;
+  /* Prevent blocking clicks on underlying menu buttons */
+  pointer-events: none;
+  /* Hide by default; it will be explicitly shown when needed */
+  display: none;
 }
 /* Sidebar collapse styles */
 .sidebar {

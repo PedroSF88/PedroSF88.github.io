@@ -473,6 +473,8 @@
   // sort topics by leading number in title
   function selectUnit(unit, topics) {
     clear(topicMenu, cardList);
+  const topicTitle = document.getElementById('selectedTopicTitle');
+  if (topicTitle) topicTitle.style.display = 'none';
     const getNum = (t) => {
       const m = String(t.topic_title || "").match(/^\s*(\d+)/);
       return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
@@ -485,13 +487,14 @@
       btn.onclick = () => {
         renderLesson(topic);
         // Collapse sidebar and show topic title, hide menu
-        const sidebar = document.querySelector('.sidebar');
-        const topicTitle = document.getElementById('selectedTopicTitle');
-        sidebar.classList.add('collapsed');
-        topicTitle.style.display = '';
-        document.getElementById('unitMenu').style.display = 'none';
-        document.getElementById('topicMenu').style.display = 'none';
-        document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
+  const sidebar = document.querySelector('.sidebar');
+  const topicTitle = document.getElementById('selectedTopicTitle');
+  sidebar.classList.add('collapsed');
+  if (topicTitle && topicTitle.textContent.trim()) topicTitle.style.display = '';
+  const um = document.getElementById('unitMenu'); if (um) um.style.display = 'none';
+  const tm = document.getElementById('topicMenu'); if (tm) tm.style.display = 'none';
+  const rm = document.getElementById('requestMenu'); if (rm) rm.style.display = 'none';
+  document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
       };
       topicMenu.append(btn);
     });
@@ -510,6 +513,7 @@
     const selectedTopicTitle = document.getElementById('selectedTopicTitle');
     if (selectedTopicTitle) {
       selectedTopicTitle.textContent = topic.topic_title || '';
+  selectedTopicTitle.style.display = '';
     }
     if (!outline) {
       const msg = document.createElement("p");

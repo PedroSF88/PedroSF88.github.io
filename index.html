@@ -86,7 +86,7 @@
         <button class="btn btn-primary" onclick="window.open('/worksheet_template.html','_blank')">Print Stand-alone Lesson Worksheet</button>
   <button class="btn btn-secondary" id="printVocabBtn">Print Vocab Cards</button>
   <button class="btn btn-secondary" id="printLessonCardsBtn">Print Lesson Cards</button>
-  <button class="btn btn-success" id="printStudentWorksheetBtn">Print Student Worksheet</button>
+  <button class="btn btn-success" id="printStudentWorksheetBtn">Print Student Answer Sheet</button>
       </div>
   <div id="schemaVersionToggle" class="mb-3"></div>
   <div id="cardList"></div>
@@ -131,13 +131,16 @@
     sidebar.classList.toggle('collapsed');
     // When sidebar is collapsed, show the topic title and hide the menu
     if (sidebar.classList.contains('collapsed')) {
-      topicTitle.style.display = '';
+      // Keep topic title hidden unless a topic was selected and explicitly set later
+      if (topicTitle.textContent.trim()) {
+        topicTitle.style.display = '';
+      }
       document.getElementById('unitMenu').style.display = 'none';
       document.getElementById('topicMenu').style.display = 'none';
       document.getElementById('requestMenu').style.display = 'none';
       document.querySelectorAll('.sidebar h5').forEach(h => h.style.display = 'none');
     } else {
-      topicTitle.style.display = 'none';
+  topicTitle.style.display = 'none';
       // Restore all navigation sections/buttons if they exist
       const unitMenu = document.getElementById('unitMenu');
       const topicMenu = document.getElementById('topicMenu');
