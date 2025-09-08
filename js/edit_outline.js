@@ -257,10 +257,6 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
         '</div>' +
         '<div>' + renderField(val, [i, key]) + '</div>' +
-        '<div class="d-flex flex-wrap gap-2 justify-content-end mt-2">' +
-          '<button class="btn btn-success btn-sm" id="saveSegmentBtn_' + i + '">Save This Segment</button>' +
-          '<span id="statusMsgSegment_' + i + '" class="ms-2"></span>' +
-        '</div>' +
       '</div>';
     });
 
@@ -301,22 +297,14 @@ document.addEventListener('DOMContentLoaded', function () {
           html += '<div class="text-muted small">No image</div>';
         }
         html += '</div>' +
-          '<div class="d-flex flex-wrap gap-2 justify-content-end mt-2">' +
-            '<button class="btn btn-success btn-sm" id="saveVocabBtn_' + i + '">Save This Term</button>' +
-            '<span id="statusMsgVocab_' + i + '" class="ms-2"></span>' +
-          '</div>' +
         '</div>';
       });
     } else {
       html += '<div class="text-muted">No vocabulary yet.</div>';
     }
 
-    // Footer actions (no publish button here)
-    html += '' +
-      '<div class="d-flex flex-wrap gap-2 justify-content-end mt-4">' +
-        '<button class="btn btn-outline-secondary" id="copyJsonBtn">Copy Draft JSON</button>' +
-        '<button class="btn btn-success" id="saveBtn">Save Draft</button>' +
-      '</div>';
+  // Floating Save button
+  html += '<button class="btn btn-success" id="floatingSaveBtn" style="position:fixed;bottom:2.5rem;right:2.5rem;z-index:9999;box-shadow:0 2px 8px #0002;font-size:1.3rem;padding:1rem 2.2rem;">Save Draft</button>';
     cardList.innerHTML = html;
 
     // --- VERSION TOGGLE WIRING ---
@@ -332,32 +320,17 @@ document.addEventListener('DOMContentLoaded', function () {
     wireDynamicInputs();
     wireAddersAndRemovers();
     wireActions();
-    // Add per-segment save buttons
-    (currentOutline.lesson_segments || []).forEach(function(seg, i) {
-      var btn = document.getElementById('saveSegmentBtn_' + i);
-      var status = document.getElementById('statusMsgSegment_' + i);
-      if (btn && status) {
-        btn.onclick = async function() {
-          if (!currentTopicId) return;
-          // Save the entire outline, not just this segment
-          var updated = buildUpdatedOutline();
-          await callUpdateOutline({ topic_id: currentTopicId, draft: updated, schema_version: currentSchemaVersion }, status, btn);
-        };
-      }
-    });
-    // Add per-vocab save buttons
-    (currentOutline.vocabulary || []).forEach(function(vocab, i) {
-      var btn = document.getElementById('saveVocabBtn_' + i);
-      var status = document.getElementById('statusMsgVocab_' + i);
-      if (btn && status) {
-        btn.onclick = async function() {
-          if (!currentTopicId) return;
-          // Save the entire outline, not just this vocab
-          var updated = buildUpdatedOutline();
-          await callUpdateOutline({ topic_id: currentTopicId, draft: updated, schema_version: currentSchemaVersion }, status, btn);
-        };
-      }
-    });
+    // Floating save button handler
+    var floatingSaveBtn = document.getElementById('floatingSaveBtn');
+    if (floatingSaveBtn) {
+      floatingSaveBtn.onclick = async function() {
+        if (!currentTopicId) return;
+        var draft = buildUpdatedOutline();
+        // Use the status message at the top if present, else show a temp message
+        var statusMsg = document.getElementById('statusMsg') || null;
+        await callUpdateOutline({ topic_id: currentTopicId, draft: draft, schema_version: currentSchemaVersion }, statusMsg || {textContent:''}, floatingSaveBtn);
+      };
+    }
   }
 
   function wireDynamicInputs() {
