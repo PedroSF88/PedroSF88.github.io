@@ -303,8 +303,8 @@ document.addEventListener('DOMContentLoaded', function () {
       html += '<div class="text-muted">No vocabulary yet.</div>';
     }
 
-  // Floating Save button
-  html += '<button class="btn btn-success" id="floatingSaveBtn" style="position:fixed;bottom:2.5rem;right:2.5rem;z-index:9999;box-shadow:0 2px 8px #0002;font-size:1.3rem;padding:1rem 2.2rem;">Save Draft</button>';
+  // Floating Save button (now just "Save")
+  html += '<button class="btn btn-success" id="floatingSaveBtn" style="position:fixed;bottom:2.5rem;right:2.5rem;z-index:9999;box-shadow:0 2px 8px #0002;font-size:1.3rem;padding:1rem 2.2rem;">Save</button>';
     cardList.innerHTML = html;
 
     // --- VERSION TOGGLE WIRING ---
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
     wireDynamicInputs();
     wireAddersAndRemovers();
     wireActions();
-    // Floating save button handler
+    // Floating save button handler (immediate update)
     var floatingSaveBtn = document.getElementById('floatingSaveBtn');
     if (floatingSaveBtn) {
       floatingSaveBtn.onclick = async function() {
@@ -511,14 +511,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Save / Publish / Copy
   function wireActions() {
-    var publishBtn = document.getElementById('publishBtn');
-    var statusMsg = document.getElementById('statusMsg');
-    if (publishBtn) {
-      publishBtn.onclick = async function() {
-        if (!currentTopicId) return;
-        await callUpdateOutline({ topic_id: currentTopicId, publish: true, schema_version: currentSchemaVersion }, statusMsg, publishBtn);
-      };
-    }
+    // No publish button or logic needed
   }
 
   function buildUpdatedOutline() {
