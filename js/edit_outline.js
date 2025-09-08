@@ -511,28 +511,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Save / Publish / Copy
   function wireActions() {
-    var saveBtn = document.getElementById('saveBtn');
     var publishBtn = document.getElementById('publishBtn');
-    var copyBtn = document.getElementById('copyJsonBtn');
     var statusMsg = document.getElementById('statusMsg');
-
-    copyBtn.onclick = function() {
-      var draft = buildUpdatedOutline();
-      navigator.clipboard.writeText(JSON.stringify(draft, null, 2));
-      statusMsg.textContent = 'Draft JSON copied. Use MyGPT → updateOutline to save.';
-      statusMsg.className = 'text-success ms-2';
-    };
-
-    saveBtn.onclick = async function() {
-      if (!currentTopicId) return;
-      var draft = buildUpdatedOutline();
-      await callUpdateOutline({ topic_id: currentTopicId, draft: draft, schema_version: currentSchemaVersion }, statusMsg, saveBtn);
-    };
-
-    publishBtn.onclick = async function() {
-      if (!currentTopicId) return;
-      await callUpdateOutline({ topic_id: currentTopicId, publish: true, schema_version: currentSchemaVersion }, statusMsg, publishBtn);
-    };
+    if (publishBtn) {
+      publishBtn.onclick = async function() {
+        if (!currentTopicId) return;
+        await callUpdateOutline({ topic_id: currentTopicId, publish: true, schema_version: currentSchemaVersion }, statusMsg, publishBtn);
+      };
+    }
   }
 
   function buildUpdatedOutline() {
