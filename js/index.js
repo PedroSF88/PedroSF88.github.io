@@ -127,243 +127,257 @@
           if (d.instructions) {
             mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(d.instructions)}</em></div>`;
           }
-          const printStudentBtn = document.getElementById('printStudentWorksheetBtn');
-          if (printStudentBtn) {
-            printStudentBtn.addEventListener('click', function() {
-              let outline = window._lastLessonOutline;
-              if (!outline) { alert('No lesson loaded.'); return; }
-              // Remove any previous print container
-              let old = document.getElementById('printStudentWorksheetContainer');
-              if (old) old.remove();
-              let printDiv = document.createElement('div');
-              printDiv.id = 'printStudentWorksheetContainer';
+          mainHtml += `<div style=\"font-weight:bold;margin-bottom:4px;\">Explain cause → effect...</div>`;
+          mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
+        }
 
-              // --- Combined worksheet main page (all except vocab) ---
-              let mainHtml = '';
-              // 1. Warm up
-              let warmup = outline.lesson_segments && outline.lesson_segments.find(seg => seg.warm_up);
-              let lessonTitle = outline.title || outline.lesson_title || outline.topic_title || '';
-              if (lessonTitle) {
-                mainHtml += `<div style="font-size:1.2rem;font-weight:bold;margin-bottom:0.7rem;">${escapeHtml(lessonTitle)}</div>`;
-              }
-              if (warmup && warmup.warm_up) {
-                mainHtml += `<h2 style="font-size:1.3rem;margin-bottom:0.7rem;">Warm Up</h2>`;
-                mainHtml += `<div style="font-size:1rem;margin-bottom:0.7rem;">${escapeHtml(warmup.warm_up.question||'')}</div>`;
-                mainHtml += `<div style="width:100%;max-width:600px;height:14.7px;margin:0.7rem 0 1.2rem 0;"></div>`;
-              }
-
-              // 2. LO/SC placeholders (worksheet_template.js style)
-              // --- LO/SC from updated_worksheet.js ---
-              let loText = '';
-              let scList = [];
-              if (outline.learning_objective) loText = outline.learning_objective;
-              else if (outline.objective) loText = outline.objective;
-              else {
-                let seg = (outline.lesson_segments||[]).filter(s => s.objectives)[0];
-                if (seg && seg.objectives && seg.objectives.learning_objective) loText = seg.objectives.learning_objective;
-              }
-              if (Array.isArray(outline.success_criteria) && outline.success_criteria.length) scList = outline.success_criteria;
-              else if (Array.isArray(outline.successCriteria) && outline.successCriteria.length) scList = outline.successCriteria;
-              mainHtml += `<div style='margin:0 0 6px;'><span style='color:#888;'>Learning Objective</span></div>`;
-              mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>${loText ? escapeHtml(loText) : ''}</div>`;
-              mainHtml += `<div style='margin:0 0 6px;'><span style='color:#888;'>Success Criteria</span></div>`;
-              let scCount = (scList && scList.length) ? scList.length : 1;
-              for (let i = 0; i < scCount; i++) {
-                mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
-              }
-
-              // 3. Image Analysis (instructions from worksheet_template.js)
-              let imageAnalysis = outline.lesson_segments && outline.lesson_segments.find(seg => seg.image_analysis);
-              if (imageAnalysis && imageAnalysis.image_analysis) {
-                let d = imageAnalysis.image_analysis;
-                mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">Image Analysis</div>`;
-                // Example instructions
-                mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>Before: Describe what you see in the image and explain what you think it is for.<br>After: After completing the vocabulary, update your response about what the image shows.</em></div>`;
-                if (d.instructions) {
-                  mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(d.instructions)}</em></div>`;
-                }
-                mainHtml += `<div style=\"font-weight:bold;margin-bottom:4px;\">Before Vocab</div>`;
-                mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
-                mainHtml += `<div style=\"font-weight:bold;margin-bottom:4px;\">After Vocab</div>`;
-                mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
-                mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
-              }
-
-              // 4. Reading 1
-              let reading1 = outline.lesson_segments && outline.lesson_segments.find(seg => Object.keys(seg)[0] === 'reading_1');
-              if (reading1 && reading1.reading_1) {
-                let val = reading1.reading_1;
-                let readingTitle = val.title || val.heading || '';
-                if (readingTitle) {
-                  mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">${escapeHtml(readingTitle)}</div>`;
-                }
-                let qs = [];
-                if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
-                if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
-                if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
-                if (Array.isArray(val.discussion_questions)) {
-                  val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
-                }
-                if (qs.length) {
-                  qs.forEach(q => {
-                    mainHtml += `<div style=\\\"font-size:1rem;margin-bottom:0.3rem;\\\"><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</div>`;
-                    mainHtml += `<div style=\\\"width:100%;max-width:600px;height:32px;margin:0.3rem 0 0.7rem 0;\\\"></div>`;
-                  });
-                }
-              }
-
-              // 5. Odd One Out
-              let ooo = outline.lesson_segments && outline.lesson_segments.find(seg => seg.odd_one_out);
-              if (ooo && ooo.odd_one_out) {
-                let d = ooo.odd_one_out;
-                mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">Odd One Out</div>`;
-                if (d.instructions) {
-                  mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(d.instructions)}</em></div>`;
-                }
-                mainHtml += `<div style=\"font-weight:bold;margin-bottom:4px;\">Justify your choice...</div>`;
-                mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
-              }
-
-              // 6. Reading 2
-              let reading2 = outline.lesson_segments && outline.lesson_segments.find(seg => Object.keys(seg)[0] === 'reading_2');
-              if (reading2 && reading2.reading_2) {
-                let val = reading2.reading_2;
-                let readingTitle = val.title || val.heading || '';
-                if (readingTitle) {
-                  mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">${escapeHtml(readingTitle)}</div>`;
-                }
-                let qs = [];
-                if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
-                if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
-                if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
-                if (Array.isArray(val.discussion_questions)) {
-                  val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
-                }
-                if (qs.length) {
-                  qs.forEach(q => {
-                    mainHtml += `<div style=\\\"font-size:1rem;margin-bottom:0.3rem;\\\"><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</div>`;
-                    mainHtml += `<div style=\\\"width:100%;max-width:600px;height:32px;margin:0.3rem 0 0.7rem 0;\\\"></div>`;
-                  });
-                }
-              }
-
-
-              // 7. Cause Effect
-              let causeEffect = outline.lesson_segments && outline.lesson_segments.find(seg => seg.cause_effect);
-              if (causeEffect && causeEffect.cause_effect) {
-                let d = causeEffect.cause_effect;
-                mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">Cause and Effect</div>`;
-                if (d.instructions) {
-                  mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(d.instructions)}</em></div>`;
-                }
-                mainHtml += `<div style=\"font-weight:bold;margin-bottom:4px;\">Explain cause → effect...</div>`;
-                mainHtml += `<div style='border:1px solid #bbb;border-radius:6px;padding:0.7em 1em 0.7em 1em;margin-bottom:10px;min-height:2.7em;width:100%;box-sizing:border-box;font-size:1.1em;line-height:2.2em;background:#fff;'>&nbsp;</div>`;
-              }
-
-              // 8. Reading 3
-              let reading3 = outline.lesson_segments && outline.lesson_segments.find(seg => Object.keys(seg)[0] === 'reading_3');
-              if (reading3 && reading3.reading_3) {
-                let val = reading3.reading_3;
-                let readingTitle = val.title || val.heading || '';
-                if (readingTitle) {
-                  mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">${escapeHtml(readingTitle)}</div>`;
-                }
-                let qs = [];
-                if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
-                if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
-                if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
-                if (Array.isArray(val.discussion_questions)) {
-                  val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
-                }
-                if (qs.length) {
-                  qs.forEach(q => {
-                    mainHtml += `<div style=\\\"font-size:1rem;margin-bottom:0.3rem;\\\"><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</div>`;
-                    mainHtml += `<div style=\\\"width:100%;max-width:600px;height:32px;margin:0.3rem 0 0.7rem 0;\\\"></div>`;
-                  });
-                }
-              }
-
-              // 9. Exit Ticket
-              let exit = outline.lesson_segments && outline.lesson_segments.find(seg => seg.exit_ticket);
-              if (exit && exit.exit_ticket) {
-                mainHtml += `<h2 style=\"font-size:1.3rem;margin-bottom:0.7rem;\">Exit Ticket</h2>`;
-                mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\">${escapeHtml(exit.exit_ticket.prompt||'')}</div>`;
-                mainHtml += `<div style=\"width:100%;max-width:600px;height:30px;margin:0.7rem 0 0 0;\"></div>`;
-              }
-
-              // Render main worksheet page (all except vocab)
-              printDiv.innerHTML = `<div class=\"print-student-page\" style=\"width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;\">${mainHtml}</div>`;
-
-              // Vocab grid page (on its own page)
-              if (Array.isArray(outline.vocabulary) && outline.vocabulary.length) {
-                let grid = '<div class="print-student-page" style="width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;page-break-before:always;">';
-                grid += '<h2 style="font-size:2rem;margin-bottom:1.2rem;">Vocabulary</h2>';
-                grid += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;width:100%;max-width:900px;margin:0 auto;">';
-                outline.vocabulary.forEach(vocab => {
-                  let imgHtml = vocab.link_to_image && vocab.link_to_image !== '@image_placeholder'
-                    ? `<img src="${vocab.link_to_image}" alt="${escapeHtml(vocab.term)}" style="max-width:100%;max-height:120px;display:block;margin:0.5rem auto;object-fit:contain;">`
-                    : '';
-                  grid += `<div style="border:1.2px solid #222;border-radius:7px;padding:0.2rem;height:2.5in;min-height:2.5in;max-height:2.5in;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:0;">
-                    <div style=\"font-weight:bold;font-size:0.95rem;border-bottom:1px solid #aaa;width:100%;height:10%;min-height:1.2em;max-height:10%;display:flex;align-items:flex-start;justify-content:flex-start;\">&nbsp;</div>
-                    <div style=\"font-size:0.9rem;width:100%;height:20%;min-height:1.2em;max-height:20%;display:flex;align-items:center;justify-content:flex-start;\">&nbsp;</div>
-                    <div style=\"flex:1 1 auto;\"></div>
-                    <div style=\"width:100%;height:50%;max-height:50%;display:flex;align-items:flex-end;justify-content:center;\">${imgHtml}</div>
-                  </div>`;
-                });
-                grid += '</div></div>';
-                printDiv.innerHTML += grid;
-              }
-
-              // --- Image/Visual Questions Page(s) ---
-              if (outline.lesson_segments) {
-                outline.lesson_segments.forEach(seg => {
-                  let key = Object.keys(seg)[0];
-                  let val = seg[key];
-                  // Only process segments with visuals/images
-                  if (val && typeof val === 'object' && (
-                    val.visual_1A || val.visual_1B || val.visual_2B || val.visual_3B || val.visual_4B || val.visual_1C || val.visual_2C || val.link_to_image || val.url_to_image || key.includes('image')
-                  )) {
-                    let hasQuestion = !!val.question || !!val.instructions;
-                    // Also check for questions/instructions in visual sub-objects
-                    ['visual_1A','visual_1B','visual_2B','visual_3B','visual_4B','visual_1C','visual_2C'].forEach(k => {
-                      if (val[k] && (val[k].question || val[k].instructions)) hasQuestion = true;
-                    });
-                    if (!hasQuestion) return;
-                    let page = '<div class="print-student-page" style="width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;">';
-                    let header = key.replace(/_/g, ' ').replace(/\b\w/g, s => s.toUpperCase());
-                    page += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">${header}</div>`;
-                    // Add instructions/questions if present
-                    if (val.instructions) {
-                      page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(val.instructions)}</em></div>`;
-                    }
-                    if (val.question) {
-                      page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><strong>Question:</strong> ${escapeHtml(val.question)}</div>`;
-                    }
-                    // Add questions/instructions for each visual sub-object, in order
-                    ['visual_1A','visual_1B','visual_2B','visual_3B','visual_4B','visual_1C','visual_2C'].forEach(k => {
-                      if (val[k]) {
-                        if (val[k].instructions) {
-                          page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(val[k].instructions)}</em></div>`;
-                        }
-                        if (val[k].question) {
-                          page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><strong>Question:</strong> ${escapeHtml(val[k].question)}</div>`;
-                        }
-                      }
-                    });
-                    page += '</div>';
-                    printDiv.innerHTML += page;
-                  }
-                });
-              }
-
-              document.body.appendChild(printDiv);
-              window.print();
-              setTimeout(() => { printDiv.remove(); }, 1000);
+        // 8. Reading 3
+        let reading3 = outline.lesson_segments && outline.lesson_segments.find(seg => Object.keys(seg)[0] === 'reading_3');
+        if (reading3 && reading3.reading_3) {
+          let val = reading3.reading_3;
+          let readingTitle = val.title || val.heading || '';
+          if (readingTitle) {
+            mainHtml += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">${escapeHtml(readingTitle)}</div>`;
+          }
+          let qs = [];
+          if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
+          if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
+          if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
+          if (Array.isArray(val.discussion_questions)) {
+            val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
+          }
+          if (qs.length) {
+            qs.forEach(q => {
+              mainHtml += `<div style=\\\"font-size:1rem;margin-bottom:0.3rem;\\\"><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</div>`;
+              mainHtml += `<div style=\\\"width:100%;max-width:600px;height:32px;margin:0.3rem 0 0.7rem 0;\\\"></div>`;
             });
           }
-        });
+        }
+
+        // 9. Exit Ticket
+        let exit = outline.lesson_segments && outline.lesson_segments.find(seg => seg.exit_ticket);
+        if (exit && exit.exit_ticket) {
+          mainHtml += `<h2 style=\"font-size:1.3rem;margin-bottom:0.7rem;\">Exit Ticket</h2>`;
+          mainHtml += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\">${escapeHtml(exit.exit_ticket.prompt||'')}</div>`;
+          mainHtml += `<div style=\"width:100%;max-width:600px;height:30px;margin:0.7rem 0 0 0;\"></div>`;
+        }
+
+        // Render main worksheet page (all except vocab)
+        printDiv.innerHTML = `<div class=\"print-student-page\" style=\"width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;\">${mainHtml}</div>`;
+
+        // Vocab grid page (on its own page)
+        if (Array.isArray(outline.vocabulary) && outline.vocabulary.length) {
+          let grid = '<div class="print-student-page" style="width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;page-break-before:always;">';
+          grid += '<h2 style="font-size:2rem;margin-bottom:1.2rem;">Vocabulary</h2>';
+          grid += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;width:100%;max-width:900px;margin:0 auto;">';
+          outline.vocabulary.forEach(vocab => {
+            let imgHtml = vocab.link_to_image && vocab.link_to_image !== '@image_placeholder'
+              ? `<img src="${vocab.link_to_image}" alt="${escapeHtml(vocab.term)}" style="max-width:100%;max-height:120px;display:block;margin:0.5rem auto;object-fit:contain;">`
+              : '';
+            grid += `<div style="border:1.2px solid #222;border-radius:7px;padding:0.2rem;height:2.5in;min-height:2.5in;max-height:2.5in;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:0;">
+              <div style=\"font-weight:bold;font-size:0.95rem;border-bottom:1px solid #aaa;width:100%;height:10%;min-height:1.2em;max-height:10%;display:flex;align-items:flex-start;justify-content:flex-start;\">&nbsp;</div>
+              <div style=\"font-size:0.9rem;width:100%;height:20%;min-height:1.2em;max-height:20%;display:flex;align-items:center;justify-content:flex-start;\">&nbsp;</div>
+              <div style=\"flex:1 1 auto;\"></div>
+              <div style=\"width:100%;height:50%;max-height:50%;display:flex;align-items:flex-end;justify-content:center;\">${imgHtml}</div>
+            </div>`;
+          });
+          grid += '</div></div>';
+          printDiv.innerHTML += grid;
+        }
+        // --- Image/Visual Questions Page(s) ---
+        if (outline.lesson_segments) {
+          outline.lesson_segments.forEach(seg => {
+            let key = Object.keys(seg)[0];
+            let val = seg[key];
+            // Skip Odd One Out and Cause Effect to avoid duplicates
+            if (key === 'odd_one_out' || key === 'cause_effect') return;
+            // Only process segments with visuals/images
+            if (val && typeof val === 'object' && (
+              val.visual_1A || val.visual_1B || val.visual_2B || val.visual_3B || val.visual_4B || val.visual_1C || val.visual_2C || val.link_to_image || val.url_to_image || key.includes('image')
+            )) {
+              let hasQuestion = !!val.question || !!val.instructions;
+              // Also check for questions/instructions in visual sub-objects
+              ['visual_1A','visual_1B','visual_2B','visual_3B','visual_4B','visual_1C','visual_2C'].forEach(k => {
+                if (val[k] && (val[k].question || val[k].instructions)) hasQuestion = true;
+              });
+              if (!hasQuestion) return;
+              let page = '<div class="print-student-page" style="width:100vw;min-height:90vh;padding:0.4cm 0.2cm 0.4cm 0.2cm;background:white;color:black;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;">';
+              let header = key.replace(/_/g, ' ').replace(/\b\w/g, s => s.toUpperCase());
+              page += `<div style=\"font-size:1.15rem;font-weight:bold;margin:0.7rem 0 0.4rem 0;\">${header}</div>`;
+              // Add instructions/questions if present
+              if (val.instructions) {
+                page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(val.instructions)}</em></div>`;
+              }
+              if (val.question) {
+                page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><strong>Question:</strong> ${escapeHtml(val.question)}</div>`;
+              }
+              // Add questions/instructions for each visual sub-object, in order
+              ['visual_1A','visual_1B','visual_2B','visual_3B','visual_4B','visual_1C','visual_2C'].forEach(k => {
+                if (val[k]) {
+                  if (val[k].instructions) {
+                    page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><em>${escapeHtml(val[k].instructions)}</em></div>`;
+                  }
+                  if (val[k].question) {
+                    page += `<div style=\"font-size:1rem;margin-bottom:0.7rem;\"><strong>Question:</strong> ${escapeHtml(val[k].question)}</div>`;
+                  }
+                }
+              });
+              page += '</div>';
+              printDiv.innerHTML += page;
+            }
+          });
+        }
+        document.body.appendChild(printDiv);
+        window.print();
+        setTimeout(() => { printDiv.remove(); }, 1000);
+      });
     }
   });
+  // --- Print Lesson Cards (non-vocab) ---
+  document.addEventListener('DOMContentLoaded', function() {
+    const printLessonBtn = document.getElementById('printLessonCardsBtn');
+    if (printLessonBtn) {
+      printLessonBtn.addEventListener('click', function() {
+        let outline = window._lastLessonOutline;
+        if (!outline || !Array.isArray(outline.lesson_segments) || !outline.lesson_segments.length) {
+          alert('No lesson segments to print.');
+          return;
+        }
+        // Remove any previous print container
+        let old = document.getElementById('printLessonCardsContainer');
+        if (old) old.remove();
+        let printDiv = document.createElement('div');
+        printDiv.id = 'printLessonCardsContainer';
+        // Print each segment except vocab
+        outline.lesson_segments.forEach(function(seg) {
+          const key = Object.keys(seg)[0];
+          if (key === 'vocabulary') return; // skip vocab
+          let val = seg[key];
+          let html = `<div class="print-lesson-page" style="width:100vw;min-height:90vh;padding:2.5cm 1.5cm 2.5cm 1.5cm;background:white;color:black;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <h1 style="font-size:2.2rem;margin-bottom:1.2rem;">${key.replace(/_/g, ' ')}</h1>
+            <div style="font-size:1.2rem;max-width:700px;width:100%;margin:0 auto;">${renderSegmentForPrint(val)}</div>
+          </div>`;
+          printDiv.innerHTML += html;
+        });
+        document.body.appendChild(printDiv);
+        window.print();
+        setTimeout(() => { printDiv.remove(); }, 1000);
+      });
+    }
+  });
+
+  function renderSegmentForPrint(val) {
+    // If this is a segment with multiple visuals (e.g., odd_one_out, image_analysis, cause_effect, compare_contrast), render as grid
+    if (val && typeof val === 'object' && (
+      val.visual_1A || val.visual_1B || val.visual_2B || val.visual_3B || val.visual_4B || val.visual_1C || val.visual_2C
+    )) {
+      // Collect all visuals in order
+      let visuals = [];
+      ['visual_1A','visual_1B','visual_2B','visual_3B','visual_4B','visual_1C','visual_2C'].forEach(k => {
+        if (val[k]) visuals.push(val[k]);
+      });
+      if (visuals.length) {
+        let grid = '<div style="display:grid;grid-template-columns:repeat(' + Math.min(visuals.length,2) + ',1fr);gap:18px;margin-bottom:1.2em;">';
+        visuals.forEach(v => {
+          grid += '<div style="text-align:center;">';
+          if (v.url_to_image) {
+            grid += `<img src="${v.url_to_image}" alt="${escapeHtml(v.type||'image')}" style="max-width:100%;max-height:260px;display:block;margin:0 auto 0.5em auto;object-fit:contain;">`;
+          }
+          if (v.type) grid += `<div style="font-weight:bold;">${escapeHtml(v.type)}</div>`;
+          if (v.description) grid += `<div style="font-size:0.95em;">${escapeHtml(v.description)}</div>`;
+          grid += '</div>';
+        });
+        grid += '</div>';
+        // Render any other fields below the grid
+        let rest = Object.keys(val).filter(k => !k.startsWith('visual_')).map(k => `<div style="margin-bottom:0.5em;"><strong>${escapeHtml(k)}:</strong> ${renderSegmentForPrint(val[k])}</div>`).join('');
+        return grid + rest;
+      }
+    }
+    // Special handling for reading segments: only show title, text, questions (in that order)
+    if (val && typeof val === 'object' && (
+      val.title || val.text || val.discussion_question_L1 || val.discussion_question_L2 || val.discussion_question_L3 || val.discussion_questions
+    )) {
+      let html = '';
+      if (val.title) html += `<div style="font-size:1.5rem;font-weight:bold;margin-bottom:1rem;">${escapeHtml(val.title)}</div>`;
+      if (val.text) html += `<div style="margin-bottom:1.2rem;">${escapeHtml(val.text)}</div>`;
+      // Collect questions
+      let qs = [];
+      if (val.discussion_question_L1) qs.push({lvl:'L1',text:val.discussion_question_L1});
+      if (val.discussion_question_L2) qs.push({lvl:'L2',text:val.discussion_question_L2});
+      if (val.discussion_question_L3) qs.push({lvl:'L3',text:val.discussion_question_L3});
+      if (Array.isArray(val.discussion_questions)) {
+        val.discussion_questions.forEach((q,i) => qs.push({lvl:'L'+(i+1),text:q}));
+      }
+      if (qs.length) {
+        html += '<div style="margin-top:1.2rem;"><strong>Questions:</strong><ul>';
+        qs.forEach(q => { html += `<li><span style='font-weight:bold;'>${q.lvl}:</span> ${escapeHtml(q.text)}</li>`; });
+        html += '</ul></div>';
+      }
+      return html;
+    }
+    if (typeof val === 'string' || typeof val === 'number') {
+      return `<div>${escapeHtml(val)}</div>`;
+    } else if (Array.isArray(val)) {
+      return val.map(renderSegmentForPrint).join('');
+    } else if (typeof val === 'object' && val !== null) {
+      return Object.keys(val).map(k => `<div style="margin-bottom:0.5em;"><strong>${escapeHtml(k)}:</strong> ${renderSegmentForPrint(val[k])}</div>`).join('');
+    } else {
+      return '';
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+;(async function() {
+  "use strict";
+  /**
+   * Interactive lesson viewer powered by Supabase.
+   */
+
+  // Read Supabase credentials from globals (index.html) with safe fallbacks
+  const SUPABASE_URL = window.SUPABASE_URL || 'https://hhlzhoqwlqsiefyiuqmg.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = window.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_z5FpORNEIA4S6kOY-Mdzxw_YtBllO9n';
+
+  if (!window.supabase) {
+    console.error("Supabase client library not found. Include @supabase/supabase-js before this script.");
+    return;
+  }
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  // DOM refs
+  const unitMenu   = document.getElementById("unitMenu");
+  const topicMenu  = document.getElementById("topicMenu");
+  const cardList   = document.getElementById("cardList");
+
+  // utils
+  function clear(...els) { els.forEach((e) => e && e.replaceChildren()); }
+  function safeParseJSON(val) {
+    if (!val) return null;
+    if (typeof val === "object") return val;
+    if (typeof val === "string") { try { return JSON.parse(val); } catch { return null; } }
+    return null;
+  }
+  function normalizeTeks(matched) {
+    if (!matched) return [];
+    if (Array.isArray(matched)) return matched.filter((x) => x && typeof x === "object");
+    if (typeof matched === "object") return [matched];
+    if (typeof matched === "string") {
+      const parsed = safeParseJSON(matched);
+      if (Array.isArray(parsed)) return parsed.filter((x) => x && typeof x === "object");
+      if (parsed && typeof parsed === "object") return [parsed];
+    }
+    return [];
+  }
+  function renderTEKSList(items) {
+    if (!items.length) return "";
+    let html = '<ul class="mb-0">';
+    items.forEach((it) => {
+      const code = it.teks ? `<strong>${it.teks}</strong> ` : "";
+      const text = it.text ? `${it.text}` : "";
+      const uuid = it.uuid ? `<div class="text-muted small">UUID: ${it.uuid}</div>` : "";
       html += `<li>${code}${text}${uuid}</li>`;
     });
     html += "</ul>";
