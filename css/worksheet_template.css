@@ -82,7 +82,7 @@
   flex-direction: column;
   align-items: stretch;
   min-height: 0;
-  height: 2.5in;
+  height: 2.875in;
 /* Odd one out images scale to fit their cell */
 .odd-one-out-img, .vocab-grid-cell .odd-one-out-img img {
   width: 100% !important;

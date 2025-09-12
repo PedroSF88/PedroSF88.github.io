@@ -208,9 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var grid = el('div', { className: 'vocab-grid' });
     (vocab || []).forEach(function(v) {
       var cell = el('div', { className: 'vocab-grid-cell' });
-      // Term slot
-      var termSlot = el('div', { className:'slot slot-term', 'data-col':'term', style:'justify-content:center; align-items:center; min-height:0; margin-bottom:0;' });
-      termSlot.appendChild(el('div', { className:'filled term', style:'width:100%; text-align:center;' }, v.term || ''));
+      // Term slot (blank placeholder, no text)
+      var termSlot = el('div', { className:'slot slot-term', 'data-col':'term' });
+      termSlot.appendChild(el('div', { className:'blank placeholder' }, ''));
       // Definition slot (always blank placeholder)
       var defSlot = el('div', { className:'slot slot-def', 'data-col':'def' });
       defSlot.appendChild(el('div', { className:'blank placeholder' }, 'write the definition'));
@@ -400,112 +400,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function generateWordsearch(vocab) {
     const SEPARATOR = 'X';
     // Build segments: TERM + X + DEFINITION + [3-17 random ZQJKV], then shuffle order
-    let segments = (vocab || []).map(item => {
-      const termNorm = normalizeText(item.term);
-      const defNorm = normalizeText(item.definition || item.def || '');
-      // Add 3-17 random rare letters after each block
-      const nRare = 3 + Math.floor(Math.random() * 15); // 3-17
-      let rareBlock = '';
-      for (let i = 0; i < nRare; i++) {
-        rareBlock += rareLetters[Math.floor(Math.random() * rareLetters.length)];
-      }
-      return {
-        label: `${item.term} : ${item.definition || item.def || ''}`,
-        text: termNorm + SEPARATOR + defNorm + rareBlock
-      };
-    });
-    // Fisher-Yates shuffle
-    for (let i = segments.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [segments[i], segments[j]] = [segments[j], segments[i]];
-    }
-    // Dynamically size grid so that there is no more than one block of random letters at the end
-    const fullText = segments.map(seg => seg.text).join('');
-    let nchars = fullText.length;
-    let minSide = Math.max(18, Math.ceil(Math.sqrt(nchars)));
-    let bestSide = minSide;
-    let bestCoords = [];
-    let bestExtra = Infinity;
-    // Try grid sizes from minSide up to minSide+5 to minimize trailing empty space
-    for (let trySide = minSide; trySide <= minSide + 5; trySide++) {
-      let coords = [];
-      for (let r = 0; r < trySide; r++) {
-        if (r % 2 === 0) {
-          for (let c = 0; c < trySide; c++) coords.push([r, c]);
-        } else {
-          for (let c = trySide - 1; c >= 0; c--) coords.push([r, c]);
-        }
-      }
-      let extra = coords.length - nchars;
-      if (extra >= 0 && extra < bestExtra) {
-        bestSide = trySide;
-        bestCoords = coords;
-        bestExtra = extra;
-        if (extra <= segments[0].text.length) break; // No more than one block of random letters
-      }
-    }
-    let side = bestSide;
-    let coords = bestCoords;
-    // Fill grid
-    let grid = Array.from({ length: side }, () => Array(side).fill(''));
-    let posIdx = 0;
-    let answerKey = [];
-    for (const seg of segments) {
-      const startIdx = posIdx;
-      for (const ch of seg.text) {
-        const [r, c] = coords[posIdx];
-        grid[r][c] = ch;
-        posIdx++;
-      }
-      const endIdx = posIdx - 1;
-      const [sr, sc] = coords[startIdx];
-      const [er, ec] = coords[endIdx];
-      answerKey.push({
-        label: seg.label,
-        start: { row: sr, col: sc },
-        end: { row: er, col: ec },
-        length: seg.text.length
-      });
-    }
-    // Fill rest with rare letters to match the rest of the grid style
-    for (let i = posIdx; i < coords.length; i++) {
-      const [r, c] = coords[i];
-      grid[r][c] = rareLetters[Math.floor(Math.random() * rareLetters.length)];
-    }
-    return { grid, side, answerKey, separator: SEPARATOR };
-  }
-
-  function renderWordsearchCard(vocab) {
-    const { grid, side, answerKey, separator } = generateWordsearch(vocab);
-    // Render grid as HTML table
-    const table = document.createElement('table');
-    table.className = 'wordsearch-table';
-    for (let r = 0; r < side; r++) {
-      const tr = document.createElement('tr');
-      for (let c = 0; c < side; c++) {
-        const td = document.createElement('td');
-        td.textContent = grid[r][c];
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    }
-  // Card
-  const cardDiv = document.createElement('div');
-  cardDiv.className = 'card';
-  const header = document.createElement('div');
-  header.className = 'section-header';
-  header.textContent = 'Wordsearch: Terms Embedded with Definitions';
-  cardDiv.appendChild(header);
-  cardDiv.appendChild(table);
-  return cardDiv;
-  }
-
-  // ================== Render All ==================
-  function renderAll(data) {
-    clearRoot();
-    window.__CURRENT_LESSON__ = data;
-    renderHeader(data); // Name card
-    // Gather segments by type for ordered rendering
     var segments = Array.isArray(data.lesson_segments) ? data.lesson_segments : [];
     var warmUpSeg = segments.find(seg => seg.warm_up);
     var imageAnalysisSeg = segments.find(seg => seg.image_analysis);
@@ -546,21 +440,78 @@ document.addEventListener('DOMContentLoaded', function() {
     // 4. Vocab
     if (data.vocabulary && data.vocabulary.length) renderVocabGrid(data.vocabulary);
     // 5. Reading 1
+    if (reading1) renderReading('reading_1', reading1.reading_1);
+    // 6. Odd One Out
+    if (oddOneOutSeg) renderOddOneOut(oddOneOutSeg.odd_one_out);
+    // 7. Reading 2
+    if (reading2) renderReading('reading_2', reading2.reading_2);
+    // 8. Cause and Effect
+    var causeEffectSeg = segments.find(seg => seg.cause_effect);
+    if (causeEffectSeg) renderCauseEffect(causeEffectSeg.cause_effect);
+    // 9. Reading 3
+    if (reading3) renderReading('reading_3', reading3.reading_3);
+    // 10. Exit Ticket
+    if (exitTicketSeg) renderExitTicket(exitTicketSeg.exit_ticket);
+  }
+
+  // ================== Render All ==================
+  function renderAll(data) {
+    clearRoot();
+    window.__CURRENT_LESSON__ = data;
+    renderHeader(data); // Name card
+    // Gather segments by type for ordered rendering
+    var segments = Array.isArray(data.lesson_segments) ? data.lesson_segments : [];
+    var warmUpSeg = segments.find(seg => seg.warm_up);
+    var imageAnalysisSeg = segments.find(seg => seg.image_analysis);
+    var oddOneOutSeg = segments.find(seg => seg.odd_one_out);
+    var compareAndCauseSegs = segments.filter(seg => seg.compare_contrast || seg.cause_effect);
+    var reading1 = segments.find(seg => Object.keys(seg)[0] === 'reading_1');
+    var reading2 = segments.find(seg => Object.keys(seg)[0] === 'reading_2');
+    var reading3 = segments.find(seg => Object.keys(seg)[0] === 'reading_3');
+    var exitTicketSeg = segments.find(seg => seg.exit_ticket);
+    // 1. Warm up
+    if (warmUpSeg) renderWarmUp(warmUpSeg);
+    // 2. LO/SC
+    renderObjectives(data);
+    // 3. Image analysis
+    if (imageAnalysisSeg) {
+      var d = imageAnalysisSeg.image_analysis;
+      if (d) {
+        var table = el('table', { className: 'image-analysis-table', style: 'width:100%; margin-bottom: 12px;' });
+        var tbody = el('tbody'); table.appendChild(tbody);
+        if (d.instructions) tbody.appendChild(el('tr', {}, el('td', { colspan: 2, className: 'muted', style: 'text-align:center; padding: 8px 0;' }, d.instructions)));
+        var imgCell = el('td', { style: 'width:50%; vertical-align:top; text-align:center;' });
+        if (d.visual_1A) imgCell.appendChild(imgBlock(d.visual_1A.type, d.visual_1A));
+        var qCell = el('td', { style: 'width:50%; vertical-align:top;' });
+        var beforeDiv = el('div', { style: 'margin-bottom: 18px;' },
+          el('div', { style: 'font-weight: bold; margin-bottom: 4px;' }, 'Before Vocab'),
+          el('div', { className: 'lines md' }, el('div', { className: 'pad' }, ''))
+        );
+        var afterDiv = el('div', {},
+          el('div', { style: 'font-weight: bold; margin-bottom: 4px;' }, 'After Vocab'),
+          el('div', { className: 'lines md' }, el('div', { className: 'pad' }, ''))
+        );
+        qCell.appendChild(beforeDiv);
+        qCell.appendChild(afterDiv);
+        tbody.appendChild(el('tr', {}, imgCell, qCell));
+        root.appendChild(card('Image Analysis', el('div', {}, table)));
+      }
+    }
+    // 4. Vocab
+    if (data.vocabulary && data.vocabulary.length) renderVocabGrid(data.vocabulary);
+    // 5. Reading 1
     if (reading1) renderReading('reading_1', reading1);
     // 6. Odd One Out
     if (oddOneOutSeg) renderOddOneOut(oddOneOutSeg);
     // 7. Reading 2
     if (reading2) renderReading('reading_2', reading2);
-  // 8. Compare & Contrast and/or Cause and Effect
-  compareAndCauseSegs.forEach(renderCompareAndCause);
+    // 8. Cause and Effect
+    var causeEffectSeg = segments.find(seg => seg.cause_effect);
+    if (causeEffectSeg) renderCompareAndCause(causeEffectSeg);
     // 9. Reading 3
     if (reading3) renderReading('reading_3', reading3);
     // 10. Exit Ticket
     if (exitTicketSeg) renderExitTicket(exitTicketSeg.exit_ticket);
-    // 11. Wordsearch (after exit ticket)
-    if (data.vocabulary && data.vocabulary.length) {
-      root.appendChild(renderWordsearchCard(data.vocabulary));
-    }
   }
 
   // Boot is selector-driven; no default data fallback.
